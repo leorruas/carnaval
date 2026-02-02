@@ -5,6 +5,7 @@
 ### 1.1. Catálogo de Blocos
 - O sistema exibe uma lista de 179 blocos do Carnaval BH 2026.
 - **Regra**: A lista deve ser performática e carregada localmente ou via API otimizada.
+- **Regra de Tempo**: Eventos passados devem ser ocultados automaticamente da visualização padrão para não poluir a lista.
 
 ### 1.2. Favoritos & Agenda
 - Usuários podem favoritar blocos.

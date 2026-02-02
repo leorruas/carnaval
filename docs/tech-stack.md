@@ -9,10 +9,11 @@
 ## Styling
 - **Engine**: TailwindCSS
 - **PostCSS**: Configured via `postcss.config.js`
+- **Animations**: Framer Motion
 
 ## State Management
-- **Local**: React `useState` / `useContext`
-- **Persistence**: `localStorage` (for Favorites)
+- **Store**: Zustand (Global state for favorites)
+- **Persistence**: `localStorage` (via Zustand middleware)
 
 ## Integrations
 - **Maps**: Google Maps Links / OSRM
