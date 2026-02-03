@@ -22,10 +22,13 @@
 - **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos. Amigos seguidos são salvos no perfil do usuário e podem ser acessados rapidamente na aba "Amigos" da agenda.
 
 ### 1.3. Filtros e Busca
-- **Busca Global**: O usuário pode buscar por nome do bloco, bairro ou endereço. A busca é ativada por um botão no header.
+- **Busca Global**: 
+    - O usuário pode buscar por nome do bloco, bairro ou endereço globalmente.
+    - **Regra de Prioridade**: Ao digitar uma busca, os filtros de data ("Hoje", "Calendário") são ignorados, exibindo resultados de todos os dias agrupados por data.
+    - O campo de busca se sobrepõe visualmente aos seletores de data para indicar esse escopo global. (z-index fix).
 - **Filtro por Data**: 
     - **Hoje**: Exibe eventos do dia atual (ou próximo disponível).
-    - **Calendário**: Exibe estritamente os eventos do dia selecionado no seletor horizontal (Quick Nav). O seletor é "sticky" no topo da tela.
+    - **Calendário**: Exibe estritamente os eventos do dia selecionado no seletor horizontal (Quick Nav).
     - **Favoritos**: Exibe apenas blocos favoritados.
     - Eventos passados são filtrados automaticamente da visualização padrão.
 - **Ações Rápidas**: Reposicionamento do botão de filtro para o header para evitar obstrução visual.
@@ -45,7 +48,9 @@
     - Campos obrigatórios: Nome, Data, Horário e Localização.
     - Status inicial: `pending`.
 - **Painel Administrativo**:
-    - Acesso exclusivo para o e-mail administrador (`leoruas@gmail.com`).
+    - **Segurança**: Acesso **exclusivo** para o e-mail administrador (`leoruas@gmail.com`). Regras de segurança do Firestore bloqueiam leitura/escrita para outros usuários.
+    - **Tempo Real**: A lista de sugestões utiliza `onSnapshot` para atualizações instantâneas sem necessidade de refresh manual.
+    - **Proteção**: Envios de sugestão possuem timeout de 10s e proteção contra race conditions de rede.
     - Permite visualizar sugestões pendentes, aprovar ou rejeitar.
     - **Aprovação**: Move o bloco da coleção `suggested_blocks` para `approved_blocks`.
     - **Rejeição**: Exclui permanentemente a sugestão.

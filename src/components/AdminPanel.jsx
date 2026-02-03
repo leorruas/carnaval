@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Trash2, Loader2, RefreshCw } from 'lucide-react';
-import { collection, getDocs, deleteDoc, doc, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, setDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
 const AdminPanel = ({ isOpen, onClose }) => {
@@ -9,26 +9,28 @@ const AdminPanel = ({ isOpen, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(null); // ID being processed
 
-    const fetchSuggestions = async () => {
+    useEffect(() => {
+        if (!isOpen) return;
+
         setLoading(true);
-        try {
-            const querySnapshot = await getDocs(collection(db, 'suggested_blocks'));
+        console.log("AdminPanel: Listening for suggestions...");
+
+        const q = collection(db, 'suggested_blocks');
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            console.log("AdminPanel: Snapshot received", querySnapshot.size);
             const list = [];
             querySnapshot.forEach((doc) => {
                 list.push({ id: doc.id, ...doc.data() });
             });
             setSuggestions(list);
-        } catch (error) {
-            console.error("Error fetching suggestions:", error);
-        } finally {
             setLoading(false);
-        }
-    };
+        }, (error) => {
+            console.error("AdminPanel Error:", error);
+            setLoading(false);
+            alert("Erro de conexão com Admin Panel.");
+        });
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchSuggestions();
-        }
+        return () => unsubscribe();
     }, [isOpen]);
 
     const handleApprove = async (suggestion) => {
@@ -92,9 +94,7 @@ const AdminPanel = ({ isOpen, onClose }) => {
                             Painel <span className="text-primary NOT-italic">Admin</span>
                         </h2>
                         <div className="flex gap-2">
-                            <button onClick={fetchSuggestions} className="p-2 hover:bg-black/5 rounded-full transition-colors">
-                                <RefreshCw className={`w-5 h-5 opacity-60 ${loading ? 'animate-spin' : ''}`} />
-                            </button>
+
                             <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors">
                                 <X className="w-5 h-5 opacity-60" />
                             </button>

@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
@@ -23,6 +23,19 @@ export const analytics = getAnalytics(app);
 // Serviços do Firebase
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+
+try {
+  enableMultiTabIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Persistência falhou: Múltiplas abas abertas.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('Persistência não suportada neste navegador.');
+    }
+  });
+} catch (e) {
+  console.warn("Erro ao ativar persistência:", e);
+}
 
 // Messaging (notificações push)
 let messaging = null;

@@ -9,7 +9,7 @@ exports[`Home > renders correctly 1`] = `
       class="max-w-md mx-auto relative px-6"
     >
       <header
-        class="relative left-0 right-0 z-20 px-6 max-w-md mx-auto"
+        class="relative left-0 right-0 z-40 px-6 max-w-md mx-auto"
         layoutid="main-sticky-header"
       >
         <div
@@ -435,7 +435,7 @@ exports[`Home > renders correctly 1`] = `
                           style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          25d 22h 47m
+                          25d 22h 21m
                         </span>
                       </div>
                     </div>

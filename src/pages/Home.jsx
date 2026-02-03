@@ -35,6 +35,16 @@ const Home = () => {
 
   // Base filtering (Search + Tab Type)
   const baseBlocks = useMemo(() => {
+    // Global Search Logic - Bypasses all other filters
+    if (searchQuery) {
+      // When searching, we want to look at EVERYTHING
+      return allBlocks.filter(b =>
+        b.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.bairro.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.endereco.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
     let result = allBlocks;
     const now = new Date();
 
@@ -52,13 +62,6 @@ const Home = () => {
       });
     }
 
-    if (searchQuery) {
-      result = result.filter(b =>
-        b.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.bairro.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.endereco.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
     return result;
   }, [activeTab, favoriteBlocks, searchQuery, allBlocks]);
 
@@ -116,7 +119,8 @@ const Home = () => {
   // Final filtering
   const displayBlocks = useMemo(() => {
     let result = baseBlocks;
-    if ((activeTab === 'calendar' || activeTab === 'favorites') && selectedDate) {
+    // Only apply date filtering if NOT searching
+    if (!searchQuery && (activeTab === 'calendar' || activeTab === 'favorites') && selectedDate) {
       result = result.filter(b => b.data === selectedDate);
     }
     return groupBlocksByDate(result);

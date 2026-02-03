@@ -32,7 +32,12 @@ const SuggestBlockModal = ({ isOpen, onClose }) => {
         setError(null);
 
         try {
-            await addDoc(collection(db, 'suggested_blocks'), {
+            // Race condition to prevent infinite loading
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Timeout: Falha de conexão.')), 10000)
+            );
+
+            const submissionPromise = addDoc(collection(db, 'suggested_blocks'), {
                 ...formData,
                 suggestedBy: auth.currentUser.uid,
                 suggestedByName: auth.currentUser.displayName || 'Anônimo',
@@ -40,6 +45,8 @@ const SuggestBlockModal = ({ isOpen, onClose }) => {
                 createdAt: serverTimestamp(),
                 status: 'pending'
             });
+
+            await Promise.race([submissionPromise, timeoutPromise]);
 
             setSuccess(true);
             setTimeout(() => {
@@ -49,7 +56,7 @@ const SuggestBlockModal = ({ isOpen, onClose }) => {
             }, 2000);
         } catch (err) {
             console.error("Error suggesting block:", err);
-            setError("Erro ao enviar sugestão. Tente novamente.");
+            setError(err.message || "Erro ao enviar sugestão. Verifique sua conexão.");
         } finally {
             setIsSubmitting(false);
         }

@@ -101,3 +101,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 15:15] - refactor: Migrated Data Layer to use `useBlocks` hook, merging static JSON with dynamic Firestore data.
 - [2026-02-03 15:15] - ui: Added "Sugerir Bloco" buttons to Home footer and Profile page.
 - [2026-02-03 15:15] - test: Updated ProfilePage verification and mocked useBlocks in Agenda/Home tests.
+- [2026-02-03 15:38] - fix: Resolved z-index issue where search bar was hidden behind sticky navigation.
+- [2026-02-03 15:38] - fix: Updated search logic to be truly global, bypassing "Today/Calendar" tab filters when active.
+- [2026-02-03 15:35] - fix: Resolved infinite loading in Admin Panel by implementing `onSnapshot` for real-time updates.
+- [2026-02-03 15:35] - fix: Added timeout protection (10s) and race condition handling to "Suggest Block" submission.
+- [2026-02-03 15:35] - sec: Hardened Firestore Security Rules for `suggested_blocks` (admin-only read/write).
+- [2026-02-03 15:35] - feat: Enabled offline persistence for Firestore to improve reliability on flaky networks.
