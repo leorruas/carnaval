@@ -7,9 +7,9 @@ export const useAgendaSelection = (allBlocks, sharedData, isSharedMode, favorite
 
     const currentBlocks = useMemo(() => {
         if (isSharedMode && sharedData) {
-            const ids = sharedData.blocks || [];
-            const hydrated = allBlocks.filter(b => ids.includes(b.id));
-            return sortBlocksByDateTime(hydrated);
+            // Fix: sharedData.blocks comes fully hydrated from the service
+            // No need to filter allBlocks (which would fail if blocks are objects not IDs)
+            return sortBlocksByDateTime(sharedData.blocks || []);
         }
         const favoriteIds = blocksList.map(f => f.id);
         const blocks = allBlocks.filter(b => favoriteIds.includes(b.id));

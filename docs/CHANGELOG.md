@@ -123,4 +123,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 19:18] - fix: Fixed "FIRESTORE INTERNAL ASSERTION FAILED" by removing aggressive connection checks in `useFirestoreReady`.
 - [2026-02-03 19:18] - feat: Created `blockService` to handle efficient block retrieval strategies (static vs dynamic).
 - [2026-02-03 19:18] - test: Added comprehensive unit tests for block hydration logic.
-
+- [2026-02-03 19:37] - fix: Resolved shared agenda visibility issue where blocks were not appearing (hook logic mismatch).
+- [2026-02-03 19:37] - test: Updated shared agenda tests to correctly mock hydrated block objects.
