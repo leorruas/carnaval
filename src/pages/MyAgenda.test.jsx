@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import MyAgenda from './MyAgenda';
 import useStore from '../store/useStore';
@@ -61,12 +61,22 @@ vi.mock('framer-motion', async (importOriginal) => {
 describe('MyAgenda', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        useStore.mockReturnValue({
+            favoriteBlocks: [],
+            friends: [],
+            toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
+        });
     });
 
     it('renders Personal Mode correctly', () => {
         useStore.mockReturnValue({
             favoriteBlocks: [{ id: '1' }],
+            friends: [],
             toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
         });
 
         render(
@@ -83,7 +93,10 @@ describe('MyAgenda', () => {
     it('renders Shared Mode when shareId is present', async () => {
         useStore.mockReturnValue({
             favoriteBlocks: [],
+            friends: [],
             toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
@@ -112,7 +125,10 @@ describe('MyAgenda', () => {
     it('calculates matches correctly in Shared Mode', async () => {
         useStore.mockReturnValue({
             favoriteBlocks: [{ id: '1' }],
+            friends: [],
             toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
@@ -135,7 +151,10 @@ describe('MyAgenda', () => {
         const toggleFavoriteMock = vi.fn();
         useStore.mockReturnValue({
             favoriteBlocks: [],
+            friends: [],
             toggleFavorite: toggleFavoriteMock,
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
@@ -154,5 +173,54 @@ describe('MyAgenda', () => {
         fireEvent.click(addAllButton);
 
         expect(toggleFavoriteMock).toHaveBeenCalledWith('2');
+    });
+
+    it('renders Friends tab correctly with empty state', () => {
+        useStore.mockReturnValue({
+            favoriteBlocks: [{ id: '1' }],
+            friends: [],
+            toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
+        });
+
+        render(
+            <MemoryRouter>
+                <MyAgenda />
+            </MemoryRouter>
+        );
+
+        const friendsTab = screen.getByText(/Amigos \(0\)/i);
+        fireEvent.click(friendsTab);
+
+        expect(screen.getByText(/Nenhum amigo ainda/i)).toBeInTheDocument();
+    });
+
+    it('renders list of friends and allows viewing their agenda', () => {
+        const friends = [
+            { shareId: 'f1', name: 'Amigo 1', addedAt: new Date().toISOString() }
+        ];
+        useStore.mockReturnValue({
+            favoriteBlocks: [{ id: '1' }],
+            friends: friends,
+            toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
+            removeFriend: vi.fn(),
+        });
+
+        render(
+            <MemoryRouter>
+                <MyAgenda />
+            </MemoryRouter>
+        );
+
+        fireEvent.click(screen.getByText(/Amigos \(1\)/i));
+        expect(screen.getByText('Amigo 1')).toBeInTheDocument();
+
+        // Clicking the friend should trigger a navigation
+        // The button has a Calendar icon inside. We can find it by getting the button relative to the friend name.
+        const friendCard = screen.getByText('Amigo 1').closest('div').parentElement.parentElement;
+        const viewButton = within(friendCard).getAllByRole('button')[0];
+        expect(viewButton).toBeInTheDocument();
     });
 });

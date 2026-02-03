@@ -63,7 +63,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
+        sans: ['Archivo', 'sans-serif'],
+        bricolage: ['Bricolage Grotesque', 'sans-serif'],
       }
     },
   },

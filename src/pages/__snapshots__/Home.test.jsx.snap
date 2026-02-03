@@ -152,7 +152,7 @@ exports[`Home > renders correctly 1`] = `
             class="relative group/scroll"
           >
             <button
-              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
             >
               <span
                 class="text-lg leading-none mb-0.5"
@@ -196,7 +196,7 @@ exports[`Home > renders correctly 1`] = `
               </button>
             </div>
             <button
-              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
             >
               <span
                 class="text-lg leading-none mb-0.5"
@@ -275,7 +275,7 @@ exports[`Home > renders correctly 1`] = `
               transition="[object Object]"
             >
               <div
-                class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden hover:shadow-2xl hover:border-transparent"
+                class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden hover:border-transparent"
                 style="--theme-color: #00CE65;"
               >
                 <div
@@ -410,8 +410,8 @@ exports[`Home > renders correctly 1`] = `
                       class="flex items-center justify-center gap-3"
                     >
                       <div
-                        class="flex items-center gap-2 px-4 py-2 rounded-2xl border shadow-sm transition-colors duration-500"
-                        style="background-color: rgba(0, 206, 101, 0.082); border-color: rgba(0, 206, 101, 0.19); box-shadow: 0 2px 10px #00CE6510;"
+                        class="flex items-center gap-2 px-4 py-2 rounded-2xl border transition-colors duration-500"
+                        style="background-color: rgba(0, 206, 101, 0.082); border-color: rgba(0, 206, 101, 0.19);"
                       >
                         <div
                           class="w-2 h-2 rounded-full animate-pulse"
@@ -422,7 +422,7 @@ exports[`Home > renders correctly 1`] = `
                           style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          26d 3h 42m
+                          26d 3h 22m
                         </span>
                       </div>
                     </div>

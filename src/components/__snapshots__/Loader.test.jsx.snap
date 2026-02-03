@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Loader > matches snapshot 1`] = `
+<div>
+  <div
+    animate="[object Object]"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-background/80 backdrop-blur-xl"
+    exit="[object Object]"
+    initial="[object Object]"
+  >
+    <div
+      class="relative w-[300px] h-[70px] md:w-[385px] md:h-[90px]"
+    >
+      <div
+        animate="[object Object]"
+        class="absolute inset-0"
+        transition="[object Object]"
+      />
+    </div>
+  </div>
+</div>
+`;

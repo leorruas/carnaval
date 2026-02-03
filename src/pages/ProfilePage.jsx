@@ -26,7 +26,7 @@ const ProfilePage = () => {
 
                 {/* User Info Card */}
                 <div className="px-6 mb-8">
-                    <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4 shadow-sm">
+                    <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4">
                         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                             <User className="w-8 h-8" />
                         </div>

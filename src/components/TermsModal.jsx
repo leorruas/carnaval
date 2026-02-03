@@ -15,7 +15,7 @@ const TermsModal = ({ isOpen, onClose }) => {
                         initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.95, opacity: 0 }}
-                        className="bg-card w-full max-w-lg rounded-3xl shadow-2xl border border-border/20 overflow-hidden flex flex-col max-h-[85vh]"
+                        className="bg-card w-full max-w-lg rounded-3xl border border-border/20 overflow-hidden flex flex-col max-h-[85vh]"
                     >
                         {/* Header */}
                         <div className="p-6 border-b border-border/10 flex items-center justify-between">

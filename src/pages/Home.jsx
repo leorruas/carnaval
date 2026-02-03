@@ -148,7 +148,7 @@ const Home = () => {
                     const el = document.getElementById('date-scroll-container');
                     if (el) el.scrollBy({ left: -200, behavior: 'smooth' });
                   }}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
                 >
                   <span className="text-lg leading-none mb-0.5">‹</span>
                 </button>
@@ -168,22 +168,19 @@ const Home = () => {
                         key={date}
                         onClick={() => {
                           setSelectedDate(date);
-                          // If we are on 'today', clicking a date switches to 'calendar'. 
-                          // If we are on 'favorites', we stay on 'favorites' but change date.
                           if (activeTab === 'today') setActiveTab('calendar');
                         }}
-                        className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 ${isSelected
-                          ? `text-white shadow-lg scale-105`
+                        className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 font-bricolage ${isSelected
+                          ? `text-white scale-105`
                           : `bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent`
                           }`}
                         style={isSelected ? {
                           backgroundColor: theme.color,
                           borderColor: theme.color,
-                          boxShadow: `0 10px 30px -10px ${theme.color}40`
                         } : {}}
                       >
                         <span className="text-sm font-black">{date.split('-')[2]}</span>
-                        <span className={`text-[8px] font-black uppercase ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>
+                        <span className={`text-[8px] font-black uppercase tracking-widest ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>
                           {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
                         </span>
                       </button>
@@ -196,7 +193,7 @@ const Home = () => {
                     const el = document.getElementById('date-scroll-container');
                     if (el) el.scrollBy({ left: 200, behavior: 'smooth' });
                   }}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
                 >
                   <span className="text-lg leading-none mb-0.5">›</span>
                 </button>
@@ -216,10 +213,10 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="scroll-mt-48 space-y-8"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 font-bricolage">
                   <div className="flex flex-col items-center min-w-[40px]">
                     <span className="text-2xl font-black leading-none">{date.split('-')[2]}</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">
                       {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
                     </span>
                   </div>
@@ -262,7 +259,7 @@ const Home = () => {
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col p-8"
             >
-              <div className="flex justify-between items-center mb-12">
+              <div className="flex justify-between items-center mb-12 font-bricolage">
                 <h2 className="text-3xl font-black italic">Filtros<span className="text-primary NOT-italic">.</span></h2>
                 <button
                   onClick={() => setIsFilterOpen(false)}
@@ -281,7 +278,7 @@ const Home = () => {
 
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className="mt-auto w-full py-6 rounded-[2rem] bg-primary text-white font-black uppercase tracking-widest shadow-xl shadow-primary/20"
+                className="mt-auto w-full py-6 rounded-[2rem] bg-primary text-white font-black uppercase tracking-widest"
               >
                 Aplicar
               </button>

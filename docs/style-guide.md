@@ -20,6 +20,7 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
     - `brand-light`: #E7E0D3
     - `brand-pink`: #F2AEC1
 - **Pastéis**: Cores como `pastel-purple`, `pastel-peach`, `pastel-teal` e `pastel-pink` são usadas para categorização visual dos blocos.
+- **Shadows**: **IMPORTANT**: All shadows (`shadow-*`) have been removed for a clean "Flat Gummy" aesthetic. Use borders and background colors for depth instead.
 
 ## 3. Tipografia
 - **Fonte Principal**: `Outfit` (Geométrica e moderna).
@@ -63,6 +64,7 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Agenda Info**: Exibe o nome do dono da agenda e contador de "Matches" em modo compartilhado.
 - **Action Buttons**: Share e Export ("Colocar na minha agenda") com `bg-muted/30` e `hover:bg-muted` matching BottomNav aesthetic.
 - **Next Block Card**: Utiliza o tema dinâmico baseado no dia do primeiro bloco da lista.
+- **Abas da Agenda**: Alterna entre "Meus Blocos" e "Amigos". A aba de Amigos permite gerenciar as agendas seguidas.
 
 ### Header Centrado
 - Elementos de navegação (PillToggle) e seletores de data são horizontalmente centrados para melhor equilíbrio visual.

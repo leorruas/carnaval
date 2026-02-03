@@ -82,7 +82,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-border/20 overflow-hidden relative"
+                            className="bg-card w-full max-w-md rounded-3xl border border-border/20 overflow-hidden relative"
                         >
                             <div className="absolute inset-0 bg-card z-0" />
                             <div className="relative z-10 p-8">
@@ -115,7 +115,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
                                 <button
                                     onClick={handleGoogleLogin}
                                     disabled={isLoading}
-                                    className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-700 font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors mb-6 shadow-sm"
+                                    className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-700 font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors mb-6"
                                 >
                                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
                                     <span>Continuar com Google</span>

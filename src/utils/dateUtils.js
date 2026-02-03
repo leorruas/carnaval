@@ -129,7 +129,7 @@ export const formatTime = (timeStr) => {
  * @param {Array} blocos - Array de blocos
  * @returns {Object} Objeto com blocos agrupados por data
  */
-export const groupBlocksByDate = (blocos) => {
+export const groupBlocksByDate = (blocos = []) => {
   return blocos.reduce((acc, bloco) => {
     if (!acc[bloco.data]) {
       acc[bloco.data] = [];
@@ -144,7 +144,7 @@ export const groupBlocksByDate = (blocos) => {
  * @param {Array} blocos - Array de blocos
  * @returns {Array} Blocos ordenados
  */
-export const sortBlocksByDateTime = (blocos) => {
+export const sortBlocksByDateTime = (blocos = []) => {
   return [...blocos].sort((a, b) => {
     const dateA = new Date(`${a.data}T${a.horario || '00:00'}`);
     const dateB = new Date(`${b.data}T${b.horario || '00:00'}`);

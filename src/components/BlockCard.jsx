@@ -77,7 +77,7 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
 
   return (
     <div
-      className={`relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden ${onAdd ? '' : 'hover:shadow-2xl hover:border-transparent'}`}
+      className={`relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden ${onAdd ? '' : 'hover:border-transparent'}`}
       style={{
         '--theme-color': theme.color,
       }}
@@ -87,27 +87,29 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
 
       {/* Match Badge for Shared Agenda */}
       {matchBadge && (
-        <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-2xl z-10 shadow-lg">
+        <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-2xl z-10">
           👯 Match!
         </div>
       )}
 
       {/* Add Button for Shared Agenda (New Blocks) */}
-      {onAdd && (
-        <div className="absolute top-4 right-4 z-20">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onAdd(block)}
-            className="bg-primary text-white text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg hover:bg-primary/90 flex items-center gap-2"
-          >
-            Adicionar <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center text-[10px]">+</div>
-          </motion.button>
-        </div>
-      )}
+      {
+        onAdd && (
+          <div className="absolute top-4 right-4 z-20">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onAdd(block)}
+              className="bg-primary text-white text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full hover:bg-primary/90 flex items-center gap-2"
+            >
+              Adicionar <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center text-[10px]">+</div>
+            </motion.button>
+          </div>
+        )
+      }
 
       {/* Time & Favorite Header (Hidden if onAdd mode, because button takes space, or adjust layout) */}
       <div className="flex justify-between items-start mb-8">
-        <div className="space-y-1.5 font-sans">
+        <div className="space-y-1.5 font-bricolage">
           <span className={`text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors`}>
             {formatTime(block.horario)}
           </span>
@@ -122,7 +124,7 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => toggleFavorite(block.id)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10 shadow-inner' : 'bg-muted/50 hover:bg-muted'}`}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10' : 'bg-muted/50 hover:bg-muted'}`}
           >
             <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
           </motion.button>
@@ -131,12 +133,12 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
 
       {/* Main Info */}
       <div className="mb-10">
-        <h3 className="text-2xl font-black leading-[1.1] tracking-tight mb-4 text-foreground pr-8">
+        <h3 className="text-2xl font-black leading-[1.1] tracking-tight mb-4 text-foreground pr-8 font-bricolage">
           {block.nome}
         </h3>
 
         <div className="space-y-3">
-          <div className="flex items-center gap-2.5 text-muted-foreground">
+          <div className="flex items-center gap-2.5 text-muted-foreground font-bricolage">
             <MapPin className={`w-4 h-4 opacity-70`} style={{ color: theme.color }} />
             <span className="text-[11px] font-black uppercase tracking-widest truncate" style={{ color: theme.color, opacity: 0.7 }}>{block.bairro}</span>
           </div>
@@ -175,108 +177,109 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
       </div>
 
       {/* Footer / Utility Restoration */}
-      {(countdown && !countdown.isPast || route) ? (
-        <div className="pt-8 border-t border-border/20 space-y-6">
-          <div className="flex items-center justify-center gap-4">
-            <div className="flex items-center justify-center gap-3">
-              {countdown && !countdown.isPast && (
-                <div
-                  className="flex items-center gap-2 px-4 py-2 rounded-2xl border shadow-sm transition-colors duration-500"
+      {
+        (countdown && !countdown.isPast || route) ? (
+          <div className="pt-8 border-t border-border/20 space-y-6">
+            <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-3">
+                {countdown && !countdown.isPast && (
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl border transition-colors duration-500"
+                    style={{
+                      backgroundColor: `${theme.color}15`, // 10% opacity
+                      borderColor: `${theme.color}30`, // 20% opacity
+                    }}
+                  >
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: theme.color }} />
+                    <span className="font-bricolage text-[10px] uppercase font-black tracking-tight" style={{ color: theme.color }}>
+                      Falta: {countdown.formatted}
+                    </span>
+                  </div>
+                )}
+              </div>
+              {route && (
+                <span
+                  className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full font-bricolage"
                   style={{
-                    backgroundColor: `${theme.color}15`, // 10% opacity
-                    borderColor: `${theme.color}30`, // 20% opacity
-                    boxShadow: `0 2px 10px ${theme.color}10` // 5% opacity
+                    backgroundColor: `${theme.color}10`,
+                    color: theme.color
                   }}
                 >
-                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: theme.color }} />
-                  <span className="font-mono text-[10px] uppercase font-black tracking-tight" style={{ color: theme.color }}>
-                    Falta: {countdown.formatted}
-                  </span>
-                </div>
+                  {route.distanceKm}KM • {route.durationText}
+                </span>
               )}
             </div>
-            {route && (
-              <span
-                className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
-                style={{
-                  backgroundColor: `${theme.color}10`,
-                  color: theme.color
-                }}
+
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={handleCalculateDistance}
+                className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10`}
+                style={{ '--theme-color': theme.color }}
               >
-                {route.distanceKm}KM • {route.durationText}
-              </span>
-            )}
+                <Navigation className="w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all" />
+                <span className="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">
+                  {loadingRoute ? '...' : 'Rota'}
+                </span>
+              </button>
+
+              <button
+                onClick={handleOpenUber}
+                className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10`}
+                style={{ '--theme-color': theme.color }}
+              >
+                <Car className="w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all" />
+                <span className="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">
+                  {uberPrice ? uberPrice.formatted : 'Uber'}
+                </span>
+              </button>
+
+              <button
+                onClick={handleOpenMaps}
+                className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10`}
+                style={{ '--theme-color': theme.color }}
+              >
+                <Bus className="w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all" />
+                <span className="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">Bus</span>
+              </button>
+            </div>
           </div>
+        ) : (
+          <div className="pt-4 border-t border-border/10">
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={handleCalculateDistance}
+                className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 transition-all group/btn gap-1 hover:bg-[var(--theme-color)]/10 hover:text-[var(--theme-color)]`}
+                style={{ '--theme-color': theme.color }}
+              >
+                <Navigation className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
+                <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+                  {loadingRoute ? '...' : 'Rota'}
+                </span>
+              </button>
 
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={handleCalculateDistance}
-              className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10`}
-              style={{ '--theme-color': theme.color }}
-            >
-              <Navigation className="w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all" />
-              <span className="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">
-                {loadingRoute ? '...' : 'Rota'}
-              </span>
-            </button>
+              <button
+                onClick={handleOpenUber}
+                className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 transition-all group/btn gap-1 hover:bg-[var(--theme-color)]/10 hover:text-[var(--theme-color)]`}
+                style={{ '--theme-color': theme.color }}
+              >
+                <Car className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
+                <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+                  {uberPrice ? uberPrice.formatted : 'Uber'}
+                </span>
+              </button>
 
-            <button
-              onClick={handleOpenUber}
-              className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10`}
-              style={{ '--theme-color': theme.color }}
-            >
-              <Car className="w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all" />
-              <span className="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">
-                {uberPrice ? uberPrice.formatted : 'Uber'}
-              </span>
-            </button>
-
-            <button
-              onClick={handleOpenMaps}
-              className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10`}
-              style={{ '--theme-color': theme.color }}
-            >
-              <Bus className="w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all" />
-              <span className="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">Bus</span>
-            </button>
+              <button
+                onClick={handleOpenMaps}
+                className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 transition-all group/btn gap-1 hover:bg-[var(--theme-color)]/10 hover:text-[var(--theme-color)]`}
+                style={{ '--theme-color': theme.color }}
+              >
+                <Bus className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
+                <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">Bus</span>
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="pt-4 border-t border-border/10">
-          <div className="grid grid-cols-3 gap-3">
-            <button
-              onClick={handleCalculateDistance}
-              className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 transition-all group/btn gap-1 hover:bg-[var(--theme-color)]/10 hover:text-[var(--theme-color)]`}
-              style={{ '--theme-color': theme.color }}
-            >
-              <Navigation className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
-              <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
-                {loadingRoute ? '...' : 'Rota'}
-              </span>
-            </button>
-
-            <button
-              onClick={handleOpenUber}
-              className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 transition-all group/btn gap-1 hover:bg-[var(--theme-color)]/10 hover:text-[var(--theme-color)]`}
-              style={{ '--theme-color': theme.color }}
-            >
-              <Car className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
-              <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
-                {uberPrice ? uberPrice.formatted : 'Uber'}
-              </span>
-            </button>
-
-            <button
-              onClick={handleOpenMaps}
-              className={`flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 transition-all group/btn gap-1 hover:bg-[var(--theme-color)]/10 hover:text-[var(--theme-color)]`}
-              style={{ '--theme-color': theme.color }}
-            >
-              <Bus className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
-              <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">Bus</span>
-            </button>
-          </div>
-        </div>
-      )}
+        )
+      }
     </div>
   );
 };

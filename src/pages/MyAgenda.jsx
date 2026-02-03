@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { Clock, Share2, Download, User, ArrowLeft } from 'lucide-react';
+import { Clock, Share2, Download, User, ArrowLeft, Calendar, X } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
 
 import BlockCard from '../components/BlockCard';
@@ -16,9 +16,14 @@ import { getDateTheme } from '../utils/themeUtils';
 import { createShareLink, getSharedAgenda } from '../services/shareService';
 
 const MyAgenda = () => {
-  const { favoriteBlocks, toggleFavorite } = useStore();
+  const { favoriteBlocks = [], toggleFavorite, friends = [], addFriend, removeFriend } = useStore() || {};
+
+  // Ensure we always have arrays to avoid crashes during tests/incomplete state
+  const blocksList = Array.isArray(favoriteBlocks) ? favoriteBlocks : [];
+  const friendsList = Array.isArray(friends) ? friends : [];
   const [searchParams, setSearchParams] = useSearchParams();
   const auth = getAuth();
+  const [activeView, setActiveView] = useState('mine'); // 'mine' or 'friends'
 
   // State
   const shareId = searchParams.get('shareId');
@@ -57,11 +62,11 @@ const MyAgenda = () => {
   const isSharedMode = !!sharedData;
 
   const currentBlocks = useMemo(() => {
-    if (isSharedMode) return sortBlocksByDateTime(sharedData.blocks);
-    const favoriteIds = favoriteBlocks.map(f => f.id);
+    if (isSharedMode && sharedData) return sortBlocksByDateTime(sharedData.blocks);
+    const favoriteIds = blocksList.map(f => f.id);
     const blocks = blocosData.filter(b => favoriteIds.includes(b.id));
     return sortBlocksByDateTime(blocks);
-  }, [isSharedMode, sharedData, favoriteBlocks]);
+  }, [isSharedMode, sharedData, blocksList]);
 
   const navigationDates = useMemo(() => {
     const groups = groupBlocksByDate(currentBlocks);
@@ -70,7 +75,7 @@ const MyAgenda = () => {
 
   const { matches, newBlocks } = useMemo(() => {
     if (!isSharedMode) return { matches: [], newBlocks: [] };
-    const myIds = new Set(favoriteBlocks.map(b => b.id));
+    const myIds = new Set(blocksList.map(b => b.id));
     const matchIds = [];
     const newIds = [];
     currentBlocks.forEach(b => {
@@ -114,7 +119,7 @@ const MyAgenda = () => {
       return;
     }
     try {
-      const blockIds = favoriteBlocks.map(b => b.id);
+      const blockIds = blocksList.map(b => b.id);
       const id = await createShareLink(user.uid, user.displayName || 'Folião', blockIds);
       const shareUrl = `${window.location.origin}/agenda?shareId=${id}`;
       if (navigator.share) {
@@ -175,6 +180,29 @@ const MyAgenda = () => {
     setSharedData(null);
   };
 
+  const isAlreadyFollowing = useMemo(() => {
+    if (!shareId) return false;
+    return friendsList.some(f => f.shareId === shareId);
+  }, [friendsList, shareId]);
+
+  const handleFollow = () => {
+    if (!auth.currentUser) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    addFriend({
+      shareId,
+      name: sharedData.ownerName,
+      addedAt: new Date().toISOString()
+    });
+    setActiveView('friends');
+  };
+
+  const handleViewFriend = (friendShareId) => {
+    setSearchParams({ shareId: friendShareId });
+    setActiveView('mine'); // Switch to agenda view
+  };
+
   if (currentBlocks.length === 0 && !isLoadingShared) {
     return (
       <div className="min-h-screen bg-background font-sans text-foreground pb-20">
@@ -218,95 +246,172 @@ const MyAgenda = () => {
         {/* Title Section */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           {isSharedMode ? (
-            <div>
-              <h1 className="text-2xl font-black italic tracking-tight leading-none">
-                Agenda de <span className="text-primary NOT-italic">{sharedData.ownerName}</span>
-              </h1>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-                  {matches.length} em comum
-                </span>
-                {newBlocks.length > 0 && (
-                  <button onClick={handleAddAll} className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
-                    Adicionar {newBlocks.length} novos
-                  </button>
-                )}
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-2xl font-black italic tracking-tight leading-none">
+                  Agenda de <span className="text-primary NOT-italic">{sharedData.ownerName}</span>
+                </h1>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                    {matches.length} em comum
+                  </span>
+                  {newBlocks.length > 0 && (
+                    <button onClick={handleAddAll} className="text-[10px] font-bold text-primary hover:underline uppercase tracking-wider">
+                      Adicionar {newBlocks.length} novos
+                    </button>
+                  )}
+                </div>
               </div>
+              {!isAlreadyFollowing && (
+                <button
+                  onClick={handleFollow}
+                  className="bg-primary/10 text-primary border border-primary/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                >
+                  Seguir
+                </button>
+              )}
             </div>
           ) : (
-            <h1 className="text-2xl font-black italic tracking-tight leading-none">
-              Minha<span className="text-primary NOT-italic"> Agenda</span>
-            </h1>
+            <div className="flex flex-col gap-6">
+              <h1 className="text-2xl font-black italic tracking-tight leading-none">
+                Minha<span className="text-primary NOT-italic"> Agenda</span>
+              </h1>
+
+              {/* View Tabs */}
+              <div className="flex gap-2 p-1 bg-muted/20 rounded-2xl w-fit">
+                <button
+                  onClick={() => setActiveView('mine')}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeView === 'mine' ? 'bg-background text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  Meus Blocos
+                </button>
+                <button
+                  onClick={() => setActiveView('friends')}
+                  className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeView === 'friends' ? 'bg-background text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  Amigos ({friendsList.length})
+                </button>
+              </div>
+            </div>
           )}
         </motion.div>
 
-        {/* Sticky Day Selector */}
-        <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl pb-4 pt-4 -mx-6 px-6 mb-6">
-          <div className="flex justify-start gap-3 overflow-x-auto hide-scrollbar pb-2 scroll-smooth">
-            {navigationDates.map(date => {
-              const isSelected = selectedDate === date;
-              const theme = getDateTheme(date);
-              return (
-                <button
-                  key={date}
-                  onClick={() => setSelectedDate(date)}
-                  className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all border shrink-0 ${isSelected
-                    ? `text-white shadow-lg scale-105`
-                    : `bg-muted/20 hover:bg-primary/10 hover:text-primary border-transparent`
-                    }`}
-                  style={isSelected ? { backgroundColor: theme.color, borderColor: theme.color } : {}}
-                >
-                  <span className="text-sm font-black">{date.split('-')[2]}</span>
-                  <span className="text-[8px] font-black uppercase">{new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}</span>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Next Block */}
-        {!isSharedMode && nextBlock && nextBlockTheme && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl p-6 mb-8 text-white shadow-xl relative overflow-hidden"
-            style={{ backgroundColor: nextBlockTheme.color }}
-          >
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-3 text-white/80">
-                <span className="text-xs font-black uppercase tracking-widest">Próximo Bloco</span>
+        {/* Content Switcher */}
+        {activeView === 'mine' || isSharedMode ? (
+          <>
+            {/* Sticky Day Selector */}
+            <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl pb-4 pt-4 -mx-6 px-6 mb-6">
+              <div className="flex justify-start gap-3 overflow-x-auto hide-scrollbar pb-2 scroll-smooth">
+                {(navigationDates || []).map(date => {
+                  const isSelected = selectedDate === date;
+                  const theme = getDateTheme(date);
+                  return (
+                    <button
+                      key={date}
+                      onClick={() => setSelectedDate(date)}
+                      className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all border shrink-0 ${isSelected
+                        ? `text-white scale-105`
+                        : `bg-muted/20 hover:bg-primary/10 hover:text-primary border-transparent`
+                        }`}
+                      style={isSelected ? { backgroundColor: theme.color, borderColor: theme.color } : {}}
+                    >
+                      <span className="text-sm font-black">{date.split('-')[2]}</span>
+                      <span className="text-[8px] font-black uppercase">{new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}</span>
+                    </button>
+                  )
+                })}
               </div>
-              <h3 className="text-2xl font-black mb-1">{nextBlock.nome}</h3>
-              <p className="text-white/90 text-sm">{formatDate(nextBlock.data)} às {nextBlock.horario}</p>
             </div>
-            <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-          </motion.div>
-        )}
 
-        {/* Actions Row */}
-        {!isSharedMode && (
-          <div className="flex gap-3 mb-8">
-            <button onClick={handleShare} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
-              <Share2 className="w-4 h-4" /> Compartilhar
-            </button>
-            <button onClick={handleExport} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
-              <Download className="w-4 h-4" /> Colocar na minha agenda
-            </button>
+            {/* Next Block */}
+            {!isSharedMode && nextBlock && nextBlockTheme && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl p-6 mb-8 text-white relative overflow-hidden"
+                style={{ backgroundColor: nextBlockTheme.color }}
+              >
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-3 text-white/80">
+                    <span className="text-xs font-black uppercase tracking-widest">Próximo Bloco</span>
+                  </div>
+                  <h3 className="text-2xl font-black mb-1">{nextBlock.nome}</h3>
+                  <p className="text-white/90 text-sm">{formatDate(nextBlock.data)} às {nextBlock.horario}</p>
+                </div>
+                <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+              </motion.div>
+            )}
+
+            {/* Actions Row */}
+            {!isSharedMode && (
+              <div className="flex gap-3 mb-8">
+                <button onClick={handleShare} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                  <Share2 className="w-4 h-4" /> Compartilhar
+                </button>
+                <button onClick={handleExport} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                  <Download className="w-4 h-4" /> Colocar na minha agenda
+                </button>
+              </div>
+            )}
+
+            {/* Blocks List */}
+            <div className="space-y-6">
+              <AnimatePresence mode="popLayout">
+                {(displayBlocks || []).map((block) => (
+                  <motion.div key={block.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+                    <BlockCard
+                      block={block}
+                      matchBadge={isSharedMode && matches.includes(block.id)}
+                      onAdd={isSharedMode && newBlocks.includes(block.id) ? handleAddBlock : undefined}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        ) : (
+          <div className="space-y-4">
+            {friendsList.length === 0 ? (
+              <div className="py-20 text-center space-y-4 bg-muted/10 rounded-[2.5rem] border border-dashed border-border/40">
+                <div className="w-16 h-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto">
+                  <User className="w-8 h-8 opacity-20" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-widest">Nenhum amigo ainda</h3>
+                  <p className="text-xs text-muted-foreground mt-2 max-w-[200px] mx-auto">Peça o link da agenda para seus amigos e clique em "Seguir" para vê-los aqui.</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {friendsList.map(friend => (
+                  <div key={friend.shareId} className="flex items-center justify-between p-6 bg-card border border-border/40 rounded-[2rem] group hover:border-primary/20 transition-all">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center font-black text-primary text-lg">
+                        {friend.name?.[0] || 'F'}
+                      </div>
+                      <div>
+                        <h3 className="font-black text-sm uppercase tracking-tight">{friend.name}</h3>
+                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Seguindo desde {new Date(friend.addedAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleViewFriend(friend.shareId)}
+                        className="p-3 bg-muted/50 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                      >
+                        <Calendar className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => removeFriend(friend.shareId)}
+                        className="p-3 bg-muted/50 rounded-xl hover:bg-red-500/10 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
-
-        {/* Blocks List */}
-        <div className="space-y-6">
-          <AnimatePresence mode="popLayout">
-            {displayBlocks.map((block) => (
-              <motion.div key={block.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
-                <BlockCard
-                  block={block}
-                  matchBadge={isSharedMode && matches.includes(block.id)}
-                  onAdd={isSharedMode && newBlocks.includes(block.id) ? handleAddBlock : undefined}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
 
         <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
       </div>

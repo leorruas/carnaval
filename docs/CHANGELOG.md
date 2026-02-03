@@ -63,3 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 13:10] - ui: Updated "Exportar" copy to "Colocar na minha agenda" per user feedback.
 - [2026-02-03 13:15] - fix: Clamped header transforms to prevent logo "growing" pops during transitions.
 - [2026-02-03 13:20] - test: Updated test suites to cover Shared Mode and Firebase Auth logic.
+- [2026-02-03 14:15] - feat: Implemented persistent Friends Agenda with "Follow" functionality.
+- [2026-02-03 14:15] - ui: Removed all shadows globally for a cleaner "Flat Gummy" aesthetic.
+- [2026-02-03 14:15] - fix: Resolved ReferenceError (missing X icon) and shared mode hydration logic.
+- [2026-02-03 14:15] - test: Updated MyAgenda test suite to cover Friends tab and empty states.

@@ -13,6 +13,7 @@
 - **Minha Agenda**: Uma visualização filtrada apenas com os blocos favoritados.
 - **Compartilhamento Stateful**: Usuários logados podem gerar um link único para compartilhar sua agenda. As agendas compartilhadas são salvas na coleção `shared_agendas`.
 - **Match System**: Ao visualizar a agenda de um amigo, o sistema compara com os seus favoritos e exibe um badge de "Match" em blocos comuns.
+- **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos. Amigos seguidos são salvos no perfil do usuário e podem ser acessados rapidamente na aba "Amigos" da agenda.
 
 ### 1.3. Filtros e Busca
 - **Busca Global**: O usuário pode buscar por nome do bloco, bairro ou endereço. A busca é ativada por um botão no header.

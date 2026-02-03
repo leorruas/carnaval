@@ -1,8 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  h1, h2, h3, h4, .font-bricolage {
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+}
 
 @layer base {
   :root {
@@ -86,31 +92,27 @@
   .btn-primary {
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
-    @apply font-bold py-3.5 px-8 rounded-full transition-all duration-500 shadow-xl;
-    box-shadow: 0 10px 30px -10px hsla(var(--primary), 0.3);
+    @apply font-bold py-3.5 px-8 rounded-full transition-all duration-500;
   }
 
   .btn-primary:hover {
-    @apply -translate-y-1 shadow-2xl;
+    @apply -translate-y-1;
     filter: brightness(1.1);
-    box-shadow: 0 15px 40px -10px hsla(var(--primary), 0.4);
   }
 
   .btn-secondary {
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
-    @apply font-bold py-3.5 px-8 rounded-full transition-all duration-500 shadow-xl;
-    box-shadow: 0 10px 30px -10px hsla(var(--secondary), 0.3);
+    @apply font-bold py-3.5 px-8 rounded-full transition-all duration-500;
   }
 
   .btn-secondary:hover {
-    @apply -translate-y-1 shadow-2xl;
+    @apply -translate-y-1;
     filter: brightness(1.1);
-    box-shadow: 0 15px 40px -10px hsla(var(--secondary), 0.4);
   }
 
   .glass {
-    @apply backdrop-blur-2xl border border-white/10 shadow-2xl;
+    @apply backdrop-blur-2xl border border-white/10;
     background: rgba(255, 255, 255, 0.03);
   }
 
@@ -123,17 +125,17 @@
     background-color: hsl(var(--card));
     color: hsl(var(--card-foreground));
     border: 1px solid hsl(var(--border) / 0.5);
-    @apply rounded-[3rem] shadow-sm transition-all duration-500;
+    @apply rounded-[3rem] transition-all duration-500;
   }
 
   .card:hover {
-    @apply shadow-2xl translate-y-[-4px];
+    @apply translate-y-[-4px];
     border-color: hsl(var(--primary) / 0.2);
   }
 
   .countdown-card {
     background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
-    @apply text-white rounded-[3rem] p-8 shadow-2xl relative overflow-hidden;
+    @apply text-white rounded-[3rem] p-8 relative overflow-hidden;
   }
 }
 

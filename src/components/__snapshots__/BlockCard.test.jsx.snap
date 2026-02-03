@@ -3,7 +3,7 @@
 exports[`BlockCard > renders correctly 1`] = `
 <div>
   <div
-    class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-transparent group"
+    class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden hover:border-transparent"
     style="--theme-color: #00CE65;"
   >
     <div
@@ -143,8 +143,8 @@ exports[`BlockCard > renders correctly 1`] = `
           class="flex items-center justify-center gap-3"
         >
           <div
-            class="flex items-center gap-2 px-4 py-2 rounded-2xl border shadow-sm transition-colors duration-500"
-            style="background-color: rgba(0, 206, 101, 0.082); border-color: rgba(0, 206, 101, 0.19); box-shadow: 0 2px 10px #00CE6510;"
+            class="flex items-center gap-2 px-4 py-2 rounded-2xl border transition-colors duration-500"
+            style="background-color: rgba(0, 206, 101, 0.082); border-color: rgba(0, 206, 101, 0.19);"
           >
             <div
               class="w-2 h-2 rounded-full animate-pulse"
