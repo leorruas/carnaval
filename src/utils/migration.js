@@ -1,45 +1,55 @@
-import { saveUserFavorites } from '../services/syncService';
+import { saveUserData } from '../services/syncService';
 
 /**
- * Merges local favorites with cloud favorites and saves back to cloud.
- * Deduplicates by block ID.
+ * Merges local user data with cloud user data and saves back to cloud.
+ * Deduplicates favorites and friends.
  * 
  * @param {string} userId - Current authenticated user ID
- * @param {Array} localFavs - Array of block IDs from local storage
- * @param {Array} cloudFavs - Array of block IDs from Firestore
+ * @param {Object} localData - { favorites: [], friends: [] }
+ * @param {Object} cloudData - { favorites: [], friends: [] }
  * @param {string} displayName - User display name
- * @returns {Promise<Array>} The merged array of block IDs
+ * @returns {Promise<Object>} The merged data { favorites, friends }
  */
-export const mergeFavorites = async (userId, localFavs = [], cloudFavs = [], displayName = 'Folião') => {
-    const cloudList = Array.isArray(cloudFavs) ? cloudFavs : [];
-    const localList = Array.isArray(localFavs) ? localFavs : [];
+export const mergeUserData = async (userId, localData = {}, cloudData = {}, displayName = 'Folião') => {
+    const localFavs = Array.isArray(localData.favorites) ? localData.favorites : [];
+    const cloudFavs = Array.isArray(cloudData.favorites) ? cloudData.favorites : [];
 
-    // Create a map keyed by ID for deduplication
-    const map = new Map();
+    const localFriends = Array.isArray(localData.friends) ? localData.friends : [];
+    const cloudFriends = Array.isArray(cloudData.friends) ? cloudData.friends : [];
 
+    // --- Merge Favorites ---
+    const favMap = new Map();
     // Prioritize cloud info but keep order if possible
-    cloudList.forEach(item => {
-        if (item && item.id) map.set(item.id, item);
-    });
+    cloudFavs.forEach(item => { if (item && item.id) favMap.set(item.id, item); });
+    localFavs.forEach(item => { if (item && item.id && !favMap.has(item.id)) favMap.set(item.id, item); });
+    const mergedFavorites = Array.from(favMap.values());
 
-    localList.forEach(item => {
-        if (item && item.id && !map.has(item.id)) {
-            map.set(item.id, item);
-        }
-    });
+    // --- Merge Friends ---
+    const friendMap = new Map();
+    // Key by shareId
+    cloudFriends.forEach(item => { if (item && item.shareId) friendMap.set(item.shareId, item); });
+    localFriends.forEach(item => { if (item && item.shareId && !friendMap.has(item.shareId)) friendMap.set(item.shareId, item); });
+    const mergedFriends = Array.from(friendMap.values());
 
-    const mergedList = Array.from(map.values());
+    // --- Check for changes ---
+    const cloudFavIds = new Set(cloudFavs.map(f => f.id));
+    const hasFavUpdates = mergedFavorites.some(item => !cloudFavIds.has(item.id));
 
-    // Only save if we actually have new items compared to cloud
-    const cloudIds = new Set(cloudList.map(f => f.id));
-    const hasUpdates = mergedList.some(item => !cloudIds.has(item.id));
+    const cloudFriendIds = new Set(cloudFriends.map(f => f.shareId));
+    const hasFriendUpdates = mergedFriends.some(item => !cloudFriendIds.has(item.shareId));
 
-    if (hasUpdates) {
-        console.log(`[Migration] Merging ${localList.length} local and ${cloudList.length} cloud. New total: ${mergedList.length}`);
-        // We only trigger the save, but we don't necessarily block the app for it
-        // saveUserFavorites internally does the public sync too
-        await saveUserFavorites(userId, mergedList, displayName);
+    if (hasFavUpdates || hasFriendUpdates) {
+        console.log(`[Migration] Merging data. Favorites: ${localFavs.length}L/${cloudFavs.length}C -> ${mergedFavorites.length}. Friends: ${localFriends.length}L/${cloudFriends.length}C -> ${mergedFriends.length}`);
+
+        await saveUserData(userId, {
+            favorites: mergedFavorites,
+            friends: mergedFriends
+        }, displayName);
     }
 
-    return mergedList;
+    return {
+        favorites: mergedFavorites,
+        friends: mergedFriends
+    };
 };
+

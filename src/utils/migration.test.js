@@ -1,37 +1,66 @@
 import { describe, it, expect, vi } from 'vitest';
-import { mergeFavorites } from './migration';
+import { mergeUserData } from './migration';
 import * as syncService from '../services/syncService';
 
 vi.mock('../services/syncService', () => ({
-    saveUserFavorites: vi.fn().mockResolvedValue()
+    saveUserData: vi.fn().mockResolvedValue()
 }));
 
 describe('migration helper', () => {
-    it('should merge and deduplicate favorites', async () => {
-        const local = [1, 2];
-        const cloud = [2, 3];
-        const result = await mergeFavorites('user1', local, cloud);
+    it('should merge and deduplicate favorites and friends', async () => {
+        const local = {
+            favorites: [{ id: 1 }, { id: 2 }],
+            friends: [{ shareId: 'a' }]
+        };
+        const cloud = {
+            favorites: [{ id: 2 }, { id: 3 }],
+            friends: [{ shareId: 'b' }]
+        };
 
-        expect(result).toContain(1);
-        expect(result).toContain(2);
-        expect(result).toContain(3);
-        expect(result.length).toBe(3);
+        const result = await mergeUserData('user1', local, cloud);
+
+        expect(result.favorites).toEqual(expect.arrayContaining([{ id: 1 }, { id: 2 }, { id: 3 }]));
+        expect(result.favorites.length).toBe(3);
+
+        expect(result.friends).toEqual(expect.arrayContaining([{ shareId: 'a' }, { shareId: 'b' }]));
+        expect(result.friends.length).toBe(2);
     });
 
     it('should push update to cloud if local adds new data', async () => {
-        const local = [1, 2];
-        const cloud = [1];
-        await mergeFavorites('user1', local, cloud);
+        const local = {
+            favorites: [{ id: 1 }, { id: 2 }],
+            friends: []
+        };
+        const cloud = {
+            favorites: [{ id: 1 }],
+            friends: []
+        };
 
-        expect(syncService.saveUserFavorites).toHaveBeenCalledWith('user1', [1, 2], 'Folião');
+        await mergeUserData('user1', local, cloud);
+
+        expect(syncService.saveUserData).toHaveBeenCalledWith(
+            'user1',
+            expect.objectContaining({
+                favorites: expect.arrayContaining([{ id: 1 }, { id: 2 }])
+            }),
+            'Folião'
+        );
     });
 
     it('should NOT push update to cloud if local has no new data', async () => {
         vi.clearAllMocks();
-        const local = [1];
-        const cloud = [1, 2];
-        await mergeFavorites('user1', local, cloud);
+        const local = {
+            favorites: [{ id: 1 }],
+            friends: []
+        };
+        const cloud = {
+            favorites: [{ id: 1 }, { id: 2 }],
+            friends: []
+        };
 
-        expect(syncService.saveUserFavorites).not.toHaveBeenCalled();
+        await mergeUserData('user1', local, cloud);
+
+        expect(syncService.saveUserData).not.toHaveBeenCalled();
     });
 });
+

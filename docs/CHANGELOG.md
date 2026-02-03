@@ -129,3 +129,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 19:38] - feat: Created `refactoring_for_size` skill to standardize safe file reduction.
 - [2026-02-03 19:38] - docs: Added `safe-refactor-push` workflow with mandatory verification steps.
 - [2026-02-03 19:38] - test: Fixed critical timeouts and race conditions in `MyAgendaShare.test.jsx`.
+- [2026-02-03 19:50] - feat: Implemented friends list synchronization to Firestore for cross-device persistence.

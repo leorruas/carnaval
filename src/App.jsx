@@ -3,8 +3,8 @@ import { AnimatePresence } from 'framer-motion';
 import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, warmupFirestore } from './services/firebase';
-import { getUserFavorites } from './services/syncService';
-import { mergeFavorites } from './utils/migration';
+import { getUserData } from './services/syncService';
+import { mergeUserData } from './utils/migration';
 import useStore from './store/useStore';
 import { useFirestoreReady } from './hooks/useFirestoreReady';
 
@@ -21,7 +21,7 @@ import { Agentation } from 'agentation';
 function AppContent() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
-  const { user, setUser, setFavorites, favoriteBlocks } = useStore();
+  const { user, setUser, setFavorites, favoriteBlocks, setFriends, friends } = useStore();
   const { isReady: firestoreReady, isOnline } = useFirestoreReady();
   const syncedUsersRef = useRef(new Set()); // Track which users have been synced
 
@@ -46,7 +46,7 @@ function AppContent() {
   // Effect 2: Initial favorites sync (runs when user changes)
   // IMPORTANTE: Aguarda Firestore estar pronto antes de tentar sincronizar
   useEffect(() => {
-    const syncInitialFavorites = async () => {
+    const syncInitialData = async () => {
       if (!user?.uid) return;
 
       // CRITICAL FIX: Evitar sync duplicado para o mesmo usuário
@@ -57,7 +57,7 @@ function AppContent() {
 
       // Aguardar Firestore estar pronto
       if (!firestoreReady) {
-        console.log('[App] Waiting for Firestore to be ready before syncing favorites...');
+        console.log('[App] Waiting for Firestore to be ready before syncing data...');
         return;
       }
 
@@ -68,31 +68,36 @@ function AppContent() {
       }
 
       try {
-        console.log('[App] Starting initial favorites sync for user:', user.uid);
-        const cloudFavorites = await getUserFavorites(user.uid);
+        console.log('[App] Starting initial data sync for user:', user.uid);
+        const cloudData = await getUserData(user.uid);
+
+        // Prepare local data
         const localFavorites = useStore.getState().favoriteBlocks;
+        const localFriends = useStore.getState().friends;
+        const localData = { favorites: localFavorites, friends: localFriends };
 
         // Perform Merge
-        const merged = await mergeFavorites(
+        const merged = await mergeUserData(
           user.uid,
-          localFavorites,
-          cloudFavorites,
+          localData,
+          cloudData || {}, // Cloud data might be null if new user
           user.displayName || 'Folião'
         );
 
         // Update Store
-        setFavorites(merged);
+        setFavorites(merged.favorites);
+        setFriends(merged.friends);
 
         // Marcar como sincronizado
         syncedUsersRef.current.add(user.uid);
         console.log('[App] Initial sync completed successfully');
       } catch (error) {
-        console.error('Erro ao sincronizar favoritos:', error);
+        console.error('Erro ao sincronizar dados:', error);
       }
     };
 
-    syncInitialFavorites();
-  }, [user?.uid, firestoreReady, isOnline, setFavorites]);
+    syncInitialData();
+  }, [user?.uid, firestoreReady, isOnline, setFavorites, setFriends]);
 
   // Effect 3: Prefetch other pages for instant navigation
   useEffect(() => {

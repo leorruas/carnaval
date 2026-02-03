@@ -20,7 +20,9 @@
     - **Force Sync**: O sistema força uma sincronização imediata ao clicar em "Compartilhar" para prevenir dados desatualizados.
     - **Sem Bloqueio de Vazio**: É permitido compartilhar uma agenda vazia (ex: para começar a seguir amigos).
     - **Error Handling**: Feedback visual para sucesso (cópia) ou erro (permissões/falhas).
-- **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos. Amigos seguidos são salvos no perfil do usuário e podem ser acessados rapidamente na aba "Amigos" da agenda.
+- **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos.
+    - **Persistência Cloud**: A lista de amigos é sincronizada com o perfil do usuário no Firestore, garantindo acesso em múltiplos dispositivos.
+    - Amigos seguidos podem ser acessados rapidamente na aba "Amigos" da agenda.
 - **Fluxo de Onboarding de Amigos**:
     - Ao acessar um Live Link, o sistema detecta se o usuário já segue o dono da agenda.
     - **Preview Mode**: Se não seguir, o usuário é direcionado automaticamente para a aba **Amigos**, exibindo um card de pré-visualização ("Novo Amigo Encontrado").

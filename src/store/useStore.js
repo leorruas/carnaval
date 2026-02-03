@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { saveUserFavorites } from '../services/syncService';
+import { saveUserData } from '../services/syncService';
 
 // Debounce timer for Firebase sync
 let syncTimeout = null;
@@ -52,9 +52,9 @@ const useStore = create(
 
         // Sync immediately if authenticated
         if (state.user?.uid) {
-          saveUserFavorites(
+          saveUserData(
             state.user.uid,
-            newFavorites, // Use newFavorites, not get().favoriteBlocks strictly needed if synchronous, but safe
+            { favorites: newFavorites, friends: state.friends },
             state.user.displayName || 'Folião'
           ).catch(err => {
             // Silent fail for background sync to avoid interrupting user flow
@@ -68,9 +68,9 @@ const useStore = create(
       syncNow: async () => {
         const state = get();
         if (state.user?.uid) {
-          saveUserFavorites(
+          saveUserData(
             state.user.uid,
-            state.favoriteBlocks,
+            { favorites: state.favoriteBlocks, friends: state.friends },
             state.user.displayName || 'Folião'
           ).catch(err => console.error('Manual sync failed:', err));
         }
@@ -90,15 +90,40 @@ const useStore = create(
         )
       })),
 
-      addFriend: (friend) => set((state) => {
-        const alreadyExists = state.friends.some(f => f.shareId === friend.shareId);
-        if (alreadyExists) return state;
-        return { friends: [...state.friends, friend] };
-      }),
+      setFriends: (friends) => set({ friends }),
 
-      removeFriend: (shareId) => set((state) => ({
-        friends: state.friends.filter(f => f.shareId !== shareId)
-      })),
+      addFriend: (friend) => {
+        const state = get();
+        const alreadyExists = state.friends.some(f => f.shareId === friend.shareId);
+        if (alreadyExists) return;
+
+        const newFriends = [...state.friends, friend];
+        set({ friends: newFriends });
+
+        // Sync if authenticated
+        if (state.user?.uid) {
+          saveUserData(
+            state.user.uid,
+            { favorites: state.favoriteBlocks, friends: newFriends },
+            state.user.displayName || 'Folião'
+          ).catch(e => console.error('Friend sync failed:', e));
+        }
+      },
+
+      removeFriend: (shareId) => {
+        const state = get();
+        const newFriends = state.friends.filter(f => f.shareId !== shareId);
+        set({ friends: newFriends });
+
+        // Sync if authenticated
+        if (state.user?.uid) {
+          saveUserData(
+            state.user.uid,
+            { favorites: state.favoriteBlocks, friends: newFriends },
+            state.user.displayName || 'Folião'
+          ).catch(e => console.error('Friend remove sync failed:', e));
+        }
+      },
     }),
     {
       name: 'carnaval-bh-storage',
