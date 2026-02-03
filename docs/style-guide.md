@@ -59,6 +59,12 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Visual**: Utilizam classe `glass` para efeito glassmorphic consistente.
 - **Layout**: Scroll horizontal com `rounded-2xl` e hover states com `bg-primary/10`.
 
+### Modals (Login, Suggestion, Admin)
+- **Overlay**: `backdrop-blur-sm` com fundo escuro (`bg-black/60` ou `bg-black/80` para admin).
+- **Animações**: Entrada suave com `scale` e `opacity` via AnimatePresence.
+- **Estilo**: Bordas arredondadas (`rounded-[2rem]` ou `rounded-3xl`), sombras profundas e bordas sutis (`border-white/10`).
+- **Feedback**: Mensagens de sucesso ou erro integradas com cores semânticas (Verde/Vermelho).
+
 ### My Agenda Page
 - **Header**: Utiliza o `StickyHeader` padronizado. Em modo compartilhado, exibe um botão "Voltar" no lugar do logo.
 - **Agenda Info**: Exibe o nome do dono da agenda e contador de "Matches" em modo compartilhado.

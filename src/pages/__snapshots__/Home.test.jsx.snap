@@ -227,7 +227,6 @@ exports[`Home > renders correctly 1`] = `
         <section
           animate="[object Object]"
           class="scroll-mt-48 space-y-8"
-          id="date-2026-03-01"
           initial="[object Object]"
         >
           <div
@@ -436,7 +435,7 @@ exports[`Home > renders correctly 1`] = `
                           style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          25d 23h 32m
+                          25d 22h 47m
                         </span>
                       </div>
                     </div>
@@ -563,6 +562,20 @@ exports[`Home > renders correctly 1`] = `
             </div>
           </div>
         </section>
+        <div
+          class="py-12 text-center pb-20"
+        >
+          <p
+            class="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-40 mb-4"
+          >
+            Não encontrou seu bloco?
+          </p>
+          <button
+            class="bg-muted/30 hover:bg-muted text-foreground px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-colors"
+          >
+            Sugerir Adição
+          </button>
+        </div>
       </main>
     </div>
   </div>

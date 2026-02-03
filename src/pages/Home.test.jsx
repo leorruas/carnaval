@@ -8,29 +8,15 @@ import useStore from '../store/useStore';
 vi.mock('../store/useStore');
 
 // Mock blocos data
-vi.mock('../data/blocos.json', () => ({
-    default: [
-        {
-            id: 'bloco-1',
-            nome: 'Bloco Teste 1',
-            data: '2026-03-01',
-            horario: '14:00',
-            bairro: 'Centro',
-            endereco: 'Rua A, 100',
-            latitude: -19.92,
-            longitude: -43.94,
-        },
-        {
-            id: 'bloco-2',
-            nome: 'Bloco Teste 2',
-            data: '2026-03-02',
-            horario: '16:00',
-            bairro: 'Savassi',
-            endereco: 'Rua B, 200',
-            latitude: -19.93,
-            longitude: -43.95,
-        },
-    ],
+// Mock useBlocks
+vi.mock('../hooks/useBlocks', () => ({
+    useBlocks: vi.fn(() => ({
+        blocks: [
+            { id: 'bloco-1', nome: 'Bloco Teste 1', data: '2026-03-01', horario: '14:00', bairro: 'Centro', endereco: 'Rua A, 100', latitude: -19.92, longitude: -43.94 },
+            { id: 'bloco-2', nome: 'Bloco Teste 2', data: '2026-03-02', horario: '16:00', bairro: 'Savassi', endereco: 'Rua B, 200', latitude: -19.93, longitude: -43.95 },
+        ],
+        loading: false
+    }))
 }));
 
 describe('Home', () => {

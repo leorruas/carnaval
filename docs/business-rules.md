@@ -39,9 +39,21 @@
     - Integração com Deep Link do Uber para estimativa de preço.
 - **Address & Copy**: Exibição do endereço completo do bloco com funcionalidade de cópia rápida para a área de transferência.
 
+### 1.5. Sugestão e Aprovação de Blocos
+- **Sugestão de Usuário**:
+    - Qualquer usuário (logado) pode sugerir um novo bloco através de um formulário.
+    - Campos obrigatórios: Nome, Data, Horário e Localização.
+    - Status inicial: `pending`.
+- **Painel Administrativo**:
+    - Acesso exclusivo para o e-mail administrador (`leoruas@gmail.com`).
+    - Permite visualizar sugestões pendentes, aprovar ou rejeitar.
+    - **Aprovação**: Move o bloco da coleção `suggested_blocks` para `approved_blocks`.
+    - **Rejeição**: Exclui permanentemente a sugestão.
+- **Dados Dinâmicos**: O app exibe a união dos blocos estáticos (JSON) com os blocos aprovados (Firestore).
+
 ## 2. Autenticação & Social (Firebase)
 - **Firebase Auth**: Suporte para Login/Cadastro via E-mail e **Google Sign-In**.
-- **Perfil**: Usuários podem ver seu progresso (blocos favoritados) e logout.
+- **Perfil**: Usuários podem ver seu progresso, logout e acessar recursos exclusivos como o Painel Admin (se autorizado).
 - **Sincronização**: Favoritos são persistentes entre dispositivos para usuários logados.
 
 ## 3. Regras de Interface

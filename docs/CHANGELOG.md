@@ -96,3 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 13:55] - feat: Added input validation to prevent sharing empty agendas.
 - [2026-02-03 13:55] - ui: Improved error messages for share failures (timeout, permissions, connectivity).
 - [2026-02-03 13:55] - test: Created comprehensive test suite for shareService (10 tests) and MyAgenda share functionality (5 tests).
+- [2026-02-03 15:15] - feat: Implemented "Suggest Block" feature allowing users to submit new blocks.
+- [2026-02-03 15:15] - feat: Created Admin Panel for approval/rejection of suggested blocks (restricted to admin email).
+- [2026-02-03 15:15] - refactor: Migrated Data Layer to use `useBlocks` hook, merging static JSON with dynamic Firestore data.
+- [2026-02-03 15:15] - ui: Added "Sugerir Bloco" buttons to Home footer and Profile page.
+- [2026-02-03 15:15] - test: Updated ProfilePage verification and mocked useBlocks in Agenda/Home tests.
