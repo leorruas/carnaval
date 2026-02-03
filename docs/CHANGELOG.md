@@ -130,3 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 19:38] - docs: Added `safe-refactor-push` workflow with mandatory verification steps.
 - [2026-02-03 19:38] - test: Fixed critical timeouts and race conditions in `MyAgendaShare.test.jsx`.
 - [2026-02-03 19:50] - feat: Implemented friends list synchronization to Firestore for cross-device persistence.
+- [2026-02-03 19:55] - ui: Revamped MapPage with robust "Clean Gummy" header box and Day Navigation.
+- [2026-02-03 19:55] - feat: Implemented direct JSON data fallback for Map to ensure instant load (0ms TTI).
+- [2026-02-03 19:55] - feat: Added "Focus on Me" button and robust geolocation timeout protection (5s).
+- [2026-02-03 19:55] - ui: Replaced generic user pin with pulsing blue dot (animate-ping) for instant recognition.
