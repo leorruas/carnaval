@@ -17,7 +17,7 @@ const ProfilePage = () => {
                 {/* Header */}
                 <header className="pt-16 pb-10">
                     <h1 className="text-2xl font-black italic tracking-tight text-foreground leading-none">
-                        Perfil do <span className="text-primary NOT-italic">Folião</span>
+                        Perfil do <span className="text-brand-pink NOT-italic">Folião</span>
                     </h1>
                     <p className="text-[9px] uppercase tracking-[0.3em] font-black text-muted-foreground opacity-40 mt-1">
                         Preferências BH 2026

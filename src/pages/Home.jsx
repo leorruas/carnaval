@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import BlockCard from '../components/BlockCard';
 import blocosData from '../data/blocos.json';
 import { groupBlocksByDate, sortBlocksByDateTime } from '../utils/dateUtils';
+import { getDateTheme } from '../utils/themeUtils';
 import useStore from '../store/useStore';
 import PillToggle from '../components/PillToggle';
 import ThemeToggle from '../components/ThemeToggle';
@@ -66,32 +67,49 @@ const Home = () => {
     return result;
   }, [activeTab, favoriteBlocks, searchQuery]);
 
-  // Derived dates for the selector (valid for the current view)
-  const availableDates = useMemo(() => {
-    const groups = groupBlocksByDate(baseBlocks);
+  // Independent dates for the navigation
+  const navigationDates = useMemo(() => {
+    const now = new Date();
+    let sourceBlocks = blocosData;
+
+    // If in favorites tab, valid dates come only from favorites
+    if (activeTab === 'favorites') {
+      const favoriteIds = favoriteBlocks.map(f => f.id);
+      sourceBlocks = blocosData.filter(b => favoriteIds.includes(b.id));
+    }
+
+    // Filter only future blocks for general calendar navigation
+    const futureBlocks = sourceBlocks.filter(b => {
+      const blockDate = new Date(`${b.data}T23:59:59`);
+      return blockDate >= now;
+    });
+    const groups = groupBlocksByDate(futureBlocks);
     return Object.keys(groups).sort();
-  }, [baseBlocks]);
+  }, [activeTab, favoriteBlocks]); // Added dependencies
 
   const [selectedDate, setSelectedDate] = useState(null);
 
-  // Auto-select first date when switching to calendar or if current selection is invalid
+  // Auto-select first date when switching tabs or if current selection is invalid
   useEffect(() => {
-    if (activeTab === 'calendar') {
-      if (!selectedDate || !availableDates.includes(selectedDate)) {
-        if (availableDates.length > 0) {
-          setSelectedDate(availableDates[0]);
+    if (activeTab === 'calendar' || activeTab === 'favorites') {
+      if (!selectedDate || !navigationDates.includes(selectedDate)) {
+        if (navigationDates.length > 0) {
+          setSelectedDate(navigationDates[0]);
         }
       }
     }
-  }, [activeTab, availableDates, selectedDate]);
+  }, [activeTab, navigationDates, selectedDate]);
 
 
   // Final filtering for display
   const displayBlocks = useMemo(() => {
     let result = baseBlocks;
-    if (activeTab === 'calendar' && selectedDate) {
+
+    // Apply date filter for calendar OR favorites
+    if ((activeTab === 'calendar' || activeTab === 'favorites') && selectedDate) {
       result = result.filter(b => b.data === selectedDate);
     }
+
     return groupBlocksByDate(result);
   }, [baseBlocks, activeTab, selectedDate]);
 
@@ -174,9 +192,9 @@ const Home = () => {
         </motion.header>
 
         {/* Sticky Navigation Section */}
-        <div className="sticky top-0 z-30 bg-gradient-to-b from-background via-background/95 to-transparent pb-8 pt-2 -mx-6 px-6 mb-6 transition-all">
+        <div className="sticky top-0 z-30 bg-gradient-to-b from-background via-background/85 to-transparent backdrop-blur-xl pb-4 pt-4 -mx-6 px-6 mb-6 transition-all">
           <div className="flex flex-col gap-4">
-            <div className="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm mx-auto">
+            <div className="flex justify-center overflow-x-auto hide-scrollbar mx-auto w-full">
               <PillToggle
                 options={navOptions}
                 value={activeTab}
@@ -184,8 +202,8 @@ const Home = () => {
               />
             </div>
 
-            {/* Quick Day Selector (Only in Calendar/Favorites with results) */}
-            {activeTab === 'calendar' && availableDates.length > 1 && (
+            {/* Quick Day Selector (Show for Today, Calendar, and Favorites) */}
+            {navigationDates.length > 1 && (
               <div className="relative group/scroll">
                 <button
                   onClick={() => {
@@ -203,16 +221,28 @@ const Home = () => {
                   animate={{ opacity: 1 }}
                   className="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-10 pb-2 scroll-smooth"
                 >
-                  {availableDates.map(date => {
-                    const isSelected = selectedDate === date;
+                  {navigationDates.map(date => {
+                    // Selected if it matches state AND we are in a mode that uses selection (Calendar or Favorites)
+                    const isSelected = selectedDate === date && (activeTab === 'calendar' || activeTab === 'favorites');
+                    const theme = getDateTheme(date);
                     return (
                       <button
                         key={date}
-                        onClick={() => setSelectedDate(date)}
+                        onClick={() => {
+                          setSelectedDate(date);
+                          // If we are on 'today', clicking a date switches to 'calendar'. 
+                          // If we are on 'favorites', we stay on 'favorites' but change date.
+                          if (activeTab === 'today') setActiveTab('calendar');
+                        }}
                         className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 ${isSelected
-                          ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
-                          : 'glass hover:bg-primary/10 hover:text-primary hover:border-primary/20'
+                          ? `text-white shadow-lg scale-105`
+                          : `bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent`
                           }`}
+                        style={isSelected ? {
+                          backgroundColor: theme.color,
+                          borderColor: theme.color,
+                          boxShadow: `0 10px 30px -10px ${theme.color}40`
+                        } : {}}
                       >
                         <span className="text-sm font-black">{date.split('-')[2]}</span>
                         <span className={`text-[8px] font-black uppercase ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>

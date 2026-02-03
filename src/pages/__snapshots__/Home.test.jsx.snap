@@ -104,13 +104,13 @@ exports[`Home > renders correctly 1`] = `
         </div>
       </header>
       <div
-        class="sticky top-0 z-30 bg-gradient-to-b from-background via-background/95 to-transparent pb-8 pt-2 -mx-6 px-6 mb-6 transition-all"
+        class="sticky top-0 z-30 bg-gradient-to-b from-background via-background/85 to-transparent backdrop-blur-xl pb-4 pt-4 -mx-6 px-6 mb-6 transition-all"
       >
         <div
           class="flex flex-col gap-4"
         >
           <div
-            class="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm mx-auto"
+            class="flex justify-center overflow-x-auto hide-scrollbar mx-auto w-full"
           >
             <div
               class="glass p-1 rounded-full shadow-sm inline-flex space-x-1"
@@ -145,6 +145,63 @@ exports[`Home > renders correctly 1`] = `
                 Favoritos
               </button>
             </div>
+          </div>
+          <div
+            class="relative group/scroll"
+          >
+            <button
+              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+            >
+              <span
+                class="text-lg leading-none mb-0.5"
+              >
+                ‹
+              </span>
+            </button>
+            <div
+              animate="[object Object]"
+              class="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-10 pb-2 scroll-smooth"
+              id="date-scroll-container"
+              initial="[object Object]"
+            >
+              <button
+                class="flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent"
+              >
+                <span
+                  class="text-sm font-black"
+                >
+                  01
+                </span>
+                <span
+                  class="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100"
+                >
+                  fev
+                </span>
+              </button>
+              <button
+                class="flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent"
+              >
+                <span
+                  class="text-sm font-black"
+                >
+                  02
+                </span>
+                <span
+                  class="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100"
+                >
+                  mar
+                </span>
+              </button>
+            </div>
+            <button
+              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+            >
+              <span
+                class="text-lg leading-none mb-0.5"
+              >
+                ›
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -216,8 +273,12 @@ exports[`Home > renders correctly 1`] = `
               transition="[object Object]"
             >
               <div
-                class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-primary/20 group"
+                class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-transparent group"
+                style="--theme-color: #00CE65;"
               >
+                <div
+                  class="absolute inset-0 rounded-[2.5rem] border border-transparent pointer-events-none transition-all duration-500 border-[#00CE65]"
+                />
                 <div
                   class="flex justify-between items-start mb-8"
                 >
@@ -225,7 +286,7 @@ exports[`Home > renders correctly 1`] = `
                     class="space-y-1.5 font-sans"
                   >
                     <span
-                      class="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors"
+                      class="text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors"
                     >
                       14:00
                     </span>
@@ -267,13 +328,14 @@ exports[`Home > renders correctly 1`] = `
                       class="flex items-center gap-2.5 text-muted-foreground"
                     >
                       <svg
-                        class="lucide lucide-map-pin w-4 h-4 text-primary opacity-50"
+                        class="lucide lucide-map-pin w-4 h-4 opacity-70"
                         fill="none"
                         height="24"
                         stroke="currentColor"
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
+                        style="color: rgb(0, 206, 101);"
                         viewBox="0 0 24 24"
                         width="24"
                         xmlns="http://www.w3.org/2000/svg"
@@ -288,7 +350,8 @@ exports[`Home > renders correctly 1`] = `
                         />
                       </svg>
                       <span
-                        class="text-[11px] font-black uppercase tracking-widest opacity-60 truncate"
+                        class="text-[11px] font-black uppercase tracking-widest truncate"
+                        style="color: rgb(0, 206, 101); opacity: 0.7;"
                       >
                         Centro
                       </span>
@@ -345,16 +408,19 @@ exports[`Home > renders correctly 1`] = `
                       class="flex items-center justify-center gap-3"
                     >
                       <div
-                        class="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-2xl border border-primary/20 shadow-sm shadow-primary/5"
+                        class="flex items-center gap-2 px-4 py-2 rounded-2xl border shadow-sm transition-colors duration-500"
+                        style="background-color: rgba(0, 206, 101, 0.082); border-color: rgba(0, 206, 101, 0.19); box-shadow: 0 2px 10px #00CE6510;"
                       >
                         <div
-                          class="w-2 h-2 rounded-full bg-primary animate-pulse"
+                          class="w-2 h-2 rounded-full animate-pulse"
+                          style="background-color: rgb(0, 206, 101);"
                         />
                         <span
-                          class="font-mono text-[10px] uppercase font-black text-primary tracking-tight"
+                          class="font-mono text-[10px] uppercase font-black tracking-tight"
+                          style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          26d 5h 7m
+                          26d 4h 21m
                         </span>
                       </div>
                     </div>
@@ -363,10 +429,11 @@ exports[`Home > renders correctly 1`] = `
                     class="grid grid-cols-3 gap-3"
                   >
                     <button
-                      class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
+                      class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10"
+                      style="--theme-color: #00CE65;"
                     >
                       <svg
-                        class="lucide lucide-navigation w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all"
+                        class="lucide lucide-navigation w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
                         fill="none"
                         height="24"
                         stroke="currentColor"
@@ -382,16 +449,17 @@ exports[`Home > renders correctly 1`] = `
                         />
                       </svg>
                       <span
-                        class="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100"
+                        class="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
                       >
                         Rota
                       </span>
                     </button>
                     <button
-                      class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
+                      class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10"
+                      style="--theme-color: #00CE65;"
                     >
                       <svg
-                        class="lucide lucide-car w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all"
+                        class="lucide lucide-car w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
                         fill="none"
                         height="24"
                         stroke="currentColor"
@@ -420,16 +488,17 @@ exports[`Home > renders correctly 1`] = `
                         />
                       </svg>
                       <span
-                        class="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100"
+                        class="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
                       >
                         Uber
                       </span>
                     </button>
                     <button
-                      class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
+                      class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10"
+                      style="--theme-color: #00CE65;"
                     >
                       <svg
-                        class="lucide lucide-bus w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all"
+                        class="lucide lucide-bus w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
                         fill="none"
                         height="24"
                         stroke="currentColor"
@@ -467,7 +536,7 @@ exports[`Home > renders correctly 1`] = `
                         />
                       </svg>
                       <span
-                        class="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100"
+                        class="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
                       >
                         Bus
                       </span>

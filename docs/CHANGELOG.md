@@ -45,4 +45,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 12:55] - ui: Added glassmorphism to date selector buttons.
 - [2026-02-03 12:55] - ui: Centered navigation elements and card footer content.
 - [2026-02-03 12:55] - fix: Adjusted logo sizing and spacing to prevent overflow and overlap.
+- [2026-02-03 09:30] - feat: Implemented date navigation for Favorites tab and MyAgenda page.
+- [2026-02-03 09:30] - ui: Restored gradient glassmorphism to sticky header with improved opacity (85%).
+- [2026-02-03 09:30] - ui: Applied subtle glassmorphism to unselected date buttons.
+- [2026-02-03 09:30] - ui: Removed unwanted borders from sticky header for cleaner look.
+- [2026-02-03 09:30] - fix: Resolved Favorites filtering logic to respect date selection.
 - [2026-02-03 12:55] - docs: Updated documentation to reflect rebranding.

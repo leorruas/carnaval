@@ -1,32 +1,71 @@
-import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, Share2, Download } from 'lucide-react';
 import BlockCard from '../components/BlockCard';
 import blocosData from '../data/blocos.json';
 import useStore from '../store/useStore';
-import { sortBlocksByDateTime, formatDate } from '../utils/dateUtils';
+import { sortBlocksByDateTime, formatDate, groupBlocksByDate } from '../utils/dateUtils';
+import { getDateTheme, BRAND_COLORS } from '../utils/themeUtils';
 
 const MyAgenda = () => {
   const { favoriteBlocks } = useStore();
 
+  // Get random theme for the header only once on mount
+  const headerTheme = useMemo(() => {
+    const themes = Object.values(BRAND_COLORS).filter(c => c !== BRAND_COLORS.light);
+    return themes[Math.floor(Math.random() * themes.length)];
+  }, []);
+
   // Obter blocos favoritos completos
-  const myBlocks = useMemo(() => {
+  const allMyBlocks = useMemo(() => {
     const favoriteIds = favoriteBlocks.map(f => f.id);
     const blocks = blocosData.filter(b => favoriteIds.includes(b.id));
     return sortBlocksByDateTime(blocks);
   }, [favoriteBlocks]);
 
-  // Próximo bloco
+  // Derived Navigation Dates from favorites
+  const navigationDates = useMemo(() => {
+    const futureBlocks = allMyBlocks; // favorites are usually what we care about here
+    const groups = groupBlocksByDate(futureBlocks);
+    return Object.keys(groups).sort();
+  }, [allMyBlocks]);
+
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  // Auto-select first date if current selection is invalid
+  useEffect(() => {
+    if (!selectedDate || !navigationDates.includes(selectedDate)) {
+      if (navigationDates.length > 0) {
+        setSelectedDate(navigationDates[0]);
+      } else {
+        setSelectedDate(null);
+      }
+    }
+  }, [navigationDates, selectedDate]);
+
+  // Filtered blocks for display based on selected date
+  const displayBlocks = useMemo(() => {
+    if (!selectedDate) return [];
+    return allMyBlocks.filter(b => b.data === selectedDate);
+  }, [allMyBlocks, selectedDate]);
+
+
+  // Próximo bloco (independent of selected date, generally the next upcoming one)
   const nextBlock = useMemo(() => {
     const now = new Date();
-    return myBlocks.find(block => {
+    return allMyBlocks.find(block => {
       const blockDate = new Date(`${block.data}T${block.horario || '00:00'}`);
       return blockDate > now;
     });
-  }, [myBlocks]);
+  }, [allMyBlocks]);
+
+  // Próximo bloco tema
+  const nextBlockTheme = nextBlock ? getDateTheme(nextBlock.data) : null;
+
 
   const handleShare = async () => {
-    const blockNames = myBlocks.map(b => `${b.nome} - ${formatDate(b.data)} às ${b.horario}`).join('\n');
+    // Share all blocks or just selected day? Usually all blocks for "My Agenda" export
+    const blockNames = allMyBlocks.map(b => `${b.nome} - ${formatDate(b.data)} às ${b.horario}`).join('\n');
     const text = `🎭 Minha Agenda - Carnaval BH 2026\n\n${blockNames}\n\n#CarnavalBH2026`;
 
     if (navigator.share) {
@@ -49,7 +88,7 @@ const MyAgenda = () => {
     // Criar arquivo iCal
     let ical = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Carnaval BH 2026//PT\n';
 
-    myBlocks.forEach(block => {
+    allMyBlocks.forEach(block => {
       const [year, month, day] = block.data.split('-');
       const [hours, minutes] = (block.horario || '00:00').split(':');
       const startDate = `${year}${month}${day}T${hours}${minutes}00`;
@@ -60,9 +99,9 @@ const MyAgenda = () => {
       ical += `LOCATION:${block.endereco}, ${block.bairro}\n`;
       ical += `DESCRIPTION:${block.observacoes || 'Bloco de Carnaval'}\n`;
       ical += 'END:VEVENT\n';
+      ical += 'END:VCALENDAR';
     });
 
-    ical += 'END:VCALENDAR';
 
     // Download
     const blob = new Blob([ical], { type: 'text/calendar' });
@@ -74,7 +113,7 @@ const MyAgenda = () => {
     URL.revokeObjectURL(url);
   };
 
-  if (myBlocks.length === 0) {
+  if (allMyBlocks.length === 0) {
     return (
       <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-500 pb-20">
         <div className="max-w-md mx-auto px-6">
@@ -96,7 +135,7 @@ const MyAgenda = () => {
             className="flex flex-col items-center justify-center py-20 space-y-6"
           >
             <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <Calendar className="w-10 h-10 text-primary opacity-40" />
+              <Calendar className="text-primary opacity-40 w-10 h-10" />
             </div>
             <div className="text-center space-y-3">
               <h2 className="text-2xl font-black text-foreground">
@@ -122,14 +161,14 @@ const MyAgenda = () => {
     <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-500 pb-20">
       <div className="max-w-md mx-auto px-6">
         {/* Header */}
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl pt-16 pb-6 mb-6">
+        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl pt-16 pb-2 mb-4">
           <div className="flex items-center justify-between mb-2">
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-2xl font-black tracking-tight leading-none italic"
             >
-              Minha<span className="text-primary NOT-italic"> Agenda</span>
+              Minha<span className="NOT-italic" style={{ color: headerTheme }}> Agenda</span>
             </motion.h1>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -137,18 +176,58 @@ const MyAgenda = () => {
               className="px-4 py-2 bg-primary/10 rounded-full"
             >
               <span className="text-xs font-black text-primary uppercase tracking-widest">
-                {myBlocks.length} {myBlocks.length === 1 ? 'bloco' : 'blocos'}
+                {allMyBlocks.length} {allMyBlocks.length === 1 ? 'bloco' : 'blocos'}
               </span>
             </motion.div>
           </div>
+
+          {/* Navigation Dates (New) */}
+          {navigationDates.length > 0 && (
+            <div className="relative group/scroll -mx-6 px-6 pb-2">
+              <motion.div
+                id="date-scroll-container-agenda"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-start gap-3 overflow-x-auto hide-scrollbar pb-2 scroll-smooth"
+              >
+                {navigationDates.map(date => {
+                  const isSelected = selectedDate === date;
+                  const theme = getDateTheme(date);
+                  return (
+                    <button
+                      key={date}
+                      onClick={() => setSelectedDate(date)}
+                      className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 ${isSelected
+                        ? `text-white shadow-lg scale-105`
+                        : `hover:bg-primary/10 hover:text-primary hover:border-primary/20 bg-transparent border-transparent`
+                        }`}
+                      style={isSelected ? {
+                        backgroundColor: theme.color,
+                        borderColor: theme.color,
+                        boxShadow: `0 10px 30px -10px ${theme.color}40`
+                      } : {}}
+                    >
+                      <span className="text-sm font-black">{date.split('-')[2]}</span>
+                      <span className={`text-[8px] font-black uppercase ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>
+                        {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </motion.div>
+            </div>
+          )}
         </header>
 
         {/* Próximo bloco (destaque) */}
-        {nextBlock && (
+        {nextBlock && nextBlockTheme && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="countdown-card mb-6"
+            style={{
+              backgroundImage: `linear-gradient(135deg, ${nextBlockTheme.color}, ${nextBlockTheme.color}dd)`
+            }}
           >
             <div className="flex items-center gap-2 mb-3">
               <Clock className="w-5 h-5" />
@@ -192,22 +271,34 @@ const MyAgenda = () => {
         </div>
 
         {/* Lista de blocos */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="space-y-6"
-        >
-          {myBlocks.map((block, idx) => (
+        <AnimatePresence mode='popLayout'>
+          {displayBlocks.length > 0 ? (
             <motion.div
-              key={block.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
+              layout
+              className="space-y-6"
             >
-              <BlockCard block={block} />
+              {displayBlocks.map((block, idx) => (
+                <motion.div
+                  key={block.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <BlockCard block={block} />
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-10 opacity-50"
+            >
+              <p>Nenhum bloco favorito para esta data.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

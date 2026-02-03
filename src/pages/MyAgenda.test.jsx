@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import MyAgenda from './MyAgenda';
 import useStore from '../store/useStore';
@@ -141,7 +141,7 @@ describe('MyAgenda', () => {
         expect(exportClasses).toContain('hover:bg-primary/10');
     });
 
-    it('displays favorited blocks in the list', () => {
+    it('filters blocks by selected date', () => {
         useStore.mockReturnValue({
             favoriteBlocks: [{ id: 'fav-1' }, { id: 'fav-2' }],
         });
@@ -152,10 +152,22 @@ describe('MyAgenda', () => {
             </BrowserRouter>
         );
 
-        const block1 = screen.getAllByText('Bloco Favorito 1');
-        const block2 = screen.getAllByText('Bloco Favorito 2');
+        // Initially, only the first date's block (Date 1) should be visible in the list.
+        // Block 1 is in 'Centro'. Block 2 is in 'Savassi'.
+        // "Próximo Bloco" header might show Block 1's name, but not its Bairro.
+        expect(screen.getByText('Centro')).toBeInTheDocument();
+        expect(screen.queryByText('Savassi')).not.toBeInTheDocument();
 
-        expect(block1.length).toBeGreaterThanOrEqual(1);
-        expect(block2.length).toBeGreaterThanOrEqual(1);
+        // Find date selector buttons
+        // Date 1: 01 (March)
+        // Date 2: 02 (March)
+        const dayButton2 = screen.getByText('02').closest('button');
+
+        // Click the second date
+        fireEvent.click(dayButton2);
+
+        // Now block 2 should be visible in the list (Savassi) and block 1 (Centro) hidden
+        expect(screen.getByText('Savassi')).toBeInTheDocument();
+        expect(screen.queryByText('Centro')).not.toBeInTheDocument();
     });
 });
