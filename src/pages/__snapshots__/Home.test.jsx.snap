@@ -9,7 +9,7 @@ exports[`Home > renders correctly 1`] = `
       class="max-w-md mx-auto relative px-6"
     >
       <header
-        class="sticky top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-xl px-6 max-w-md mx-auto"
+        class="relative left-0 right-0 z-20 px-6 max-w-md mx-auto"
       >
         <div
           class="flex justify-between items-center mb-6"
@@ -99,14 +99,18 @@ exports[`Home > renders correctly 1`] = `
             </button>
           </div>
         </div>
+      </header>
+      <div
+        class="sticky top-0 z-30 bg-background/85 backdrop-blur-xl pb-4 pt-2 -mx-6 px-6 mb-6 transition-all border-b border-white/5"
+      >
         <div
           class="flex flex-col gap-4"
         >
           <div
-            class="flex justify-center overflow-x-auto hide-scrollbar py-1"
+            class="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm mx-auto"
           >
             <div
-              class="bg-card p-1 rounded-full shadow-sm inline-flex space-x-1 border border-border"
+              class="glass p-1 rounded-full shadow-sm inline-flex space-x-1"
             >
               <button
                 class="
@@ -115,7 +119,7 @@ exports[`Home > renders correctly 1`] = `
             "
               >
                 <div
-                  class="absolute inset-0 bg-primary/10 rounded-full -z-10"
+                  class="absolute -bottom-1 w-1 h-1 bg-primary rounded-full"
                   layoutid="pill-active-bg"
                   transition="[object Object]"
                 />
@@ -135,32 +139,14 @@ exports[`Home > renders correctly 1`] = `
               text-muted-foreground hover:text-primary
             "
               >
-                <span>
-                  <svg
-                    class="lucide lucide-heart w-3.5 h-3.5"
-                    fill="none"
-                    height="24"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-                    />
-                  </svg>
-                </span>
                 Favoritos
               </button>
             </div>
           </div>
         </div>
-      </header>
+      </div>
       <main
-        class="pt-48 space-y-16"
+        class="space-y-8 min-h-[50vh]"
       >
         <section
           animate="[object Object]"
@@ -169,7 +155,7 @@ exports[`Home > renders correctly 1`] = `
           initial="[object Object]"
         >
           <div
-            class="flex items-center gap-4"
+            class="flex items-center gap-3"
           >
             <div
               class="flex flex-col items-center min-w-[40px]"
@@ -353,7 +339,7 @@ exports[`Home > renders correctly 1`] = `
                     class="flex items-center justify-between"
                   >
                     <div
-                      class="flex items-center gap-3"
+                      class="flex items-center justify-center gap-3"
                     >
                       <div
                         class="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-2xl border border-primary/20 shadow-sm shadow-primary/5"
@@ -365,7 +351,7 @@ exports[`Home > renders correctly 1`] = `
                           class="font-mono text-[10px] uppercase font-black text-primary tracking-tight"
                         >
                           Falta: 
-                          26d 16h 2m
+                          26d 5h 36m
                         </span>
                       </div>
                     </div>

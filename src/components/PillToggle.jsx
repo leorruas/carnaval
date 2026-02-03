@@ -18,7 +18,7 @@ const PillToggle = ({ options, value, onChange }) => {
                         {isActive && (
                             <motion.div
                                 layoutId="pill-active-bg"
-                                className="absolute inset-0 bg-primary/10 rounded-full -z-10"
+                                className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full"
                                 initial={false}
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
                             />

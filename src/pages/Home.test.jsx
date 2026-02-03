@@ -51,7 +51,7 @@ describe('Home', () => {
         expect(container).toMatchSnapshot();
     });
 
-    it('uses sticky header instead of fixed', () => {
+    it('uses sticky navigation', () => {
         const { container } = render(
             <BrowserRouter>
                 <Home />
@@ -60,8 +60,13 @@ describe('Home', () => {
 
         const header = container.querySelector('header');
         const headerClasses = header?.className || '';
-        expect(headerClasses).toContain('sticky');
-        expect(headerClasses).not.toContain('fixed');
+        expect(headerClasses).toContain('relative');
+
+        // Find the sticky nav container
+        const stickyContainer = container.querySelector('.sticky');
+        expect(stickyContainer).toBeInTheDocument();
+        expect(stickyContainer.className).toContain('top-0');
+        expect(stickyContainer.className).toContain('z-30');
     });
 
     it('displays navigation pills', () => {

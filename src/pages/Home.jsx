@@ -31,10 +31,11 @@ const Home = () => {
   const navOptions = [
     { label: 'Hoje', value: 'today' },
     { label: 'Calendário', value: 'calendar' },
-    { label: 'Favoritos', value: 'favorites', icon: <Heart className="w-3.5 h-3.5" /> }
+    { label: 'Favoritos', value: 'favorites' }
   ];
 
-  const filteredBlocks = useMemo(() => {
+  // Base filtering (Search + Tab Type)
+  const baseBlocks = useMemo(() => {
     let result = blocosData;
     const now = new Date();
 
@@ -45,13 +46,14 @@ const Home = () => {
       const futureBlocks = result.filter(b => new Date(`${b.data}T${b.horario || '00:00'}`) >= now);
       const nextDate = sortBlocksByDateTime(futureBlocks)[0]?.data;
       result = result.filter(b => b.data === nextDate);
+    } else {
+      // Calendar mode: just filter out past days globally if desired
+      // Or keep all future days
+      result = result.filter(b => {
+        const blockDate = new Date(`${b.data}T23:59:59`);
+        return blockDate >= now;
+      });
     }
-
-    // Filter out past dates globally for the lists
-    result = result.filter(b => {
-      const blockDate = new Date(`${b.data}T23:59:59`); // End of the day
-      return blockDate >= now;
-    });
 
     if (searchQuery) {
       result = result.filter(b =>
@@ -63,24 +65,34 @@ const Home = () => {
     return result;
   }, [activeTab, favoriteBlocks, searchQuery]);
 
-  const groupedBlocks = useMemo(() => groupBlocksByDate(filteredBlocks), [filteredBlocks]);
-  const allDates = useMemo(() => Object.keys(groupedBlocks).sort(), [groupedBlocks]);
+  // Derived dates for the selector (valid for the current view)
+  const availableDates = useMemo(() => {
+    const groups = groupBlocksByDate(baseBlocks);
+    return Object.keys(groups).sort();
+  }, [baseBlocks]);
 
-  const scrollToDate = (date) => {
-    const element = document.getElementById(`date-${date}`);
-    if (element) {
-      const offset = 180; // Adjusted for compact header
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
+  const [selectedDate, setSelectedDate] = useState(null);
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+  // Auto-select first date when switching to calendar or if current selection is invalid
+  useEffect(() => {
+    if (activeTab === 'calendar') {
+      if (!selectedDate || !availableDates.includes(selectedDate)) {
+        if (availableDates.length > 0) {
+          setSelectedDate(availableDates[0]);
+        }
+      }
     }
-  };
+  }, [activeTab, availableDates, selectedDate]);
+
+
+  // Final filtering for display
+  const displayBlocks = useMemo(() => {
+    let result = baseBlocks;
+    if (activeTab === 'calendar' && selectedDate) {
+      result = result.filter(b => b.data === selectedDate);
+    }
+    return groupBlocksByDate(result);
+  }, [baseBlocks, activeTab, selectedDate]);
 
   return (
     <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-500 pb-40">
@@ -88,7 +100,7 @@ const Home = () => {
 
         <motion.header
           style={{ height: headerHeight, paddingTop: headerPadding }}
-          className="sticky top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-xl px-6 max-w-md mx-auto"
+          className="relative left-0 right-0 z-20 px-6 max-w-md mx-auto"
         >
           <div className="flex justify-between items-center mb-6">
             <motion.div style={{ scale: logoScale }} className="origin-left">
@@ -162,43 +174,51 @@ const Home = () => {
           </AnimatePresence>
         </motion.header>
 
-        {/* Navigation Section - Scrolls with page */}
-        <div className="flex flex-col gap-4 mb-6">
-          <div className="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm">
-            <PillToggle
-              options={navOptions}
-              value={activeTab}
-              onChange={setActiveTab}
-            />
-          </div>
+        {/* Sticky Navigation Section */}
+        <div className="sticky top-0 z-30 bg-background/85 backdrop-blur-xl pb-4 pt-2 -mx-6 px-6 mb-6 transition-all border-b border-white/5">
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm mx-auto">
+              <PillToggle
+                options={navOptions}
+                value={activeTab}
+                onChange={setActiveTab}
+              />
+            </div>
 
-          {/* Quick Day Selector (Only in Calendar/Favorites with results) */}
-          {activeTab !== 'today' && allDates.length > 1 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex justify-center gap-3 overflow-x-auto hide-scrollbar pb-3 px-4"
-            >
-              {allDates.map(date => (
-                <button
-                  key={date}
-                  onClick={() => scrollToDate(date)}
-                  className="flex flex-col items-center min-w-[48px] py-2 rounded-2xl glass hover:bg-primary/10 hover:text-primary transition-all group"
-                >
-                  <span className="text-sm font-black">{date.split('-')[2]}</span>
-                  <span className="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100">
-                    {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
-                  </span>
-                </button>
-              ))}
-            </motion.div>
-          )}
+            {/* Quick Day Selector (Only in Calendar/Favorites with results) */}
+            {activeTab === 'calendar' && availableDates.length > 1 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
+              >
+                {availableDates.map(date => {
+                  const isSelected = selectedDate === date;
+                  return (
+                    <button
+                      key={date}
+                      onClick={() => setSelectedDate(date)}
+                      className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border ${isSelected
+                        ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
+                        : 'glass border-transparent hover:bg-primary/10 hover:text-primary hover:border-primary/20'
+                        }`}
+                    >
+                      <span className="text-sm font-black">{date.split('-')[2]}</span>
+                      <span className={`text-[8px] font-black uppercase ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>
+                        {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </div>
         </div>
 
         {/* Content Section */}
-        <main className="space-y-8">
+        <main className="space-y-8 min-h-[50vh]">
           <AnimatePresence mode="popLayout">
-            {Object.entries(groupedBlocks).sort().map(([date, blocks]) => (
+            {Object.entries(displayBlocks).sort().map(([date, blocks]) => (
               <motion.section
                 key={date}
                 id={`date-${date}`}
@@ -233,7 +253,7 @@ const Home = () => {
             ))}
           </AnimatePresence>
 
-          {filteredBlocks.length === 0 && (
+          {baseBlocks.length === 0 && (
             <div className="py-20 text-center space-y-4">
               <div className="w-12 h-12 rounded-full bg-muted mx-auto flex items-center justify-center opacity-40">
                 <Search className="w-5 h-5" />

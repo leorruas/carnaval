@@ -93,7 +93,7 @@ describe('BlockCard', () => {
         expect(heartClasses).toContain('bg-red-500/10');
 
         const heartIcon = heartButton.querySelector('svg');
-        const iconClasses = heartIcon?.className || '';
+        const iconClasses = heartIcon?.getAttribute('class') || '';
         expect(iconClasses).toContain('fill-red-500');
         expect(iconClasses).toContain('text-red-500');
     });
@@ -110,7 +110,7 @@ describe('BlockCard', () => {
         expect(heartClasses).toContain('bg-muted/50');
 
         const heartIcon = heartButton.querySelector('svg');
-        const iconClasses = heartIcon?.className || '';
+        const iconClasses = heartIcon?.getAttribute('class') || '';
         expect(iconClasses).toContain('text-muted-foreground');
         expect(iconClasses).not.toContain('fill-red-500');
     });

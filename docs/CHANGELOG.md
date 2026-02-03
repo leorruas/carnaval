@@ -35,3 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-02 22:05] - test: Configured global framer-motion mocking in test setup for proper animation testing.
 - [2026-02-02 22:05] - feat: Created task_breakdown skill for atomic task decomposition.
 - [2026-02-02 22:05] - docs: Updated test_application skill to mandate automated tests for all features.
+- [2026-02-03 08:31] - ui: Implemented Sticky Navigation for tabs and day selector, while Logo scrolls away.
+- [2026-02-03 08:31] - ui: Replaced PillToggle background with subtle dot marker.
+- [2026-02-03 08:31] - ui: Centered countown content in BlockCard.
+- [2026-02-03 08:31] - fix: Calendar view now strictly filters blocks by selected day.
