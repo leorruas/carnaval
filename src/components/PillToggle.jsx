@@ -11,14 +11,14 @@ const PillToggle = ({ options, value, onChange }) => {
                         key={option.value}
                         onClick={() => onChange(option.value)}
                         className={`
-              relative px-6 py-3 rounded-full text-sm font-semibold transition-colors duration-200 z-10 flex items-center gap-2
-              ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'}
+              relative px-6 py-3 rounded-full text-sm font-bold transition-colors duration-200 z-10 flex items-center gap-2
+              ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}
             `}
                     >
                         {isActive && (
                             <motion.div
                                 layoutId="pill-active-bg"
-                                className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full"
+                                className="absolute inset-0 bg-background rounded-full shadow-sm border border-black/5"
                                 initial={false}
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
                             />

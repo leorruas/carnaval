@@ -39,3 +39,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 08:31] - ui: Replaced PillToggle background with subtle dot marker.
 - [2026-02-03 08:31] - ui: Centered countown content in BlockCard.
 - [2026-02-03 08:31] - fix: Calendar view now strictly filters blocks by selected day.
+- [2026-02-03 12:55] - feat: Rebranded app to "TáTeno" with new SVG logo and identity.
+- [2026-02-03 12:55] - ui: Implemented new Brand Colors (Brand Blue, Green, Orange, Light, Pink).
+- [2026-02-03 12:55] - ui: Refined sticky header with gradient fade background for better legibility.
+- [2026-02-03 12:55] - ui: Added glassmorphism to date selector buttons.
+- [2026-02-03 12:55] - ui: Centered navigation elements and card footer content.
+- [2026-02-03 12:55] - fix: Adjusted logo sizing and spacing to prevent overflow and overlap.
+- [2026-02-03 12:55] - docs: Updated documentation to reflect rebranding.

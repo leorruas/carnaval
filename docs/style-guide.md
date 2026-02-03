@@ -13,11 +13,23 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Primary (`--primary`)**: Cor de destaque (Deep Purple).
 - **Secondary (`--secondary`)**: Tons de cinza claro para fundos alternativos.
 - **Card (`--card`)**: Estilização específica para containers de blocos.
+- **Brand Colors**:
+    - `brand-blue`: #0038FF
+    - `brand-green`: #00BD6D
+    - `brand-orange`: #FF5F1E
+    - `brand-light`: #E7E0D3
+    - `brand-pink`: #F2AEC1
 - **Pastéis**: Cores como `pastel-purple`, `pastel-peach`, `pastel-teal` e `pastel-pink` são usadas para categorização visual dos blocos.
 
 ## 3. Tipografia
 - **Fonte Principal**: `Outfit` (Geométrica e moderna).
 - **Headings**: Grandes e com tracking reduzido para impacto visual.
+
+## 4. Logo e Identidade
+- **Logo**: SVG otimizado ("TáTeno") focado no logotype.
+- **Aplicações**:
+    - **Header**: Versão monocromática (`text-foreground`) escalável.
+    - **Responsividade**: Adapta-se à largura do container (`max-w-full`) para evitar overflow em telas pequenas.
 
 ## 4. Componentes UI
 

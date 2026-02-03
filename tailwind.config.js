@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        brand: {
+          blue: "#4E48FF",
+          green: "#00CE65",
+          orange: "#FF6616",
+          light: "#E4FFAA",
+          pink: "#FF00ED",
+        },
         // Legacy carnival colors kept for reference
         carnival: {
           magenta: '#FF00FF',

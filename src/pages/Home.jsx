@@ -7,6 +7,7 @@ import { groupBlocksByDate, sortBlocksByDateTime } from '../utils/dateUtils';
 import useStore from '../store/useStore';
 import PillToggle from '../components/PillToggle';
 import ThemeToggle from '../components/ThemeToggle';
+import BrandLogo from '../components/BrandLogo';
 
 const Home = () => {
   const { favoriteBlocks } = useStore();
@@ -102,11 +103,9 @@ const Home = () => {
           style={{ height: headerHeight, paddingTop: headerPadding }}
           className="relative left-0 right-0 z-20 px-6 max-w-md mx-auto"
         >
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 gap-4">
             <motion.div style={{ scale: logoScale }} className="origin-left">
-              <h1 className="text-2xl font-black tracking-tight leading-none italic">
-                Carnaval<span className="text-primary NOT-italic">.bh</span>
-              </h1>
+              <BrandLogo className="h-16 w-auto max-w-full text-foreground" />
             </motion.div>
 
             <div className="flex items-center gap-3">
@@ -175,7 +174,7 @@ const Home = () => {
         </motion.header>
 
         {/* Sticky Navigation Section */}
-        <div className="sticky top-0 z-30 bg-background/85 backdrop-blur-xl pb-4 pt-2 -mx-6 px-6 mb-6 transition-all border-b border-white/5">
+        <div className="sticky top-0 z-30 bg-gradient-to-b from-background via-background/95 to-transparent pb-8 pt-2 -mx-6 px-6 mb-6 transition-all">
           <div className="flex flex-col gap-4">
             <div className="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm mx-auto">
               <PillToggle
@@ -187,30 +186,53 @@ const Home = () => {
 
             {/* Quick Day Selector (Only in Calendar/Favorites with results) */}
             {activeTab === 'calendar' && availableDates.length > 1 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-4 pb-2"
-              >
-                {availableDates.map(date => {
-                  const isSelected = selectedDate === date;
-                  return (
-                    <button
-                      key={date}
-                      onClick={() => setSelectedDate(date)}
-                      className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border ${isSelected
-                        ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
-                        : 'glass border-transparent hover:bg-primary/10 hover:text-primary hover:border-primary/20'
-                        }`}
-                    >
-                      <span className="text-sm font-black">{date.split('-')[2]}</span>
-                      <span className={`text-[8px] font-black uppercase ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>
-                        {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
-                      </span>
-                    </button>
-                  );
-                })}
-              </motion.div>
+              <div className="relative group/scroll">
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('date-scroll-container');
+                    if (el) el.scrollBy({ left: -200, behavior: 'smooth' });
+                  }}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+                >
+                  <span className="text-lg leading-none mb-0.5">‹</span>
+                </button>
+
+                <motion.div
+                  id="date-scroll-container"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-10 pb-2 scroll-smooth"
+                >
+                  {availableDates.map(date => {
+                    const isSelected = selectedDate === date;
+                    return (
+                      <button
+                        key={date}
+                        onClick={() => setSelectedDate(date)}
+                        className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 ${isSelected
+                          ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105'
+                          : 'glass hover:bg-primary/10 hover:text-primary hover:border-primary/20'
+                          }`}
+                      >
+                        <span className="text-sm font-black">{date.split('-')[2]}</span>
+                        <span className={`text-[8px] font-black uppercase ${isSelected ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>
+                          {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </motion.div>
+
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('date-scroll-container');
+                    if (el) el.scrollBy({ left: 200, behavior: 'smooth' });
+                  }}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md shadow-lg flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+                >
+                  <span className="text-lg leading-none mb-0.5">›</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
