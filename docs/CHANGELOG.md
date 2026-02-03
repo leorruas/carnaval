@@ -125,3 +125,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 19:18] - test: Added comprehensive unit tests for block hydration logic.
 - [2026-02-03 19:37] - fix: Resolved shared agenda visibility issue where blocks were not appearing (hook logic mismatch).
 - [2026-02-03 19:37] - test: Updated shared agenda tests to correctly mock hydrated block objects.
+- [2026-02-03 19:38] - refactor: Major refactor of `MyAgenda.jsx` reducing line count by 50% (257 -> 128 lines).
+- [2026-02-03 19:38] - feat: Created `refactoring_for_size` skill to standardize safe file reduction.
+- [2026-02-03 19:38] - docs: Added `safe-refactor-push` workflow with mandatory verification steps.
+- [2026-02-03 19:38] - test: Fixed critical timeouts and race conditions in `MyAgendaShare.test.jsx`.
