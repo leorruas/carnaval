@@ -13,8 +13,9 @@
 - **Minha Agenda**: Uma visualização filtrada apenas com os blocos favoritados.
 
 ### 1.3. Filtros e Busca
-- **Filtro por Data**: O usuário pode filtrar blocos por dia específico.
-- **Busca Textual**: Busca por nome do bloco.
+- **Busca Global**: O usuário pode buscar por nome do bloco, bairro ou endereço. A busca é ativada por um botão no header.
+- **Filtro por Data**: O usuário pode filtrar blocos por dia específico através das abas de navegação (Hoje, Calendário, Favoritos) e um seletor rápido de dias (Quick Nav) no modo Calendário/Favoritos.
+- **Ações Rápidas**: Reposicionamento do botão de filtro para o header para evitar obstrução visual.
 
 ### 1.4. Ferramentas Úteis
 - **Countdown**: Contador em tempo real para o início do carnaval.
@@ -23,6 +24,7 @@
     - Cálculo de distância até o bloco usando OSRM (grátis).
     - Integração com Google Maps para rotas de ônibus.
     - Integração com Deep Link do Uber para estimativa de preço.
+- **Address & Copy**: Exibição do endereço completo do bloco com funcionalidade de cópia rápida para a área de transferência.
 
 ## 2. Funcionalidades Opcionais (Firebase)
 *Estas funcionalidades dependem de configuração explicita das chaves do Firebase.*

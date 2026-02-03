@@ -45,9 +45,14 @@ const MapPage = () => {
     }
 
     return (
-        <div className="h-[calc(100vh-64px)] w-full relative bg-background">
-            <header className="absolute top-0 left-0 right-0 z-[1000] p-4 bg-gradient-to-b from-background/80 to-transparent pointer-events-none">
-                <h1 className="text-2xl font-bold text-foreground drop-shadow-md">Mapa dos Blocos</h1>
+        <div className="h-screen w-full relative bg-background pb-32">
+            <header className="absolute top-0 left-0 right-0 z-[1000] p-8 pt-16 bg-gradient-to-b from-background/95 to-transparent pointer-events-none">
+                <h1 className="text-2xl font-black italic tracking-tight text-foreground leading-none">
+                    Mapa de <span className="text-primary NOT-italic">Blocos</span>
+                </h1>
+                <p className="text-[9px] uppercase tracking-[0.3em] font-black text-muted-foreground opacity-40 mt-1">
+                    Belo Horizonte 2026
+                </p>
             </header>
 
             <MapContainer

@@ -21,6 +21,12 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        vibrant: {
+          pink: "hsl(330 100% 50%)",
+          purple: "hsl(270 100% 50%)",
+          yellow: "hsl(50 100% 50%)",
+          cyan: "hsl(180 100% 50%)",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -41,13 +47,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Legacy carnival colors kept for reference but mapped to new system where possible
+        // Legacy carnival colors kept for reference
         carnival: {
-          yellow: '#FFD700',
-          green: '#00A86B',
-          blue: '#0047AB',
-          red: '#DC143C',
-          purple: '#9370DB'
+          magenta: '#FF00FF',
+          neon: '#39FF14',
+          hot: '#FF69B4',
+          gold: '#FFD700',
         }
       },
       fontFamily: {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Heart, MapPin, Clock, Navigation, Car, Bus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, MapPin, Navigation, Car, Bus, Copy, Check } from 'lucide-react';
 import useStore from '../store/useStore';
 import { calculateTimeUntil, formatTime } from '../utils/dateUtils';
 import {
@@ -12,22 +13,23 @@ import {
 } from '../utils/locationUtils';
 
 const BlockCard = ({ block }) => {
-  const { toggleFavorite, isFavorited } = useStore();
+  const { toggleFavorite, favoriteBlocks } = useStore();
   const [countdown, setCountdown] = useState(null);
   const [route, setRoute] = useState(null);
   const [loadingRoute, setLoadingRoute] = useState(false);
-  const favorited = isFavorited(block.id);
+  const [copied, setCopied] = useState(false);
 
-  // Atualizar countdown a cada segundo
+  // Directly derive favorited state from favoriteBlocks array to ensure re-renders
+  const favorited = favoriteBlocks.some(b => b.id === block.id);
+
+  // Update countdown
   useEffect(() => {
     const updateCountdown = () => {
       const time = calculateTimeUntil(block.data, block.horario);
       setCountdown(time);
     };
-
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
-
     return () => clearInterval(interval);
   }, [block.data, block.horario]);
 
@@ -35,163 +37,156 @@ const BlockCard = ({ block }) => {
     setLoadingRoute(true);
     try {
       const userLocation = await getCurrentLocation();
-      const routeData = await calculateRoute(
-        userLocation,
-        { lat: block.latitude, lng: block.longitude }
-      );
+      const routeData = await calculateRoute(userLocation, { lat: block.latitude, lng: block.longitude });
       setRoute(routeData);
     } catch (error) {
-      console.error('Erro ao calcular distância:', error);
-      alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
+      alert('Localização não permitida.');
     } finally {
       setLoadingRoute(false);
     }
   };
 
   const handleOpenUber = () => {
-    const deepLink = getUberDeepLink({
-      lat: block.latitude,
-      lng: block.longitude,
-      name: block.nome
-    });
-
-    // Tentar abrir o app
+    const deepLink = getUberDeepLink({ lat: block.latitude, lng: block.longitude, name: block.nome });
     window.location.href = deepLink;
-
-    // Fallback para versão web após 1 segundo
     setTimeout(() => {
-      const webUrl = getUberWebUrl({
-        lat: block.latitude,
-        lng: block.longitude
-      });
-      window.open(webUrl, '_blank');
+      window.open(getUberWebUrl({ lat: block.latitude, lng: block.longitude }), '_blank');
     }, 1000);
   };
 
-  const handleOpenGoogleMaps = async () => {
+  const handleOpenMaps = async () => {
     try {
       const userLocation = await getCurrentLocation();
-      const url = getGoogleMapsTransitUrl(
-        userLocation,
-        { lat: block.latitude, lng: block.longitude }
-      );
-      window.open(url, '_blank');
+      window.open(getGoogleMapsTransitUrl(userLocation, { lat: block.latitude, lng: block.longitude }), '_blank');
     } catch (error) {
-      // Fallback: abrir sem origem
-      const url = `https://www.google.com/maps/search/?api=1&query=${block.latitude},${block.longitude}`;
-      window.open(url, '_blank');
+      window.open(`https://www.google.com/maps/search/?api=1&query=${block.latitude},${block.longitude}`, '_blank');
     }
+  };
+
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(`${block.endereco}, ${block.bairro}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const uberPrice = route ? estimateUberPrice(route.distanceKm) : null;
 
-  // Determinar cor baseada no ID (consistente)
-  const getCardColor = (id) => {
-    // Keeping pastel colors for light mode, but ensuring they have a dark mode equivalent if needed
-    // or just using the card style for dark mode to keep it clean
-    const colors = [
-      'bg-pastel-purple dark:bg-purple-900/40 dark:border-purple-700/50',
-      'bg-pastel-peach dark:bg-orange-900/40 dark:border-orange-700/50',
-      'bg-pastel-teal dark:bg-teal-900/40 dark:border-teal-700/50',
-      'bg-pastel-pink dark:bg-pink-900/40 dark:border-pink-700/50'
-    ];
-    const index = typeof id === 'number' ? id : id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colors[index % colors.length];
-  };
-
-  const cardColor = getCardColor(block.id);
-
   return (
-    <div className={`relative ${cardColor} dark:border rounded-[32px] p-6 transition-transform hover:scale-[1.02] duration-200`}>
-      {/* Header: Time & Actions */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex flex-col">
-          <span className="text-3xl font-bold tracking-tight text-foreground dark:text-white">
+    <div className="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-primary/20 group">
+      {/* Time & Favorite Header */}
+      <div className="flex justify-between items-start mb-8">
+        <div className="space-y-1.5">
+          <span className="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
             {formatTime(block.horario)}
           </span>
           {block.observacoes && (
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-60 text-foreground dark:text-gray-300 mt-1">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">
               {block.observacoes}
+            </p>
+          )}
+        </div>
+
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => toggleFavorite(block.id)}
+          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-primary/10 shadow-inner' : 'bg-muted/50 hover:bg-muted'}`}
+        >
+          <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+        </motion.button>
+      </div>
+
+      {/* Main Info */}
+      <div className="mb-10">
+        <h3 className="text-2xl font-black leading-[1.1] tracking-tight mb-4 text-foreground pr-8">
+          {block.nome}
+        </h3>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5 text-muted-foreground">
+            <MapPin className="w-4 h-4 text-primary opacity-50" />
+            <span className="text-[11px] font-black uppercase tracking-widest opacity-60 truncate">{block.bairro}</span>
+          </div>
+
+          <button
+            onClick={handleCopyAddress}
+            className="flex items-center gap-2 group/addr w-full text-left"
+          >
+            <p className="text-[11px] font-medium text-muted-foreground opacity-40 group-hover/addr:opacity-80 transition-opacity truncate flex-1">
+              {block.endereco}
+            </p>
+            <AnimatePresence mode="wait">
+              {copied ? (
+                <motion.div
+                  key="check"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                >
+                  <Check className="w-3.5 h-3.5 text-green-500" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="copy"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.4 }}
+                  whileHover={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </button>
+        </div>
+      </div>
+
+      {/* Footer / Utility Restoration */}
+      <div className="pt-8 border-t border-border/20 space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {countdown && !countdown.isPast && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="font-mono text-xs font-black opacity-80">{countdown.formatted}</span>
+              </div>
+            )}
+          </div>
+          {route && (
+            <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">
+              {route.distanceKm}KM • {route.durationText}
             </span>
           )}
         </div>
 
-        <button
-          onClick={() => toggleFavorite(block.id)}
-          className="w-12 h-12 flex items-center justify-center rounded-full bg-white/30 dark:bg-white/10 backdrop-blur-sm hover:bg-white/50 dark:hover:bg-white/20 transition-colors"
-          aria-label={favorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-        >
-          <Heart
-            className={`w-6 h-6 transition-all ${favorited
-              ? 'fill-gray-900 text-foreground dark:text-purple-400 dark:fill-purple-400'
-              : 'text-gray-800 dark:text-white'
-              }`}
-          />
-        </button>
-      </div>
-
-      {/* Main Content */}
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold leading-tight mb-2 text-foreground dark:text-white">
-          {block.nome}
-        </h3>
-
-        <div className="flex items-start text-gray-800/80 dark:text-gray-300">
-          <MapPin className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-          <div>
-            <p className="font-semibold text-foreground dark:text-gray-200">{block.endereco}</p>
-            <p className="text-sm opacity-75">{block.bairro}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer: Countdown & Actions */}
-      <div className="space-y-3">
-        {/* Countdown */}
-        {countdown && !countdown.isPast && (
-          <div className="bg-white/40 dark:bg-black/40 rounded-2xl p-3 flex items-center justify-between backdrop-blur-sm">
-            <span className="text-sm font-semibold text-gray-900 dark:text-white">
-              {countdown.isToday ? '🎉 É HOJE!' : 'Faltam:'}
-            </span>
-            <span className="font-bold font-mono text-gray-900 dark:text-white bg-white/50 dark:bg-white/10 px-2 py-1 rounded-lg">
-              {countdown.formatted}
-            </span>
-          </div>
-        )}
-
-        {/* Action Pills */}
-        <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+        <div className="grid grid-cols-3 gap-3">
           <button
             onClick={handleCalculateDistance}
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-2xl bg-gray-900 dark:bg-white dark:text-black text-white text-sm font-semibold hover:bg-black dark:hover:bg-gray-200 transition-colors"
+            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
           >
-            <Navigation className="w-4 h-4" />
-            {loadingRoute ? '...' : route ? `${route.distanceKm} km` : 'Distância'}
+            <Navigation className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
+            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+              {loadingRoute ? '...' : 'Rota'}
+            </span>
           </button>
 
           <button
             onClick={handleOpenUber}
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
           >
-            <Car className="w-4 h-4" />
-            Uber
+            <Car className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
+            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+              {uberPrice ? uberPrice.formatted : 'Uber'}
+            </span>
           </button>
 
           <button
-            onClick={handleOpenGoogleMaps}
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white text-sm font-semibold hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors"
+            onClick={handleOpenMaps}
+            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
           >
-            <Bus className="w-4 h-4" />
-            Como ir
+            <Bus className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
+            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">Bus</span>
           </button>
         </div>
-
-        {/* Route Info */}
-        {route && (
-          <div className="text-xs text-center font-medium opacity-60 text-gray-900 dark:text-white mt-2">
-            {route.durationText} de carro • ~{uberPrice ? uberPrice.formatted : 'R$ --'}
-          </div>
-        )}
       </div>
     </div>
   );

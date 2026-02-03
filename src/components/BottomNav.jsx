@@ -10,23 +10,25 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 mx-auto max-w-md bg-white border-t border-gray-100 shadow-xl z-50">
-      <div className="flex justify-around items-center h-16 max-w-screen-xl mx-auto">
+    <nav className="fixed bottom-6 left-6 right-6 mx-auto max-w-sm bg-background/80 backdrop-blur-2xl border border-border/40 rounded-full shadow-2xl z-50 overflow-hidden">
+      <div className="flex justify-around items-center h-16">
         {navItems.map(({ path, icon: Icon, label }) => (
           <NavLink
             key={path}
             to={path}
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center flex-1 h-full transition-all ${isActive
-                ? 'text-carnival-purple'
-                : 'text-gray-500 hover:text-carnival-purple'
+              `group flex flex-col items-center justify-center flex-1 h-full transition-all duration-300 ${isActive
+                ? 'text-primary'
+                : 'text-muted-foreground hover:text-primary'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <Icon className={`w-6 h-6 mb-1 ${isActive ? 'stroke-2' : ''}`} />
-                <span className={`text-xs ${isActive ? 'font-bold' : ''}`}>
+                <div className={`p-2 rounded-xl transition-all duration-300 ${isActive ? 'bg-primary/10' : 'group-hover:bg-muted'}`}>
+                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.5px]'}`} />
+                </div>
+                <span className={`text-[9px] font-bold uppercase tracking-widest mt-0.5 transition-all ${isActive ? 'opacity-100' : 'opacity-40'}`}>
                   {label}
                 </span>
               </>

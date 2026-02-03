@@ -18,9 +18,13 @@ Este workflow DEVE ser executado pelo Agente de IA no início de QUALQUER solici
 
 4. **Criação do Plano (PLANNING & BREAKDOWN)**
    - Utilize a skill `break_down_tasks` (se disponível) para decompor a solicitação.
+   - **Breakdown Atômico (Obrigatório)**: O `task.md` deve conter tarefas granulares.
+     - Cada tarefa deve ter uma responsabilidade única.
+     - Deve existir um critério de verificação claro para cada item.
+     - Evite tarefas genéricas como "Implementar feature X"; use "Criar componente Y", "Adicionar lógica de Z", "Validar rendering de W".
    - **Critical**: Utilize a skill `test_application` para definir a estratégia de testes *antes* de codar (Quais testes unitários? Quais snapshots?).
    - Crie o `implementation_plan.md` incluindo uma seção dedicada a testes.
-   - Liste explicitamente no `task.md` as etapas de verificação.
+   - Liste explicitamente no `task.md` as etapas de verificação para cada item atômico.
 
 5. **Análise do Plano (Skill Check)**
    - Leia as instruções em `.agent/skills/plan_analysis/SKILL.md`.

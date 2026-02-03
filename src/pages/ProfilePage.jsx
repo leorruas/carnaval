@@ -12,12 +12,16 @@ const ProfilePage = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-background pb-24 text-foreground">
-            <div className="max-w-md mx-auto bg-background min-h-screen">
+        <div className="min-h-screen bg-background pb-40 text-foreground">
+            <div className="max-w-md mx-auto bg-background min-h-screen px-6">
                 {/* Header */}
-                <header className="p-6 pt-12">
-                    <h1 className="text-3xl font-bold mb-2">Perfil</h1>
-                    <p className="text-muted-foreground">Gerencie suas preferências</p>
+                <header className="pt-16 pb-10">
+                    <h1 className="text-2xl font-black italic tracking-tight text-foreground leading-none">
+                        Perfil do <span className="text-primary NOT-italic">Folião</span>
+                    </h1>
+                    <p className="text-[9px] uppercase tracking-[0.3em] font-black text-muted-foreground opacity-40 mt-1">
+                        Preferências BH 2026
+                    </p>
                 </header>
 
                 {/* User Info Card */}
