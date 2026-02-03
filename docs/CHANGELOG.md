@@ -86,8 +86,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 13:34] - perf: Optimized scroll behavior to only animate when necessary (smarter visibility checks).
 - [2026-02-03 13:34] - perf: Added page prefetch for instant navigation between routes (0ms vs 1-2s).
 - [2026-02-03 13:34] - fix: Fixed critical bug where user variable was undefined in sync effect.
+- [2026-02-03 14:24] - feat: Implemented Live Link feature (permanent public sharable links)
+- [2026-02-03 14:24] - fix: Fixed infinite loading state on share button by replacing snapshot generation with live link
+- [2026-02-03 14:24] - test: Added comprehensive test suite for shareService and MyAgenda
+- [2026-02-03 13:52] - fix: Fixed timeout issues in MyAgenda tests loading state with 10-second timeout protection.
 - [2026-02-03 13:55] - fix: Fixed share link infinite loading state with 10-second timeout protection.
 - [2026-02-03 13:55] - feat: Added input validation to prevent sharing empty agendas.
 - [2026-02-03 13:55] - ui: Improved error messages for share failures (timeout, permissions, connectivity).
 - [2026-02-03 13:55] - test: Created comprehensive test suite for shareService (10 tests) and MyAgenda share functionality (5 tests).
-

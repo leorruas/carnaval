@@ -18,14 +18,38 @@ const withTimeout = (promise, timeoutMs = 10000) => {
     ]);
 };
 
+// ... keep imports ...
+
 /**
- * Creates a shared agenda document in Firestore.
+ * Retrieves a public agenda (Live Link) from Firestore.
+ * @param {string} userId - The user's ID.
+ * @returns {Promise<Object|null>} - The agenda data or null if not found.
+ */
+export const getPublicAgenda = async (userId) => {
+    try {
+        const docRef = doc(db, 'public_agendas', userId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() };
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error('[ShareService] Error getting public agenda:', error);
+        throw error;
+    }
+};
+
+/**
+ * Creates a shared agenda document in Firestore (Legacy Snapshot).
  * @param {string} userId - The user's ID (or null/anonymous ID).
  * @param {string} userName - The user's display name.
  * @param {Array<number>} blockIds - List of block IDs to share.
  * @returns {Promise<string>} - The ID of the created document (the share token).
  */
 export const createShareLink = async (userId, userName, blockIds) => {
+    // ... implementation remains for legacy support ...
     try {
         // Validate inputs
         if (!userId || !userName || !Array.isArray(blockIds) || blockIds.length === 0) {

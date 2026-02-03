@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createShareLink, getSharedAgenda } from './shareService';
-import { addDoc, getDoc } from 'firebase/firestore';
+import { createShareLink, getSharedAgenda, getPublicAgenda } from './shareService';
+import { addDoc, getDoc, doc } from 'firebase/firestore';
 
 // Mock Firebase
 vi.mock('./firebase', () => ({
@@ -121,6 +121,45 @@ describe('shareService', () => {
             await expect(
                 getSharedAgenda('share-id-123')
             ).rejects.toThrow('Network error');
+        });
+    });
+
+    describe('getPublicAgenda', () => {
+        it('should retrieve a public agenda successfully', async () => {
+            const mockData = {
+                ownerName: 'Test User',
+                blocks: [1, 2]
+            };
+            const mockDocSnap = {
+                exists: () => true,
+                id: 'user-123',
+                data: () => mockData
+            };
+            getDoc.mockResolvedValue(mockDocSnap);
+
+            const result = await getPublicAgenda('user-123');
+
+            expect(doc).toHaveBeenCalledWith(expect.objectContaining({ _firestoreClient: {} }), 'public_agendas', 'user-123');
+            expect(getDoc).toHaveBeenCalled();
+            expect(result).toEqual({ id: 'user-123', ...mockData });
+        });
+
+        it('should return null if public agenda does not exist', async () => {
+            const mockDocSnap = {
+                exists: () => false
+            };
+            getDoc.mockResolvedValue(mockDocSnap);
+
+            const result = await getPublicAgenda('non-existent');
+
+            expect(result).toBeNull();
+        });
+
+        it('should handle Firebase errors', async () => {
+            getDoc.mockRejectedValue(new Error('Firebase error'));
+
+            await expect(getPublicAgenda('user-123'))
+                .rejects.toThrow('Firebase error');
         });
     });
 });

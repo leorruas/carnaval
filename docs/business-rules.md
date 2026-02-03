@@ -13,11 +13,11 @@
     - **Hidratação**: Ao logar, se a nuvem tiver dados, eles substituem os locais. Se a nuvem estiver vazia, os favoritos locais são subidos automaticamente.
     - **Offline**: Usuários deslogados usam persistência local (fallback).
 - **Minha Agenda**: Uma visualização filtrada apenas com os blocos favoritados.
-- **Compartilhamento Stateful**: Usuários logados podem gerar um link único para compartilhar sua agenda. As agendas compartilhadas são salvas na coleção `shared_agendas`.
-    - **Timeout Protection**: Operações de compartilhamento têm timeout de 10 segundos para evitar estados de loading infinito.
-    - **Validação**: Não é possível compartilhar uma agenda vazia - o sistema valida antes de tentar criar o link.
-    - **Error Handling**: Mensagens de erro amigáveis para timeout, problemas de conexão, e permissões Firebase.
-- **Match System**: Ao visualizar a agenda de um amigo, o sistema compara com os seus favoritos e exibe um badge de "Match" em blocos comuns.
+- **Live Link (Link Permanente)**: Usuários logados têm um link único e permanente (`/agenda?uid=USER_ID`) que reflete sua agenda em tempo real.
+    - **Sincronização Dupla**: Favoritos são sincronizados automaticamente para a coleção privada `users` e pública `public_agendas`.
+    - **Sem Snapshot**: Não é necessário gerar links snapshot; o link é sempre vivo.
+    - **Validação**: O botão de copiar link só funciona se o usuário tiver blocos na agenda.
+    - **Error Handling**: Feedback visual para sucesso (cópia) ou erro (permissões/falhas).
 - **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos. Amigos seguidos são salvos no perfil do usuário e podem ser acessados rapidamente na aba "Amigos" da agenda.
 
 ### 1.3. Filtros e Busca

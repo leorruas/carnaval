@@ -57,7 +57,11 @@ const useStore = create(
         if (state.user?.uid) {
           syncTimeout = setTimeout(() => {
             // Use get() to fetch latest state at sync time
-            saveUserFavorites(state.user.uid, get().favoriteBlocks).catch(err => {
+            saveUserFavorites(
+              state.user.uid,
+              get().favoriteBlocks,
+              state.user.displayName || 'Folião'
+            ).catch(err => {
               console.error('Failed to sync favorites to cloud:', err);
             });
           }, 2000); // 2 second debounce

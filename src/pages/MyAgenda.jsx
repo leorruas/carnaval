@@ -15,7 +15,7 @@ import { sortBlocksByDateTime, formatDate, groupBlocksByDate } from '../utils/da
 
 const allBlocks = Array.isArray(blocosData) ? blocosData : (blocosData?.default || []);
 import { getDateTheme } from '../utils/themeUtils';
-import { createShareLink, getSharedAgenda } from '../services/shareService';
+import { createShareLink, getSharedAgenda, getPublicAgenda } from '../services/shareService';
 
 const MyAgenda = () => {
   const { favoriteBlocks = [], toggleFavorite, friends = [], addFriend, removeFriend } = useStore() || {};
@@ -29,6 +29,8 @@ const MyAgenda = () => {
 
   // State
   const shareId = searchParams.get('shareId');
+  const publicUid = searchParams.get('uid');
+
   const [sharedData, setSharedData] = useState(null);
   const [isLoadingShared, setIsLoadingShared] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -41,26 +43,47 @@ const MyAgenda = () => {
   const headerPadding = useTransform(scrollY, [0, 100], [64, 24], { clamp: true });
   const logoScale = useTransform(scrollY, [0, 100], [1, 0.8], { clamp: true });
 
-  // --- Shared Mode Logic ---
+  // --- Shared Mode Logic (Legacy shareId OR New uid) ---
   useEffect(() => {
-    if (shareId) {
-      const fetchShared = async () => {
+    const fetchShared = async () => {
+      // Priority 1: Live Link (uid)
+      if (publicUid) {
+        setIsLoadingShared(true);
+        try {
+          const data = await getPublicAgenda(publicUid);
+          if (data) {
+            const hydratedBlocks = allBlocks.filter(b => data.blocks.includes(b.id));
+            setSharedData({ ...data, blocks: hydratedBlocks, isLive: true });
+          }
+        } catch (error) {
+          console.error("Failed to load public agenda", error);
+        } finally {
+          setIsLoadingShared(false);
+        }
+        return;
+      }
+
+      // Priority 2: Legacy Snapshot (shareId)
+      if (shareId) {
         setIsLoadingShared(true);
         try {
           const data = await getSharedAgenda(shareId);
           if (data) {
             const hydratedBlocks = allBlocks.filter(b => data.blocks.includes(b.id));
-            setSharedData({ ...data, blocks: hydratedBlocks });
+            setSharedData({ ...data, blocks: hydratedBlocks, isLive: false });
           }
         } catch (error) {
           console.error("Failed to load shared agenda", error);
         } finally {
           setIsLoadingShared(false);
         }
-      };
+      }
+    };
+
+    if (publicUid || shareId) {
       fetchShared();
     }
-  }, [shareId]);
+  }, [shareId, publicUid]);
 
   const isSharedMode = !!sharedData;
 
@@ -126,55 +149,27 @@ const MyAgenda = () => {
       return;
     }
 
-    // Prevent double-click
-    if (isSharing) return;
-
     // Validate we have blocks to share
     if (blocksList.length === 0) {
       alert('Você precisa ter blocos na sua agenda para compartilhar!');
       return;
     }
 
-    setIsSharing(true);
+    // Direct Live Link Sharing
+    const liveLink = `${window.location.origin}/agenda?uid=${user.uid}`;
+
     try {
-      const blockIds = blocksList.map(b => b.id);
-      console.log('[MyAgenda] Creating share link with:', {
-        userId: user.uid,
-        userName: user.displayName,
-        blockIds
-      });
-
-      const id = await createShareLink(user.uid, user.displayName || 'Folião', blockIds);
-      console.log('[MyAgenda] Share link created with ID:', id);
-
-      const shareUrl = `${window.location.origin}/agenda?shareId=${id}`;
-      console.log('[MyAgenda] Share URL:', shareUrl);
-
       if (navigator.share) {
         await navigator.share({
           title: `Agenda de ${user.displayName || 'Amigo'} - Carnaval BH`,
-          url: shareUrl,
+          url: liveLink,
         });
       } else {
-        await navigator.clipboard.writeText(shareUrl);
-        alert(`Link copiado!\n\n${shareUrl}`);
+        await navigator.clipboard.writeText(liveLink);
+        alert(`Link permanente copiado!\n\n${liveLink}`);
       }
     } catch (error) {
-      console.error('[MyAgenda] Error in handleShare:', error);
-
-      // User-friendly error messages
-      let errorMessage = 'Erro ao criar link de compartilhamento.';
-      if (error.message.includes('timed out')) {
-        errorMessage = 'A operação demorou muito. Verifique sua conexão e tente novamente.';
-      } else if (error.message.includes('not initialized')) {
-        errorMessage = 'Serviço de compartilhamento não está disponível. Tente novamente mais tarde.';
-      } else if (error.code === 'permission-denied') {
-        errorMessage = 'Você não tem permissão para compartilhar. Faça login novamente.';
-      }
-
-      alert(errorMessage);
-    } finally {
-      setIsSharing(false);
+      console.error('Error sharing live link:', error);
     }
   };
 
