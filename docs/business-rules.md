@@ -14,7 +14,7 @@
 
 ### 1.3. Filtros e Busca
 - **Busca Global**: O usuário pode buscar por nome do bloco, bairro ou endereço. A busca é ativada por um botão no header.
-- **Filtro por Data**: O usuário pode filtrar blocos por dia específico através das abas de navegação (Hoje, Calendário, Favoritos) e um seletor rápido de dias (Quick Nav) no modo Calendário/Favoritos.
+- **Filtro por Data**: O usuário pode filtrar blocos por dia específico através das abas de navegação (Hoje, Calendário, Favoritos) e um seletor rápido de dias (Quick Nav) centralizado no modo Calendário/Favoritos. Eventos passados são filtrados automaticamente.
 - **Ações Rápidas**: Reposicionamento do botão de filtro para o header para evitar obstrução visual.
 
 ### 1.4. Ferramentas Úteis

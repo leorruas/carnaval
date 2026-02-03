@@ -75,11 +75,11 @@ const BlockCard = ({ block }) => {
     <div className="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-primary/20 group">
       {/* Time & Favorite Header */}
       <div className="flex justify-between items-start mb-8">
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 font-sans">
           <span className="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
             {formatTime(block.horario)}
           </span>
-          {block.observacoes && (
+          {block.observacoes && !block.observacoes.toLowerCase().includes('carnaval 2026') && (
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">
               {block.observacoes}
             </p>
@@ -146,9 +146,9 @@ const BlockCard = ({ block }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {countdown && !countdown.isPast && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-2xl border border-primary/20 shadow-sm shadow-primary/5">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="font-mono text-xs font-black opacity-80">{countdown.formatted}</span>
+                  <span className="font-mono text-xs font-black text-primary tracking-tight">{countdown.formatted}</span>
                 </div>
               )}
             </div>

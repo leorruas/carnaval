@@ -35,6 +35,10 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Visual**: Cores pastéis suaves com bordas sutis em Dark Mode.
 - **Interação**: Micro-interações de escala ao passar o mouse.
 - **Utilitários**: Inclui botões de "Rota", "Uber" e "Bus", além de um botão de cópia rápida para o endereço com feedback animado.
+- **Countdown**: Redesenhado para um formato de pílula vibrante com fundo na cor primária.
+
+### Header Centrado
+- Elementos de navegação (PillToggle) e seletores de data são horizontalmente centrados para melhor equilíbrio visual.
 
 ### Bottom Navigation (Minimalist)
 - **Labels**: Permanently removed (`span` and `label` logic deleted).

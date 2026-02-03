@@ -20,3 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-02 21:30] - fix: Resolved Favorite button state re-rendering issue in BlockCard.
 - [2026-02-02 21:30] - fix: Implemented functional toggleable Search bar and header Filter button.
 - [2026-02-02 21:35] - ui: Removed text labels from bottom navigation bar for a more minimalist look.
+- [2026-02-02 21:40] - ui: Centered header navigation and date selector components.
+- [2026-02-02 21:40] - ui: Redesigned countdown to a more vibrant pill-shaped badge.
+- [2026-02-02 21:40] - ui: Removed header border and redundant "Carnaval 2026" text from cards.
+- [2026-02-02 21:40] - fix: Resolved layout overlap in the header date selector.
+- [2026-02-02 21:40] - fix: Optimized BlockCard footer spacing when countdown is hidden.

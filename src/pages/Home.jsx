@@ -146,7 +146,7 @@ const Home = () => {
           </AnimatePresence>
 
           <div className="flex flex-col gap-4">
-            <div className="flex justify-start overflow-x-auto hide-scrollbar py-1">
+            <div className="flex justify-center overflow-x-auto hide-scrollbar py-1">
               <PillToggle
                 options={navOptions}
                 value={activeTab}
@@ -159,7 +159,7 @@ const Home = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex gap-2 overflow-x-auto hide-scrollbar pb-2"
+                className="flex justify-center gap-3 overflow-x-auto hide-scrollbar pb-3 px-4"
               >
                 {allDates.map(date => (
                   <button
