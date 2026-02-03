@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, LogIn, UserPlus } from 'lucide-react';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import TermsModal from './TermsModal';
 
 const LoginModal = ({ isOpen, onClose, onSuccess }) => {
@@ -14,6 +14,26 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
     const [error, setError] = useState(null);
 
     const auth = getAuth();
+
+    const handleGoogleLogin = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            onSuccess?.();
+            onClose();
+        } catch (err) {
+            console.error(err);
+            if (err.code === 'auth/popup-closed-by-user') {
+                // ignore
+            } else {
+                setError('Erro ao conectar com Google.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,15 +76,16 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md"
                     >
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-border/20 overflow-hidden"
+                            className="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-border/20 overflow-hidden relative"
                         >
-                            <div className="relative p-8">
+                            <div className="absolute inset-0 bg-card z-0" />
+                            <div className="relative z-10 p-8">
                                 <button
                                     onClick={onClose}
                                     className="absolute right-6 top-6 w-8 h-8 rounded-full bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors"
@@ -88,6 +109,25 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
                                             ? 'Salve seus blocos e compartilhe com amigos!'
                                             : 'Bem-vindo de volta, folião!'}
                                     </p>
+                                </div>
+
+                                {/* Google Login Button */}
+                                <button
+                                    onClick={handleGoogleLogin}
+                                    disabled={isLoading}
+                                    className="w-full py-3 rounded-xl bg-white border border-gray-200 text-gray-700 font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors mb-6 shadow-sm"
+                                >
+                                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                                    <span>Continuar com Google</span>
+                                </button>
+
+                                <div className="relative mb-6">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full border-t border-border/20"></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-card px-2 text-muted-foreground">Ou com email</span>
+                                    </div>
                                 </div>
 
                                 <form onSubmit={handleSubmit} className="space-y-4">

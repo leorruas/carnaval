@@ -20,9 +20,9 @@ const Home = () => {
   const scrollRef = useRef(null);
 
   const { scrollY } = useScroll();
-  const headerHeight = useTransform(scrollY, [0, 100], [160, 100]);
-  const headerPadding = useTransform(scrollY, [0, 100], [64, 24]);
-  const logoScale = useTransform(scrollY, [0, 100], [1, 0.8]);
+  const headerHeight = useTransform(scrollY, [0, 100], [160, 100], { clamp: true });
+  const headerPadding = useTransform(scrollY, [0, 100], [64, 24], { clamp: true });
+  const logoScale = useTransform(scrollY, [0, 100], [1, 0.8], { clamp: true });
   const isCompact = useRef(false);
 
   useEffect(() => {

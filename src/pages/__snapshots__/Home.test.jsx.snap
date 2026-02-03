@@ -10,12 +10,14 @@ exports[`Home > renders correctly 1`] = `
     >
       <header
         class="relative left-0 right-0 z-20 px-6 max-w-md mx-auto"
+        layoutid="main-sticky-header"
       >
         <div
           class="flex justify-between items-center mb-6 gap-4"
         >
           <div
             class="origin-left"
+            layoutid="main-logo-container"
           >
             <svg
               class="h-16 w-auto max-w-full text-foreground"
@@ -420,7 +422,7 @@ exports[`Home > renders correctly 1`] = `
                           style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          26d 3h 57m
+                          26d 3h 42m
                         </span>
                       </div>
                     </div>

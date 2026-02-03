@@ -54,3 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 10:00] - feat: Created `componentization` skill for standardized UI component development.
 - [2026-02-03 10:00] - docs: Updated `start-task` workflow to include componentization check.
 - [2026-02-03 10:00] - docs: Updated Tech Stack to reflect Firebase integration.
+- [2026-02-03 13:00] - feat: Integrated Firebase Authentication (Email/Password & Google Sign-In).
+- [2026-02-03 13:00] - feat: Implemented Stateful Agenda Sharing via Firestore (`shared_agendas`).
+- [2026-02-03 13:00] - feat: Added "Match" system to highlight common blocks in shared agendas.
+- [2026-02-03 13:10] - ui: Standardized `StickyHeader` component across Home and MyAgenda.
+- [2026-02-03 13:10] - ui: Implemented Shared Element Transitions (layoutId) for seamless header motion.
+- [2026-02-03 13:10] - ui: Improved LoginModal aesthetics (backdrop blur, solid backgrounds) and contrast.
+- [2026-02-03 13:10] - ui: Updated "Exportar" copy to "Colocar na minha agenda" per user feedback.
+- [2026-02-03 13:15] - fix: Clamped header transforms to prevent logo "growing" pops during transitions.
+- [2026-02-03 13:20] - test: Updated test suites to cover Shared Mode and Firebase Auth logic.

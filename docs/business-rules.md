@@ -9,8 +9,10 @@
 
 ### 1.2. Favoritos & Agenda
 - Usuários podem favoritar blocos.
-- **Persistência**: Os favoritos são salvos no **Local Storage** do navegador (não requer login).
+- **Persistência Cloud**: Os favoritos são sincronizados com o **Firebase Firestore** quando o usuário está logado. Usuários deslogados usam persistência local (fallback).
 - **Minha Agenda**: Uma visualização filtrada apenas com os blocos favoritados.
+- **Compartilhamento Stateful**: Usuários logados podem gerar um link único para compartilhar sua agenda. As agendas compartilhadas são salvas na coleção `shared_agendas`.
+- **Match System**: Ao visualizar a agenda de um amigo, o sistema compara com os seus favoritos e exibe um badge de "Match" em blocos comuns.
 
 ### 1.3. Filtros e Busca
 - **Busca Global**: O usuário pode buscar por nome do bloco, bairro ou endereço. A busca é ativada por um botão no header.
@@ -30,12 +32,10 @@
     - Integração com Deep Link do Uber para estimativa de preço.
 - **Address & Copy**: Exibição do endereço completo do bloco com funcionalidade de cópia rápida para a área de transferência.
 
-## 2. Funcionalidades Opcionais (Firebase)
-*Estas funcionalidades dependem de configuração explicita das chaves do Firebase.*
-- Login/Cadastro (Auth)
-- Notificações Push
-- Sistema de Amigos
-- Sincronização Cloud
+## 2. Autenticação & Social (Firebase)
+- **Firebase Auth**: Suporte para Login/Cadastro via E-mail e **Google Sign-In**.
+- **Perfil**: Usuários podem ver seu progresso (blocos favoritados) e logout.
+- **Sincronização**: Favoritos são persistentes entre dispositivos para usuários logados.
 
 ## 3. Regras de Interface
 - **Responsividade**: Mobile-first obrigatório.

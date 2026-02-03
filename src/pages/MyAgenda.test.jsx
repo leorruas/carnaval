@@ -21,7 +21,7 @@ vi.mock('../data/blocos.json', () => ({
         {
             id: '1',
             nome: 'Bloco 1',
-            data: '2026-02-15', // Same date for easier testing
+            data: '2026-02-15',
             horario: '10:00',
             bairro: 'Centro',
             endereco: 'Rua A',
@@ -47,13 +47,14 @@ vi.mock('../services/shareService', () => ({
     createShareLink: vi.fn(),
 }));
 
-// Mock Scroll (Framer Motion)
+// Mock Framer Motion to avoid animation issues in tests
 vi.mock('framer-motion', async (importOriginal) => {
     const actual = await importOriginal();
     return {
         ...actual,
         useScroll: () => ({ scrollY: { get: () => 0, onChange: () => { } } }),
-        useTransform: () => 0,
+        useTransform: (val, input, output) => output[0],
+        AnimatePresence: ({ children }) => <>{children}</>,
     };
 });
 
@@ -75,18 +76,19 @@ describe('MyAgenda', () => {
         );
 
         expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Minha Agenda/i);
+        // Using findByText to allow for any micro-delays in memoized hooks
         expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
     });
 
     it('renders Shared Mode when shareId is present', async () => {
         useStore.mockReturnValue({
-            favoriteBlocks: [], // I have no favorites
+            favoriteBlocks: [],
             toggleFavorite: vi.fn(),
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
             ownerName: 'Amigo',
-            blocks: ['1', '2'] // Shared agenda has both blocks
+            blocks: ['1', '2']
         });
 
         render(
@@ -109,13 +111,13 @@ describe('MyAgenda', () => {
 
     it('calculates matches correctly in Shared Mode', async () => {
         useStore.mockReturnValue({
-            favoriteBlocks: [{ id: '1' }], // I have Bloco 1
+            favoriteBlocks: [{ id: '1' }],
             toggleFavorite: vi.fn(),
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
             ownerName: 'Crush',
-            blocks: ['1', '2'] // They have 1 and 2
+            blocks: ['1', '2']
         });
 
         render(
@@ -125,11 +127,7 @@ describe('MyAgenda', () => {
         );
 
         await waitFor(() => expect(screen.getByText('Crush')).toBeInTheDocument());
-
-        // "1 em comum"
         expect(screen.getByText(/1 em comum/i)).toBeInTheDocument();
-
-        // "Adicionar 1 novos" (since 2 is new to me)
         expect(screen.getByText(/Adicionar 1 novos/i)).toBeInTheDocument();
     });
 
@@ -152,15 +150,9 @@ describe('MyAgenda', () => {
         );
 
         await waitFor(() => expect(screen.getByText('Alegria')).toBeInTheDocument());
-
-        // Find "Adicionar" button on the card (Bloco 2)
-        // Since styling puts "Adicionar" text visually, we look for it.
-        // There is also a global "Adicionar X novos" button.
         const addAllButton = screen.getByText(/Adicionar 1 novos/i);
         fireEvent.click(addAllButton);
 
-        // Should trigger toggleFavorite for '2'
-        // Wait for potential async if any (handleAddAll is synchronous but good to be safe)
         expect(toggleFavoriteMock).toHaveBeenCalledWith('2');
     });
 });

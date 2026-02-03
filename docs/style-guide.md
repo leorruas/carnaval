@@ -38,10 +38,11 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - Possui animação de fundo via `framer-motion`.
 - **Glassmorphism**: Utiliza classe `glass` com `backdrop-blur-sm` e `bg-muted/20` para efeito de vidro fosco.
 
-### Dynamic Header
-- **Comportamento**: Header **sticky** no topo com apenas logo e botões de ação (busca, filtro, tema).
-- **Navigation Section**: PillToggle e seletor de dias foram movidos para **fora do header** e rolam naturalmente com a página.
-- **Escala**: O logo e os elementos internos são escalonados proporcionalmente via `useTransform`.
+### Standardized Sticky Header
+- **Componente**: `StickyHeader.jsx` centraliza a lógica de navegação e busca.
+- **Transições Suaves**: Utiliza `AnimatePresence` e `layoutId` do Framer Motion para que o Header e o Logo transitem suavemente entre páginas (Shared Element Transition).
+- **Comportamento**: Header **sticky** no topo com logo e botões de ação (busca, filtro, tema, avatar de perfil).
+- **Transformações**: Ocupa altura variável (160px para 100px) com escala do logo (1x para 0.8x) via `useTransform` com `clamp` ativado para evitar "pops" visuais.
 - **Blur**: Utiliza `backdrop-blur-xl` para manter a legibilidade sobre o conteúdo.
 - **Search UX**: Implementa padrão mobile com botão "Cancelar" visível ao lado do input de busca.
 
@@ -58,10 +59,10 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Layout**: Scroll horizontal com `rounded-2xl` e hover states com `bg-primary/10`.
 
 ### My Agenda Page
-- **Header**: Sticky com título estilizado ("Minha" em itálico + "Agenda" em primary).
-- **Empty State**: Layout centralizado com ícone circular, tipografia moderna e botão "Explorar blocos" em estilo tabbar.
-- **Action Buttons**: Share e Export com `bg-muted/30` e `hover:bg-primary/10` matching BottomNav aesthetic.
-- **Next Block Card**: Utiliza classe `countdown-card` do design system com gradiente.
+- **Header**: Utiliza o `StickyHeader` padronizado. Em modo compartilhado, exibe um botão "Voltar" no lugar do logo.
+- **Agenda Info**: Exibe o nome do dono da agenda e contador de "Matches" em modo compartilhado.
+- **Action Buttons**: Share e Export ("Colocar na minha agenda") com `bg-muted/30` e `hover:bg-muted` matching BottomNav aesthetic.
+- **Next Block Card**: Utiliza o tema dinâmico baseado no dia do primeiro bloco da lista.
 
 ### Header Centrado
 - Elementos de navegação (PillToggle) e seletores de data são horizontalmente centrados para melhor equilíbrio visual.

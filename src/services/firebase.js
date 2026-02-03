@@ -7,13 +7,13 @@ import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 // Configuração do Firebase
 // IMPORTANTE: Substitua com suas credenciais do Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyBElTVuiMpEzJ8nCNyGKQvTshVDfeb1NfE",
-  authDomain: "tateno-app.firebaseapp.com",
-  projectId: "tateno-app",
-  storageBucket: "tateno-app.firebasestorage.app",
-  messagingSenderId: "790111485975",
-  appId: "1:790111485975:web:dd9941f3ff0f06eef3dc52",
-  measurementId: "G-MDX7R03H3Q"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Inicializar Firebase

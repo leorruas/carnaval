@@ -36,7 +36,8 @@ describe('LoginModal', () => {
         const toggleButton = screen.getByText('Não tem conta? Cadastre-se');
         fireEvent.click(toggleButton);
 
-        expect(screen.getByText('Criar Conta')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Criar Conta' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Criar Conta' })).toBeInTheDocument();
         expect(screen.getByPlaceholderText('Seu nome ou apelido')).toBeInTheDocument();
     });
 

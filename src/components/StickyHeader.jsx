@@ -21,11 +21,13 @@ const StickyHeader = ({
 }) => {
     return (
         <motion.header
+            layout
+            layoutId="main-sticky-header"
             style={{ height: headerHeight, paddingTop: headerPadding }}
             className="relative left-0 right-0 z-20 px-6 max-w-md mx-auto"
         >
             <div className="flex justify-between items-center mb-6 gap-4">
-                <motion.div style={{ scale: logoScale }} className="origin-left">
+                <motion.div layoutId="main-logo-container" style={{ scale: logoScale }} className="origin-left">
                     {customTitle ? customTitle : <BrandLogo className="h-16 w-auto max-w-full text-foreground" />}
                 </motion.div>
 
