@@ -12,6 +12,8 @@ import StickyHeader from '../components/StickyHeader';
 import blocosData from '../data/blocos.json';
 import useStore from '../store/useStore';
 import { sortBlocksByDateTime, formatDate, groupBlocksByDate } from '../utils/dateUtils';
+
+const allBlocks = Array.isArray(blocosData) ? blocosData : (blocosData?.default || []);
 import { getDateTheme } from '../utils/themeUtils';
 import { createShareLink, getSharedAgenda } from '../services/shareService';
 
@@ -46,7 +48,7 @@ const MyAgenda = () => {
         try {
           const data = await getSharedAgenda(shareId);
           if (data) {
-            const hydratedBlocks = blocosData.filter(b => data.blocks.includes(b.id));
+            const hydratedBlocks = allBlocks.filter(b => data.blocks.includes(b.id));
             setSharedData({ ...data, blocks: hydratedBlocks });
           }
         } catch (error) {
@@ -64,7 +66,7 @@ const MyAgenda = () => {
   const currentBlocks = useMemo(() => {
     if (isSharedMode && sharedData) return sortBlocksByDateTime(sharedData.blocks);
     const favoriteIds = blocksList.map(f => f.id);
-    const blocks = blocosData.filter(b => favoriteIds.includes(b.id));
+    const blocks = allBlocks.filter(b => favoriteIds.includes(b.id));
     return sortBlocksByDateTime(blocks);
   }, [isSharedMode, sharedData, blocksList]);
 
@@ -207,7 +209,7 @@ const MyAgenda = () => {
     return (
       <div className="min-h-screen bg-background font-sans text-foreground pb-20">
         <div className="max-w-md mx-auto px-6 pt-20 text-center">
-          <h2 className="text-2xl font-black mb-4">Agenda Vazia</h2>
+          <h2 className="text-2xl font-black mb-4 font-bricolage">Agenda Vazia</h2>
           <a href="/" className="text-primary font-bold hover:underline">Explorar Blocos</a>
         </div>
         <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
@@ -272,7 +274,7 @@ const MyAgenda = () => {
               )}
             </div>
           ) : (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 font-bricolage">
               <h1 className="text-2xl font-black italic tracking-tight leading-none">
                 Minha<span className="text-primary NOT-italic"> Agenda</span>
               </h1>
@@ -309,14 +311,14 @@ const MyAgenda = () => {
                     <button
                       key={date}
                       onClick={() => setSelectedDate(date)}
-                      className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all border shrink-0 ${isSelected
+                      className={`flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all border shrink-0 font-bricolage ${isSelected
                         ? `text-white scale-105`
                         : `bg-muted/20 hover:bg-primary/10 hover:text-primary border-transparent`
                         }`}
                       style={isSelected ? { backgroundColor: theme.color, borderColor: theme.color } : {}}
                     >
                       <span className="text-sm font-black">{date.split('-')[2]}</span>
-                      <span className="text-[8px] font-black uppercase">{new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest">{new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}</span>
                     </button>
                   )
                 })}

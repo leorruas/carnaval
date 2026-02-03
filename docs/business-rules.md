@@ -9,7 +9,9 @@
 
 ### 1.2. Favoritos & Agenda
 - Usuários podem favoritar blocos.
-- **Persistência Cloud**: Os favoritos são sincronizados com o **Firebase Firestore** quando o usuário está logado. Usuários deslogados usam persistência local (fallback).
+- **Persistência Cloud**: Os favoritos são sincronizados com o **Firebase Firestore** quando o usuário está logado. 
+    - **Hidratação**: Ao logar, se a nuvem tiver dados, eles substituem os locais. Se a nuvem estiver vazia, os favoritos locais são subidos automaticamente.
+    - **Offline**: Usuários deslogados usam persistência local (fallback).
 - **Minha Agenda**: Uma visualização filtrada apenas com os blocos favoritados.
 - **Compartilhamento Stateful**: Usuários logados podem gerar um link único para compartilhar sua agenda. As agendas compartilhadas são salvas na coleção `shared_agendas`.
 - **Match System**: Ao visualizar a agenda de um amigo, o sistema compara com os seus favoritos e exibe um badge de "Match" em blocos comuns.

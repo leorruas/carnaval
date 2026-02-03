@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { saveUserFavorites } from '../services/syncService';
 
 const useStore = create(
   persist(
@@ -25,23 +26,34 @@ const useStore = create(
 
       logout: () => set({ user: null, isAuthenticated: false }),
 
-      toggleFavorite: (blockId) => set((state) => {
+      setFavorites: (favorites) => set({ favoriteBlocks: favorites }),
+
+      toggleFavorite: (blockId) => {
+        const state = get();
         const isFavorited = state.favoriteBlocks.some(b => b.id === blockId);
+        let newFavorites;
+
         if (isFavorited) {
-          return {
-            favoriteBlocks: state.favoriteBlocks.filter(b => b.id !== blockId)
-          };
+          newFavorites = state.favoriteBlocks.filter(b => b.id !== blockId);
         } else {
           // Adiciona o bloco com configurações padrão
-          return {
-            favoriteBlocks: [...state.favoriteBlocks, {
-              id: blockId,
-              addedAt: new Date().toISOString(),
-              notificationIntervals: state.notificationSettings.intervals
-            }]
+          const newBlock = {
+            id: blockId,
+            addedAt: new Date().toISOString(),
+            notificationIntervals: state.notificationSettings.intervals
           };
+          newFavorites = [...state.favoriteBlocks, newBlock];
         }
-      }),
+
+        set({ favoriteBlocks: newFavorites });
+
+        // Cloud sync if authenticated
+        if (state.user?.uid) {
+          saveUserFavorites(state.user.uid, newFavorites).catch(err => {
+            console.error('Failed to sync favorites to cloud:', err);
+          });
+        }
+      },
 
       isFavorited: (blockId) => {
         return get().favoriteBlocks.some(b => b.id === blockId);

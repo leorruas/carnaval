@@ -115,36 +115,48 @@ exports[`Home > renders correctly 1`] = `
             class="flex justify-center overflow-x-auto hide-scrollbar mx-auto w-full"
           >
             <div
-              class="glass p-1 rounded-full shadow-sm inline-flex space-x-1"
+              class="glass p-1 rounded-full inline-flex space-x-1"
             >
               <button
                 class="
-              relative px-6 py-3 rounded-full text-sm font-bold transition-colors duration-200 z-10 flex items-center gap-2
-              text-foreground
+              relative px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-200 flex items-center gap-2 font-bricolage
+              text-primary z-20
             "
               >
                 <div
-                  class="absolute inset-0 bg-background rounded-full shadow-sm border border-black/5"
+                  class="absolute inset-0 bg-background rounded-full shadow-sm border border-border/50"
                   layoutid="pill-active-bg"
                   transition="[object Object]"
                 />
-                Hoje
+                <span
+                  class="relative z-20"
+                >
+                  Hoje
+                </span>
               </button>
               <button
                 class="
-              relative px-6 py-3 rounded-full text-sm font-bold transition-colors duration-200 z-10 flex items-center gap-2
-              text-muted-foreground hover:text-foreground
+              relative px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-200 flex items-center gap-2 font-bricolage
+              text-muted-foreground hover:text-foreground z-10
             "
               >
-                Calendário
+                <span
+                  class="relative z-20"
+                >
+                  Calendário
+                </span>
               </button>
               <button
                 class="
-              relative px-6 py-3 rounded-full text-sm font-bold transition-colors duration-200 z-10 flex items-center gap-2
-              text-muted-foreground hover:text-foreground
+              relative px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-colors duration-200 flex items-center gap-2 font-bricolage
+              text-muted-foreground hover:text-foreground z-10
             "
               >
-                Favoritos
+                <span
+                  class="relative z-20"
+                >
+                  Favoritos
+                </span>
               </button>
             </div>
           </div>
@@ -152,7 +164,7 @@ exports[`Home > renders correctly 1`] = `
             class="relative group/scroll"
           >
             <button
-              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10 pointer-events-none group-hover/scroll:pointer-events-auto"
             >
               <span
                 class="text-lg leading-none mb-0.5"
@@ -162,12 +174,13 @@ exports[`Home > renders correctly 1`] = `
             </button>
             <div
               animate="[object Object]"
-              class="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-10 pb-2 scroll-smooth"
+              class="flex justify-start gap-3 overflow-x-auto hide-scrollbar px-4 md:px-16 pb-2 scroll-smooth"
               id="date-scroll-container"
               initial="[object Object]"
             >
               <button
-                class="flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent"
+                class="flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 font-bricolage bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent"
+                data-date="2026-03-01"
               >
                 <span
                   class="text-sm font-black"
@@ -175,13 +188,14 @@ exports[`Home > renders correctly 1`] = `
                   01
                 </span>
                 <span
-                  class="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100"
+                  class="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100"
                 >
                   fev
                 </span>
               </button>
               <button
-                class="flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent"
+                class="flex flex-col items-center min-w-[48px] py-2 rounded-2xl transition-all group border shrink-0 font-bricolage bg-muted/20 backdrop-blur-sm hover:bg-primary/10 hover:text-primary hover:border-primary/20 border-transparent"
+                data-date="2026-03-02"
               >
                 <span
                   class="text-sm font-black"
@@ -189,14 +203,14 @@ exports[`Home > renders correctly 1`] = `
                   02
                 </span>
                 <span
-                  class="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100"
+                  class="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100"
                 >
                   mar
                 </span>
               </button>
             </div>
             <button
-              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10 pointer-events-none group-hover/scroll:pointer-events-auto"
             >
               <span
                 class="text-lg leading-none mb-0.5"
@@ -217,7 +231,7 @@ exports[`Home > renders correctly 1`] = `
           initial="[object Object]"
         >
           <div
-            class="flex items-center gap-3"
+            class="flex items-center gap-3 font-bricolage"
           >
             <div
               class="flex flex-col items-center min-w-[40px]"
@@ -228,7 +242,7 @@ exports[`Home > renders correctly 1`] = `
                 01
               </span>
               <span
-                class="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60"
+                class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60"
               >
                 fev
               </span>
@@ -285,7 +299,7 @@ exports[`Home > renders correctly 1`] = `
                   class="flex justify-between items-start mb-8"
                 >
                   <div
-                    class="space-y-1.5 font-sans"
+                    class="space-y-1.5 font-bricolage"
                   >
                     <span
                       class="text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors"
@@ -319,7 +333,7 @@ exports[`Home > renders correctly 1`] = `
                   class="mb-10"
                 >
                   <h3
-                    class="text-2xl font-black leading-[1.1] tracking-tight mb-4 text-foreground pr-8"
+                    class="text-2xl font-black leading-[1.1] tracking-tight mb-4 text-foreground pr-8 font-bricolage"
                   >
                     Bloco Teste 1
                   </h3>
@@ -327,7 +341,7 @@ exports[`Home > renders correctly 1`] = `
                     class="space-y-3"
                   >
                     <div
-                      class="flex items-center gap-2.5 text-muted-foreground"
+                      class="flex items-center gap-2.5 text-muted-foreground font-bricolage"
                     >
                       <svg
                         class="lucide lucide-map-pin w-4 h-4 opacity-70"
@@ -418,11 +432,11 @@ exports[`Home > renders correctly 1`] = `
                           style="background-color: rgb(0, 206, 101);"
                         />
                         <span
-                          class="font-mono text-[10px] uppercase font-black tracking-tight"
+                          class="font-bricolage text-[10px] uppercase font-black tracking-tight"
                           style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          26d 3h 22m
+                          26d 2h 15m
                         </span>
                       </div>
                     </div>

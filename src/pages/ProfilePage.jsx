@@ -1,14 +1,24 @@
 import { User, Settings, Bell, Shield, LogOut, Heart } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../services/firebase';
 import ThemeToggle from '../components/ThemeToggle';
 import useStore from '../store/useStore';
 
 const ProfilePage = () => {
-    const { favoriteBlocks } = useStore();
+    const { favoriteBlocks, user } = useStore();
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Erro ao sair:', error);
+        }
+    };
 
     const menuItems = [
         { icon: Bell, label: 'Notificações', value: 'Ativado' },
         { icon: Shield, label: 'Privacidade', value: null },
-        { icon: Heart, label: 'Blocos Favoritos', value: `${favoriteBlocks.length}` },
+        { icon: Heart, label: 'Blocos Favoritos', value: `${favoriteBlocks?.length || 0}` },
     ];
 
     return (
@@ -27,12 +37,16 @@ const ProfilePage = () => {
                 {/* User Info Card */}
                 <div className="px-6 mb-8">
                     <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                            <User className="w-8 h-8" />
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary overflow-hidden">
+                            {user?.photoURL ? (
+                                <img src={user.photoURL} alt={user.displayName} className="w-full h-full object-cover" />
+                            ) : (
+                                <User className="w-8 h-8" />
+                            )}
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold">Folião 2026</h2>
-                            <p className="text-sm text-muted-foreground">Curta o carnaval com segurança!</p>
+                            <h2 className="text-xl font-bold">{user?.displayName || 'Folião 2026'}</h2>
+                            <p className="text-sm text-muted-foreground">{user?.email || 'Curta o carnaval com segurança!'}</p>
                         </div>
                     </div>
                 </div>
@@ -77,10 +91,15 @@ const ProfilePage = () => {
                         </div>
                     </section>
 
-                    <button className="w-full py-4 mt-8 flex items-center justify-center gap-2 text-destructive font-bold hover:bg-destructive/10 rounded-xl transition-colors">
-                        <LogOut className="w-5 h-5" />
-                        Sair da Conta
-                    </button>
+                    {user && (
+                        <button
+                            onClick={handleLogout}
+                            className="w-full py-4 mt-8 flex items-center justify-center gap-2 text-destructive font-bold hover:bg-destructive/10 rounded-xl transition-colors"
+                        >
+                            <LogOut className="w-5 h-5" />
+                            Sair da Conta
+                        </button>
+                    )}
 
                     <p className="text-center text-xs text-muted-foreground mt-8">
                         Versão 1.0.0 • Carnaval BH No Bolso

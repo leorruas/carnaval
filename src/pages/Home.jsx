@@ -101,6 +101,28 @@ const Home = () => {
     }
   }, [activeTab, navigationDates, selectedDate]);
 
+  // Auto-scroll to selected date to ensure visibility
+  useEffect(() => {
+    if ((activeTab === 'calendar' || activeTab === 'favorites') && selectedDate) {
+      const container = document.getElementById('date-scroll-container');
+      const activeButton = container?.querySelector(`button[data-date="${selectedDate}"]`);
+
+      if (activeButton && container) {
+        // Small delay to ensure DOM has updated
+        setTimeout(() => {
+          activeButton.scrollIntoView({
+            behavior: 'smooth',
+            inline: 'nearest',
+            block: 'nearest'
+          });
+        }, 100);
+      }
+
+      // Scroll to top of page when date changes
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedDate, activeTab]);
+
 
   // Final filtering for display
   const displayBlocks = useMemo(() => {
@@ -148,7 +170,7 @@ const Home = () => {
                     const el = document.getElementById('date-scroll-container');
                     if (el) el.scrollBy({ left: -200, behavior: 'smooth' });
                   }}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10 pointer-events-none group-hover/scroll:pointer-events-auto"
                 >
                   <span className="text-lg leading-none mb-0.5">‹</span>
                 </button>
@@ -157,7 +179,7 @@ const Home = () => {
                   id="date-scroll-container"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex justify-start md:justify-center gap-3 overflow-x-auto hide-scrollbar px-10 pb-2 scroll-smooth"
+                  className="flex justify-start gap-3 overflow-x-auto hide-scrollbar px-4 md:px-16 pb-2 scroll-smooth"
                 >
                   {navigationDates.map(date => {
                     // Selected if it matches state AND we are in a mode that uses selection (Calendar or Favorites)
@@ -166,6 +188,7 @@ const Home = () => {
                     return (
                       <button
                         key={date}
+                        data-date={date}
                         onClick={() => {
                           setSelectedDate(date);
                           if (activeTab === 'today') setActiveTab('calendar');
@@ -193,7 +216,7 @@ const Home = () => {
                     const el = document.getElementById('date-scroll-container');
                     if (el) el.scrollBy({ left: 200, behavior: 'smooth' });
                   }}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/scroll:opacity-100 transition-opacity disabled:opacity-0 hidden md:flex hover:bg-background border border-white/10 pointer-events-none group-hover/scroll:pointer-events-auto"
                 >
                   <span className="text-lg leading-none mb-0.5">›</span>
                 </button>

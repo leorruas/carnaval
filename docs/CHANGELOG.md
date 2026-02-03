@@ -67,3 +67,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 14:15] - ui: Removed all shadows globally for a cleaner "Flat Gummy" aesthetic.
 - [2026-02-03 14:15] - fix: Resolved ReferenceError (missing X icon) and shared mode hydration logic.
 - [2026-02-03 14:15] - test: Updated MyAgenda test suite to cover Friends tab and empty states.
+- [2026-02-03 11:22] - feat: Implemented real-time Firebase Firestore synchronization for user favorites.
+- [2026-02-03 11:22] - feat: Added automatic migration of local favorites to cloud on first login.
+- [2026-02-03 11:22] - ui: Updated ProfilePage with authenticated user data and functional Logout.
+- [2026-02-03 11:22] - ui: Standardized typography using Archivo for body and Bricolage Grotesque for titles.
+- [2026-02-03 11:26] - feat: Added auto-scroll to selected date in calendar navigation for better visibility.
+- [2026-02-03 11:26] - feat: Implemented scroll-to-top behavior when changing selected date.
+- [2026-02-03 11:31] - fix: Added pointer-events-none to navigation arrows to prevent blocking date selection.
+- [2026-02-03 11:31] - fix: Increased desktop padding (px-4 md:px-16) to prevent arrow overlap with dates.
+- [2026-02-03 11:36] - ui: Updated light mode cards to use warm yellow (#E7E0D3) from brand-light.
+- [2026-02-03 11:36] - ui: Changed dark mode from blue-dark to neutral gray-dark for professional look.
+- [2026-02-03 11:42] - fix: Changed scrollIntoView from 'center' to 'nearest' to prevent hiding earlier dates.
+- [2026-02-03 11:45] - fix: Removed justify-center on desktop to keep dates consistently left-aligned.
