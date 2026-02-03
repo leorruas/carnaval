@@ -43,8 +43,9 @@ const Home = () => {
     const now = new Date();
 
     if (activeTab === 'favorites') {
-      const favoriteIds = favoriteBlocks.map(f => f.id);
-      result = result.filter(b => favoriteIds.includes(b.id));
+      // Use Set for O(1) lookup instead of O(n) with includes
+      const favoriteIds = new Set(favoriteBlocks.map(f => f.id));
+      result = result.filter(b => favoriteIds.has(b.id));
     } else if (activeTab === 'today') {
       const futureBlocks = result.filter(b => new Date(`${b.data}T${b.horario || '00:00'}`) >= now);
       const nextDate = sortBlocksByDateTime(futureBlocks)[0]?.data;
@@ -75,8 +76,9 @@ const Home = () => {
 
     // If in favorites tab, valid dates come only from favorites
     if (activeTab === 'favorites') {
-      const favoriteIds = favoriteBlocks.map(f => f.id);
-      sourceBlocks = blocosData.filter(b => favoriteIds.includes(b.id));
+      // Use Set for O(1) lookup
+      const favoriteIds = new Set(favoriteBlocks.map(f => f.id));
+      sourceBlocks = blocosData.filter(b => favoriteIds.has(b.id));
     }
 
     // Filter only future blocks for general calendar navigation
@@ -108,18 +110,26 @@ const Home = () => {
       const activeButton = container?.querySelector(`button[data-date="${selectedDate}"]`);
 
       if (activeButton && container) {
-        // Small delay to ensure DOM has updated
-        setTimeout(() => {
+        // Check if button is already visible
+        const rect = activeButton.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const isVisible = rect.left >= containerRect.left &&
+          rect.right <= containerRect.right;
+
+        // Only scroll if not visible, and use instant scroll if already close
+        if (!isVisible) {
           activeButton.scrollIntoView({
             behavior: 'smooth',
             inline: 'nearest',
             block: 'nearest'
           });
-        }, 100);
+        }
       }
 
-      // Scroll to top of page when date changes
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Only scroll page to top if significantly scrolled down
+      if (window.scrollY > 200) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   }, [selectedDate, activeTab]);
 
@@ -248,16 +258,21 @@ const Home = () => {
                 </div>
 
                 <div className="space-y-6">
-                  {sortBlocksByDateTime(blocks).map((block, idx) => (
-                    <motion.div
-                      key={block.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                    >
-                      <BlockCard block={block} />
-                    </motion.div>
-                  ))}
+                  {sortBlocksByDateTime(blocks).map((block, idx) => {
+                    // Only animate first 8 blocks with progressive delay
+                    const shouldAnimateWithDelay = idx < 8;
+
+                    return (
+                      <motion.div
+                        key={block.id}
+                        initial={shouldAnimateWithDelay ? { opacity: 0, y: 10 } : { opacity: 1 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={shouldAnimateWithDelay ? { delay: idx * 0.05 } : { duration: 0.2 }}
+                      >
+                        <BlockCard block={block} />
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.section>
             ))}

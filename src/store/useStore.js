@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { saveUserFavorites } from '../services/syncService';
 
+// Debounce timer for Firebase sync
+let syncTimeout = null;
+
 const useStore = create(
   persist(
     (set, get) => ({
@@ -47,11 +50,17 @@ const useStore = create(
 
         set({ favoriteBlocks: newFavorites });
 
-        // Cloud sync if authenticated
+        // Debounced cloud sync if authenticated
+        // Clear previous timeout to reset the 2s delay
+        if (syncTimeout) clearTimeout(syncTimeout);
+
         if (state.user?.uid) {
-          saveUserFavorites(state.user.uid, newFavorites).catch(err => {
-            console.error('Failed to sync favorites to cloud:', err);
-          });
+          syncTimeout = setTimeout(() => {
+            // Use get() to fetch latest state at sync time
+            saveUserFavorites(state.user.uid, get().favoriteBlocks).catch(err => {
+              console.error('Failed to sync favorites to cloud:', err);
+            });
+          }, 2000); // 2 second debounce
         }
       },
 

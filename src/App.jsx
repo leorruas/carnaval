@@ -1,52 +1,73 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './services/firebase';
 import { getUserFavorites, saveUserFavorites } from './services/syncService';
 import useStore from './store/useStore';
 
-import Home from './pages/Home';
-import MyAgenda from './pages/MyAgenda';
+// Lazy load pages for better performance
+const Home = lazy(() => import('./pages/Home'));
+const MyAgenda = lazy(() => import('./pages/MyAgenda'));
+const MapPage = lazy(() => import('./pages/MapPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+
 import BottomNav from './components/BottomNav';
-import MapPage from './pages/MapPage';
-import ProfilePage from './pages/ProfilePage';
 import Loader from './components/Loader';
 import { Agentation } from 'agentation';
 
 function AppContent() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
-  const { setUser, setFavorites, favoriteBlocks } = useStore();
+  const { user, setUser, setFavorites, favoriteBlocks } = useStore();
 
+  // Effect 1: Authentication state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-
-        try {
-          const cloudFavorites = await getUserFavorites(user.uid);
-
-          if (cloudFavorites && cloudFavorites.length > 0) {
-            // Se existem favoritos na nuvem, usamos eles
-            // Opcional: Mesclar com locais se quiser evitar perda de dados
-            // Por simplicidade agora: Nuvem vence se tiver dados
-            setFavorites(cloudFavorites);
-          } else if (favoriteBlocks.length > 0) {
-            // Se não tem na nuvem mas tem local, sobe os locais
-            await saveUserFavorites(user.uid, favoriteBlocks);
-          }
-        } catch (error) {
-          console.error('Erro ao sincronizar favoritos:', error);
-        }
-      } else {
-        setUser(null);
-      }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []); // Só roda no mount
+  }, [setUser]);
+
+  // Effect 2: Initial favorites sync (runs when user changes)
+  useEffect(() => {
+    const syncInitialFavorites = async () => {
+      if (!user?.uid) return;
+
+      try {
+        const cloudFavorites = await getUserFavorites(user.uid);
+
+        if (cloudFavorites && cloudFavorites.length > 0) {
+          // Cloud has data - use it
+          setFavorites(cloudFavorites);
+        } else {
+          // No cloud data - check if we have local favorites to upload
+          const currentFavorites = useStore.getState().favoriteBlocks;
+          if (currentFavorites.length > 0) {
+            await saveUserFavorites(user.uid, currentFavorites);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao sincronizar favoritos:', error);
+      }
+    };
+
+    syncInitialFavorites();
+  }, [user?.uid, setFavorites]); // Only depends on user.uid
+
+  // Effect 3: Prefetch other pages for instant navigation
+  useEffect(() => {
+    if (!loading) {
+      // Wait 2 seconds after initial load, then prefetch likely pages
+      const prefetchTimer = setTimeout(() => {
+        import('./pages/MyAgenda');
+        import('./pages/ProfilePage');
+      }, 2000);
+      return () => clearTimeout(prefetchTimer);
+    }
+  }, [loading]);
 
   return (
     <div className="App">
@@ -55,12 +76,14 @@ function AppContent() {
           <Loader key="loader" />
         ) : (
           <>
-            <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<Home />} />
-              <Route path="/agenda" element={<MyAgenda />} />
-              <Route path="/mapa" element={<MapPage />} />
-              <Route path="/perfil" element={<ProfilePage />} />
-            </Routes>
+            <Suspense fallback={<Loader />}>
+              <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route path="/agenda" element={<MyAgenda />} />
+                <Route path="/mapa" element={<MapPage />} />
+                <Route path="/perfil" element={<ProfilePage />} />
+              </Routes>
+            </Suspense>
             <BottomNav />
           </>
         )}

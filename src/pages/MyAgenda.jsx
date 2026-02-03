@@ -31,6 +31,7 @@ const MyAgenda = () => {
   const shareId = searchParams.get('shareId');
   const [sharedData, setSharedData] = useState(null);
   const [isLoadingShared, setIsLoadingShared] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -77,13 +78,17 @@ const MyAgenda = () => {
 
   const { matches, newBlocks } = useMemo(() => {
     if (!isSharedMode) return { matches: [], newBlocks: [] };
+
+    // Use Set for O(1) lookup performance
     const myIds = new Set(blocksList.map(b => b.id));
     const matchIds = [];
     const newIds = [];
+
     currentBlocks.forEach(b => {
       if (myIds.has(b.id)) matchIds.push(b.id);
       else newIds.push(b.id);
     });
+
     return { matches: matchIds, newBlocks: newIds };
   }, [isSharedMode, currentBlocks, favoriteBlocks]);
 
@@ -120,10 +125,16 @@ const MyAgenda = () => {
       setIsLoginModalOpen(true);
       return;
     }
+    if (isSharing) return; // Prevent double-click
+
+    setIsSharing(true);
     try {
       const blockIds = blocksList.map(b => b.id);
+      console.log('Creating share link with:', { userId: user.uid, userName: user.displayName, blockIds });
       const id = await createShareLink(user.uid, user.displayName || 'Folião', blockIds);
+      console.log('Share link created with ID:', id);
       const shareUrl = `${window.location.origin}/agenda?shareId=${id}`;
+      console.log('Share URL:', shareUrl);
       if (navigator.share) {
         await navigator.share({
           title: `Agenda de ${user.displayName || 'Amigo'} - Carnaval BH`,
@@ -131,10 +142,13 @@ const MyAgenda = () => {
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert('Link copiado!');
+        alert(`Link copiado!\n\n${shareUrl}`);
       }
     } catch (error) {
-      alert('Erro ao criar link de compartilhamento.');
+      console.error('Error in handleShare:', error);
+      alert(`Erro ao criar link de compartilhamento: ${error.message}`);
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -345,8 +359,13 @@ const MyAgenda = () => {
             {/* Actions Row */}
             {!isSharedMode && (
               <div className="flex gap-3 mb-8">
-                <button onClick={handleShare} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
-                  <Share2 className="w-4 h-4" /> Compartilhar
+                <button
+                  onClick={handleShare}
+                  disabled={isSharing}
+                  className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Share2 className={`w-4 h-4 ${isSharing ? 'animate-spin' : ''}`} />
+                  {isSharing ? 'Gerando...' : 'Compartilhar'}
                 </button>
                 <button onClick={handleExport} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
                   <Download className="w-4 h-4" /> Colocar na minha agenda
