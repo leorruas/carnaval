@@ -24,18 +24,32 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 ### Pill Toggle
 - Utilizado para alternar entre "Hoje", "Calendário" e "Favoritos".
 - Possui animação de fundo via `framer-motion`.
+- **Glassmorphism**: Utiliza classe `glass` com `backdrop-blur-sm` e `bg-muted/20` para efeito de vidro fosco.
 
 ### Dynamic Header
-- **Comportamento**: O header reduz sua altura e padding ao rolar a página para cima (scroll > 50px).
+- **Comportamento**: Header **sticky** no topo com apenas logo e botões de ação (busca, filtro, tema).
+- **Navigation Section**: PillToggle e seletor de dias foram movidos para **fora do header** e rolam naturalmente com a página.
 - **Escala**: O logo e os elementos internos são escalonados proporcionalmente via `useTransform`.
 - **Blur**: Utiliza `backdrop-blur-xl` para manter a legibilidade sobre o conteúdo.
+- **Search UX**: Implementa padrão mobile com botão "Cancelar" visível ao lado do input de busca.
 
 ### Cards de Blocos (Clean Gummy)
 - **Cantos**: `rounded-[32px]` (Estética "Gummy").
 - **Visual**: Cores pastéis suaves com bordas sutis em Dark Mode.
 - **Interação**: Micro-interações de escala ao passar o mouse.
 - **Utilitários**: Inclui botões de "Rota", "Uber" e "Bus", além de um botão de cópia rápida para o endereço com feedback animado.
-- **Countdown**: Redesenhado para um formato de pílula vibrante com fundo na cor primária.
+- **Countdown**: Redesenhado para um formato de pílula vibrante com fundo na cor primária. Inclui prefixo "Falta: " para clareza.
+- **Favorite Button**: Heart icon vermelho (`fill-red-500`, `text-red-500`) quando favoritado para melhor feedback visual.
+
+### Day Selector Buttons
+- **Visual**: Utilizam classe `glass` para efeito glassmorphic consistente.
+- **Layout**: Scroll horizontal com `rounded-2xl` e hover states com `bg-primary/10`.
+
+### My Agenda Page
+- **Header**: Sticky com título estilizado ("Minha" em itálico + "Agenda" em primary).
+- **Empty State**: Layout centralizado com ícone circular, tipografia moderna e botão "Explorar blocos" em estilo tabbar.
+- **Action Buttons**: Share e Export com `bg-muted/30` e `hover:bg-primary/10` matching BottomNav aesthetic.
+- **Next Block Card**: Utiliza classe `countdown-card` do design system com gradiente.
 
 ### Header Centrado
 - Elementos de navegação (PillToggle) e seletores de data são horizontalmente centrados para melhor equilíbrio visual.
@@ -49,3 +63,4 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - Utilize classes utilitárias do Tailwind (`className`).
 - Evite CSS puro (`style={{}}`) a menos que estritamente necessário para valores dinâmicos.
 - Mantenha componentes pequenos e reutilizáveis.
+- **Testes**: Todos os componentes UI devem ter testes automatizados com Vitest e React Testing Library.

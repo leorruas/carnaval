@@ -89,9 +89,9 @@ const BlockCard = ({ block }) => {
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => toggleFavorite(block.id)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-primary/10 shadow-inner' : 'bg-muted/50 hover:bg-muted'}`}
+          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10 shadow-inner' : 'bg-muted/50 hover:bg-muted'}`}
         >
-          <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+          <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
         </motion.button>
       </div>
 
@@ -148,7 +148,7 @@ const BlockCard = ({ block }) => {
               {countdown && !countdown.isPast && (
                 <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-2xl border border-primary/20 shadow-sm shadow-primary/5">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="font-mono text-xs font-black text-primary tracking-tight">{countdown.formatted}</span>
+                  <span className="font-mono text-[10px] uppercase font-black text-primary tracking-tight">Falta: {countdown.formatted}</span>
                 </div>
               )}
             </div>

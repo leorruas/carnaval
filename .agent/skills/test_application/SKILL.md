@@ -12,6 +12,7 @@ This skill ensures that the application is verified through automated tests (`vi
 -   **New Features**: Write tests *alongside* the feature (TDD style preferred).
 -   **Refactoring**: **CRITICAL**. Run tests *before* you start to establish a baseline, and *after* to ensure green.
 -   **UI Changes**: Use Snapshot Testing to catch unintended visual structure changes.
+-   **Force Automated Tests**: **MANDATORY**. If a feature or component does not have automated tests, they **MUST** be created as part of the task. Never assume a project is "too simple" for tests.
 
 ## 2. The Golden Rule of Regressions
 > "If it's not tested, it's broken."

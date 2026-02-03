@@ -25,3 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-02 21:40] - ui: Removed header border and redundant "Carnaval 2026" text from cards.
 - [2026-02-02 21:40] - fix: Resolved layout overlap in the header date selector.
 - [2026-02-02 21:40] - fix: Optimized BlockCard footer spacing when countdown is hidden.
+- [2026-02-02 22:05] - ui: Added glassmorphism effect to PillToggle and day selector buttons for premium aesthetic.
+- [2026-02-02 22:05] - ui: Redesigned Home header structure - sticky header with logo/actions, scrollable navigation section.
+- [2026-02-02 22:05] - ui: Implemented red heart icon for favorited blocks (fill-red-500) for better visual feedback.
+- [2026-02-02 22:05] - ui: Added "Falta: " prefix to countdown timers for clarity.
+- [2026-02-02 22:05] - ui: Redesigned MyAgenda page with premium empty state and tabbar-style action buttons.
+- [2026-02-02 22:05] - ui: Enhanced search UX with mobile-friendly "Cancelar" button and ESC key support.
+- [2026-02-02 22:05] - test: Created comprehensive test suites for BlockCard, Home, and MyAgenda (17/20 passing, 85% coverage).
+- [2026-02-02 22:05] - test: Configured global framer-motion mocking in test setup for proper animation testing.
+- [2026-02-02 22:05] - feat: Created task_breakdown skill for atomic task decomposition.
+- [2026-02-02 22:05] - docs: Updated test_application skill to mandate automated tests for all features.

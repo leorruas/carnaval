@@ -17,7 +17,7 @@ Este workflow DEVE ser executado pelo Agente de IA no início de QUALQUER solici
    - Leia integralmente o `docs/tech-stack.md` (se existir).
 
 4. **Criação do Plano (PLANNING & BREAKDOWN)**
-   - Utilize a skill `break_down_tasks` (se disponível) para decompor a solicitação.
+   - Utilize a skill `task_breakdown` (se disponível) para decompor a solicitação.
    - **Breakdown Atômico (Obrigatório)**: O `task.md` deve conter tarefas granulares.
      - Cada tarefa deve ter uma responsabilidade única.
      - Deve existir um critério de verificação claro para cada item.

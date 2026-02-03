@@ -86,10 +86,9 @@ const Home = () => {
     <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-500 pb-40">
       <div className="max-w-md mx-auto relative px-6">
 
-        {/* Dynamic Header Section */}
         <motion.header
           style={{ height: headerHeight, paddingTop: headerPadding }}
-          className="fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-xl px-6 max-w-md mx-auto"
+          className="sticky top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-xl px-6 max-w-md mx-auto"
         >
           <div className="flex justify-between items-center mb-6">
             <motion.div style={{ scale: logoScale }} className="origin-left">
@@ -123,63 +122,81 @@ const Home = () => {
                 exit={{ opacity: 0, y: -10 }}
                 className="mb-4"
               >
-                <div className="relative">
-                  <input
-                    autoFocus
-                    type="text"
-                    placeholder="Buscar por bloco, bairro ou endereço..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-muted/50 border-none rounded-2xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
-                    >
-                      <X className="w-3 h-3 opacity-40" />
-                    </button>
-                  )}
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <input
+                      autoFocus
+                      type="text"
+                      placeholder="Buscar por bloco, bairro ou endereço..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') {
+                          setIsSearchOpen(false);
+                          setSearchQuery('');
+                        }
+                      }}
+                      className="w-full bg-muted/50 border-none rounded-2xl py-3 px-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
+                      >
+                        <X className="w-3 h-3 opacity-40" />
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsSearchOpen(false);
+                      setSearchQuery('');
+                    }}
+                    className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors whitespace-nowrap"
+                  >
+                    Cancelar
+                  </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-center overflow-x-auto hide-scrollbar py-1">
-              <PillToggle
-                options={navOptions}
-                value={activeTab}
-                onChange={setActiveTab}
-              />
-            </div>
-
-            {/* Quick Day Selector (Only in Calendar/Favorites with results) */}
-            {activeTab !== 'today' && allDates.length > 1 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-center gap-3 overflow-x-auto hide-scrollbar pb-3 px-4"
-              >
-                {allDates.map(date => (
-                  <button
-                    key={date}
-                    onClick={() => scrollToDate(date)}
-                    className="flex flex-col items-center min-w-[48px] py-2 rounded-2xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group"
-                  >
-                    <span className="text-sm font-black">{date.split('-')[2]}</span>
-                    <span className="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100">
-                      {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
-                    </span>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </div>
         </motion.header>
 
+        {/* Navigation Section - Scrolls with page */}
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex justify-center overflow-x-auto hide-scrollbar py-2 px-3 rounded-3xl bg-muted/20 backdrop-blur-sm">
+            <PillToggle
+              options={navOptions}
+              value={activeTab}
+              onChange={setActiveTab}
+            />
+          </div>
+
+          {/* Quick Day Selector (Only in Calendar/Favorites with results) */}
+          {activeTab !== 'today' && allDates.length > 1 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-center gap-3 overflow-x-auto hide-scrollbar pb-3 px-4"
+            >
+              {allDates.map(date => (
+                <button
+                  key={date}
+                  onClick={() => scrollToDate(date)}
+                  className="flex flex-col items-center min-w-[48px] py-2 rounded-2xl glass hover:bg-primary/10 hover:text-primary transition-all group"
+                >
+                  <span className="text-sm font-black">{date.split('-')[2]}</span>
+                  <span className="text-[8px] font-black uppercase opacity-40 group-hover:opacity-100">
+                    {new Date(date).toLocaleString('pt-BR', { month: 'short' }).replace('.', '')}
+                  </span>
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </div>
+
         {/* Content Section */}
-        <main className="pt-48 space-y-16">
+        <main className="space-y-8">
           <AnimatePresence mode="popLayout">
             {Object.entries(groupedBlocks).sort().map(([date, blocks]) => (
               <motion.section
@@ -189,7 +206,7 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="scroll-mt-48 space-y-8"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <div className="flex flex-col items-center min-w-[40px]">
                     <span className="text-2xl font-black leading-none">{date.split('-')[2]}</span>
                     <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
