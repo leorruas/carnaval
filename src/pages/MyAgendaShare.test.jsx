@@ -185,6 +185,7 @@ describe('MyAgenda Sharing & Shared Mode', () => {
             favoriteBlocks: [],
             friends: [],
             toggleFavorite: vi.fn(),
+            addFriend: vi.fn(),
         });
 
         // Mock getPublicAgenda for Live Link
