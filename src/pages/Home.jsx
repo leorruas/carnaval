@@ -47,6 +47,12 @@ const Home = () => {
       result = result.filter(b => b.data === nextDate);
     }
 
+    // Filter out past dates globally for the lists
+    result = result.filter(b => {
+      const blockDate = new Date(`${b.data}T23:59:59`); // End of the day
+      return blockDate >= now;
+    });
+
     if (searchQuery) {
       result = result.filter(b =>
         b.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -83,7 +89,7 @@ const Home = () => {
         {/* Dynamic Header Section */}
         <motion.header
           style={{ height: headerHeight, paddingTop: headerPadding }}
-          className="fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/10 px-6 max-w-md mx-auto"
+          className="fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-xl px-6 max-w-md mx-auto"
         >
           <div className="flex justify-between items-center mb-6">
             <motion.div style={{ scale: logoScale }} className="origin-left">

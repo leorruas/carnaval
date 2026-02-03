@@ -36,6 +36,11 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Interação**: Micro-interações de escala ao passar o mouse.
 - **Utilitários**: Inclui botões de "Rota", "Uber" e "Bus", além de um botão de cópia rápida para o endereço com feedback animado.
 
+### Bottom Navigation (Minimalist)
+- **Labels**: Permanently removed (`span` and `label` logic deleted).
+- **Icons**: Uses Lucide icons with dynamic stroke weights (2.5px when active, 1.5px when inactive).
+- **Background**: `backdrop-blur-2xl` with a subtle primary background overlay on the active icon's container.
+
 ## 5. Diretrizes de Código
 - Utilize classes utilitárias do Tailwind (`className`).
 - Evite CSS puro (`style={{}}`) a menos que estritamente necessário para valores dinâmicos.

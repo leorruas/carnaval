@@ -141,53 +141,87 @@ const BlockCard = ({ block }) => {
       </div>
 
       {/* Footer / Utility Restoration */}
-      <div className="pt-8 border-t border-border/20 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {countdown && !countdown.isPast && (
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="font-mono text-xs font-black opacity-80">{countdown.formatted}</span>
-              </div>
+      {(countdown && !countdown.isPast || route) ? (
+        <div className="pt-8 border-t border-border/20 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {countdown && !countdown.isPast && (
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="font-mono text-xs font-black opacity-80">{countdown.formatted}</span>
+                </div>
+              )}
+            </div>
+            {route && (
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">
+                {route.distanceKm}KM • {route.durationText}
+              </span>
             )}
           </div>
-          {route && (
-            <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">
-              {route.distanceKm}KM • {route.durationText}
-            </span>
-          )}
+
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={handleCalculateDistance}
+              className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
+            >
+              <Navigation className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
+              <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+                {loadingRoute ? '...' : 'Rota'}
+              </span>
+            </button>
+
+            <button
+              onClick={handleOpenUber}
+              className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
+            >
+              <Car className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
+              <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+                {uberPrice ? uberPrice.formatted : 'Uber'}
+              </span>
+            </button>
+
+            <button
+              onClick={handleOpenMaps}
+              className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
+            >
+              <Bus className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
+              <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">Bus</span>
+            </button>
+          </div>
         </div>
+      ) : (
+        <div className="pt-4 border-t border-border/10">
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={handleCalculateDistance}
+              className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-1"
+            >
+              <Navigation className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
+              <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+                {loadingRoute ? '...' : 'Rota'}
+              </span>
+            </button>
 
-        <div className="grid grid-cols-3 gap-3">
-          <button
-            onClick={handleCalculateDistance}
-            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
-          >
-            <Navigation className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
-            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
-              {loadingRoute ? '...' : 'Rota'}
-            </span>
-          </button>
+            <button
+              onClick={handleOpenUber}
+              className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-1"
+            >
+              <Car className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
+              <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
+                {uberPrice ? uberPrice.formatted : 'Uber'}
+              </span>
+            </button>
 
-          <button
-            onClick={handleOpenUber}
-            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
-          >
-            <Car className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
-            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">
-              {uberPrice ? uberPrice.formatted : 'Uber'}
-            </span>
-          </button>
-
-          <button
-            onClick={handleOpenMaps}
-            className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-2"
-          >
-            <Bus className="w-5 h-5 opacity-40 group-hover/btn:opacity-100 transition-all" />
-            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">Bus</span>
-          </button>
+            <button
+              onClick={handleOpenMaps}
+              className="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/10 hover:bg-primary/5 hover:text-primary transition-all group/btn gap-1"
+            >
+              <Bus className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 transition-all" />
+              <span className="text-[7px] font-black uppercase tracking-widest opacity-40 group-hover/btn:opacity-100">Bus</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

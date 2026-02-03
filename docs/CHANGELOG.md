@@ -8,9 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Created `.agent` directory with skills and workflows.
-- Added `plan_analysis`, `update_documentation`, `github_interaction`, `check_golden_rules` skills.
-- Added `start-task` and `finalize-task` workflows.
 - Created initial `docs/` structure (`business-rules.md`, `style-guide.md`, `tech-stack.md`).
 - [2026-02-02 20:30] - ui: Design overhaul to a "Clean Gummy" aesthetic with pastel colors and rounded corners (32px).
 - [2026-02-02 20:30] - feat: Added `PillToggle` component for better navigation.
@@ -22,3 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-02 21:30] - ui: Enhanced BlockCard with full address display and Copy to Clipboard functionality.
 - [2026-02-02 21:30] - fix: Resolved Favorite button state re-rendering issue in BlockCard.
 - [2026-02-02 21:30] - fix: Implemented functional toggleable Search bar and header Filter button.
+- [2026-02-02 21:35] - ui: Removed text labels from bottom navigation bar for a more minimalist look.
