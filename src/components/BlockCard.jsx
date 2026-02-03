@@ -13,7 +13,7 @@ import {
 } from '../utils/locationUtils';
 import { getDateTheme } from '../utils/themeUtils';
 
-const BlockCard = ({ block }) => {
+const BlockCard = ({ block, matchBadge, onAdd }) => {
   const { toggleFavorite, favoriteBlocks } = useStore();
   const [countdown, setCountdown] = useState(null);
   const [route, setRoute] = useState(null);
@@ -23,7 +23,7 @@ const BlockCard = ({ block }) => {
   // Get dynamic theme based on DATE
   const theme = getDateTheme(block.data);
 
-  // Directly derive favorited state from favoriteBlocks array to ensure re-renders
+  // Directly derive favorited state
   const favorited = favoriteBlocks.some(b => b.id === block.id);
 
   // Update countdown
@@ -77,19 +77,35 @@ const BlockCard = ({ block }) => {
 
   return (
     <div
-      className={`relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-transparent group`}
+      className={`relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden ${onAdd ? '' : 'hover:shadow-2xl hover:border-transparent'}`}
       style={{
         '--theme-color': theme.color,
       }}
     >
-      {/* Dynamic border via simulated element or box-shadow could be cleaner, but using style for hover border color is tricky with tailwind classes alone if we want exact color match. 
-          Instead, let's use the style override for the border color on hover using standard CSS logic or just inline style for the border. 
-          Actually, let's use a pseudo-element or just applying the class if it's safelisted. 
-          Given the theme definitions, we have classes like hover:border-vibrant-pink/50. 
-      */}
+      {/* Dynamic border via simulated element */}
       <div className={`absolute inset-0 rounded-[2.5rem] border border-transparent pointer-events-none transition-all duration-500 ${theme.borderClass}`} />
 
-      {/* Time & Favorite Header */}
+      {/* Match Badge for Shared Agenda */}
+      {matchBadge && (
+        <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-2xl z-10 shadow-lg">
+          👯 Match!
+        </div>
+      )}
+
+      {/* Add Button for Shared Agenda (New Blocks) */}
+      {onAdd && (
+        <div className="absolute top-4 right-4 z-20">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onAdd(block)}
+            className="bg-primary text-white text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg hover:bg-primary/90 flex items-center gap-2"
+          >
+            Adicionar <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center text-[10px]">+</div>
+          </motion.button>
+        </div>
+      )}
+
+      {/* Time & Favorite Header (Hidden if onAdd mode, because button takes space, or adjust layout) */}
       <div className="flex justify-between items-start mb-8">
         <div className="space-y-1.5 font-sans">
           <span className={`text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors`}>
@@ -102,13 +118,15 @@ const BlockCard = ({ block }) => {
           )}
         </div>
 
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => toggleFavorite(block.id)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10 shadow-inner' : 'bg-muted/50 hover:bg-muted'}`}
-        >
-          <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-        </motion.button>
+        {!onAdd && (
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => toggleFavorite(block.id)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10 shadow-inner' : 'bg-muted/50 hover:bg-muted'}`}
+          >
+            <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+          </motion.button>
+        )}
       </div>
 
       {/* Main Info */}

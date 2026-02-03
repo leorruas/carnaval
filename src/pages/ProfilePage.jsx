@@ -85,6 +85,9 @@ const ProfilePage = () => {
                     <p className="text-center text-xs text-muted-foreground mt-8">
                         Versão 1.0.0 • Carnaval BH No Bolso
                     </p>
+                    <p className="text-center text-[10px] text-muted-foreground opacity-60 mt-1">
+                        Desenvolvido por <a href="https://leoruas.com" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-primary transition-colors">Leo Ruas</a>
+                    </p>
                 </div>
             </div>
         </div>

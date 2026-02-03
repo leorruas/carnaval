@@ -273,7 +273,7 @@ exports[`Home > renders correctly 1`] = `
               transition="[object Object]"
             >
               <div
-                class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 hover:shadow-2xl hover:border-transparent group"
+                class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden hover:shadow-2xl hover:border-transparent"
                 style="--theme-color: #00CE65;"
               >
                 <div
@@ -420,7 +420,7 @@ exports[`Home > renders correctly 1`] = `
                           style="color: rgb(0, 206, 101);"
                         >
                           Falta: 
-                          26d 4h 21m
+                          26d 3h 57m
                         </span>
                       </div>
                     </div>

@@ -18,6 +18,7 @@ Este workflow DEVE ser executado pelo Agente de IA no início de QUALQUER solici
 
 4. **Criação do Plano (PLANNING & BREAKDOWN)**
    - Utilize a skill `task_breakdown` (se disponível) para decompor a solicitação.
+   - **Componentização (Se aplicável)**: Se a tarefa envolver UI, utilize a skill `componentization` para planejar a estrutura dos componentes.
    - **Breakdown Atômico (Obrigatório)**: O `task.md` deve conter tarefas granulares.
      - Cada tarefa deve ter uma responsabilidade única.
      - Deve existir um critério de verificação claro para cada item.

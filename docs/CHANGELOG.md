@@ -51,3 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 09:30] - ui: Removed unwanted borders from sticky header for cleaner look.
 - [2026-02-03 09:30] - fix: Resolved Favorites filtering logic to respect date selection.
 - [2026-02-03 12:55] - docs: Updated documentation to reflect rebranding.
+- [2026-02-03 10:00] - feat: Created `componentization` skill for standardized UI component development.
+- [2026-02-03 10:00] - docs: Updated `start-task` workflow to include componentization check.
+- [2026-02-03 10:00] - docs: Updated Tech Stack to reflect Firebase integration.

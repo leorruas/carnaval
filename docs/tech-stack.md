@@ -18,7 +18,7 @@
 ## Integrations
 - **Maps**: Google Maps Links / OSRM
 - **Transport**: Uber Deep Links
-- **Backend (Optional)**: Firebase (Auth, Firestore)
+- **Backend**: Firebase (Auth, Firestore) - Integrated
 
 ## Folder Structure
 - `src/`: Source code

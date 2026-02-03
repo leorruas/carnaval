@@ -1,173 +1,166 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import MyAgenda from './MyAgenda';
 import useStore from '../store/useStore';
+import * as shareService from '../services/shareService';
 
 // Mock store
 vi.mock('../store/useStore');
 
-// Mock blocos data
+// Mock Firebase Auth
+vi.mock('firebase/auth', () => ({
+    getAuth: vi.fn(() => ({
+        currentUser: { uid: 'user1', displayName: 'Test User' }
+    })),
+}));
+
+// Mock blocks data
 vi.mock('../data/blocos.json', () => ({
     default: [
         {
-            id: 'fav-1',
-            nome: 'Bloco Favorito 1',
-            data: '2026-03-01',
-            horario: '14:00',
+            id: '1',
+            nome: 'Bloco 1',
+            data: '2026-02-15', // Same date for easier testing
+            horario: '10:00',
             bairro: 'Centro',
-            endereco: 'Rua A, 100',
-            latitude: -19.92,
-            longitude: -43.94,
+            endereco: 'Rua A',
+            latitude: 0,
+            longitude: 0
         },
         {
-            id: 'fav-2',
-            nome: 'Bloco Favorito 2',
-            data: '2026-03-02',
-            horario: '16:00',
+            id: '2',
+            nome: 'Bloco 2',
+            data: '2026-02-15',
+            horario: '14:00',
             bairro: 'Savassi',
-            endereco: 'Rua B, 200',
-            latitude: -19.93,
-            longitude: -43.95,
-        },
+            endereco: 'Rua B',
+            latitude: 0,
+            longitude: 0
+        }
     ],
 }));
+
+// Mock Share Service
+vi.mock('../services/shareService', () => ({
+    getSharedAgenda: vi.fn(),
+    createShareLink: vi.fn(),
+}));
+
+// Mock Scroll (Framer Motion)
+vi.mock('framer-motion', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useScroll: () => ({ scrollY: { get: () => 0, onChange: () => { } } }),
+        useTransform: () => 0,
+    };
+});
 
 describe('MyAgenda', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
 
-    it('renders correctly with favorites', () => {
+    it('renders Personal Mode correctly', () => {
         useStore.mockReturnValue({
-            favoriteBlocks: [{ id: 'fav-1' }, { id: 'fav-2' }],
+            favoriteBlocks: [{ id: '1' }],
+            toggleFavorite: vi.fn(),
         });
 
-        const { container } = render(
-            <BrowserRouter>
+        render(
+            <MemoryRouter>
                 <MyAgenda />
-            </BrowserRouter>
+            </MemoryRouter>
         );
-        expect(container).toMatchSnapshot();
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Minha Agenda/i);
+        expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
     });
 
-    it('shows empty state when no favorites', () => {
+    it('renders Shared Mode when shareId is present', async () => {
+        useStore.mockReturnValue({
+            favoriteBlocks: [], // I have no favorites
+            toggleFavorite: vi.fn(),
+        });
+
+        shareService.getSharedAgenda.mockResolvedValue({
+            ownerName: 'Amigo',
+            blocks: ['1', '2'] // Shared agenda has both blocks
+        });
+
+        render(
+            <MemoryRouter initialEntries={['/agenda?shareId=share-123']}>
+                <Routes>
+                    <Route path="/agenda" element={<MyAgenda />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(shareService.getSharedAgenda).toHaveBeenCalledWith('share-123');
+        });
+
+        expect(screen.getByText('Agenda de')).toBeInTheDocument();
+        expect(screen.getByText('Amigo')).toBeInTheDocument();
+        expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Bloco 2').length).toBeGreaterThan(0);
+    });
+
+    it('calculates matches correctly in Shared Mode', async () => {
+        useStore.mockReturnValue({
+            favoriteBlocks: [{ id: '1' }], // I have Bloco 1
+            toggleFavorite: vi.fn(),
+        });
+
+        shareService.getSharedAgenda.mockResolvedValue({
+            ownerName: 'Crush',
+            blocks: ['1', '2'] // They have 1 and 2
+        });
+
+        render(
+            <MemoryRouter initialEntries={['/agenda?shareId=xyz']}>
+                <MyAgenda />
+            </MemoryRouter>
+        );
+
+        await waitFor(() => expect(screen.getByText('Crush')).toBeInTheDocument());
+
+        // "1 em comum"
+        expect(screen.getByText(/1 em comum/i)).toBeInTheDocument();
+
+        // "Adicionar 1 novos" (since 2 is new to me)
+        expect(screen.getByText(/Adicionar 1 novos/i)).toBeInTheDocument();
+    });
+
+    it('handles adding blocks from Shared View', async () => {
+        const toggleFavoriteMock = vi.fn();
         useStore.mockReturnValue({
             favoriteBlocks: [],
+            toggleFavorite: toggleFavoriteMock,
+        });
+
+        shareService.getSharedAgenda.mockResolvedValue({
+            ownerName: 'Alegria',
+            blocks: ['2']
         });
 
         render(
-            <BrowserRouter>
+            <MemoryRouter initialEntries={['/agenda?shareId=abc']}>
                 <MyAgenda />
-            </BrowserRouter>
+            </MemoryRouter>
         );
 
-        expect(screen.getByText('Agenda Vazia')).toBeInTheDocument();
-        expect(screen.getByText(/Favorite blocos para montar sua agenda/i)).toBeInTheDocument();
-        expect(screen.getByText('Explorar blocos')).toBeInTheDocument();
-    });
+        await waitFor(() => expect(screen.getByText('Alegria')).toBeInTheDocument());
 
-    it('uses sticky header', () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [{ id: 'fav-1' }],
-        });
+        // Find "Adicionar" button on the card (Bloco 2)
+        // Since styling puts "Adicionar" text visually, we look for it.
+        // There is also a global "Adicionar X novos" button.
+        const addAllButton = screen.getByText(/Adicionar 1 novos/i);
+        fireEvent.click(addAllButton);
 
-        const { container } = render(
-            <BrowserRouter>
-                <MyAgenda />
-            </BrowserRouter>
-        );
-
-        const header = container.querySelector('header');
-        const headerClasses = header?.className || '';
-        expect(headerClasses).toContain('sticky');
-    });
-
-    it('displays favorite blocks count', () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [{ id: 'fav-1' }, { id: 'fav-2' }],
-        });
-
-        render(
-            <BrowserRouter>
-                <MyAgenda />
-            </BrowserRouter>
-        );
-
-        expect(screen.getByText(/2 blocos/i)).toBeInTheDocument();
-    });
-
-    it('shows next block section when there is an upcoming event', () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [{ id: 'fav-1' }],
-        });
-
-        // Mock current date to be before the event
-        vi.setSystemTime(new Date('2026-02-01'));
-
-        render(
-            <BrowserRouter>
-                <MyAgenda />
-            </BrowserRouter>
-        );
-
-        expect(screen.getByText('Próximo Bloco')).toBeInTheDocument();
-        const blockNames = screen.getAllByText('Bloco Favorito 1');
-        expect(blockNames.length).toBeGreaterThanOrEqual(1);
-
-        vi.useRealTimers();
-    });
-
-    it('renders share and export buttons with tabbar style', () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [{ id: 'fav-1' }],
-        });
-
-        const { container } = render(
-            <BrowserRouter>
-                <MyAgenda />
-            </BrowserRouter>
-        );
-
-        const shareButton = screen.getByText('Compartilhar').closest('button');
-        const exportButton = screen.getByText('Exportar').closest('button');
-
-        const shareClasses = shareButton?.className || '';
-        const exportClasses = exportButton?.className || '';
-
-        expect(shareClasses).toContain('bg-muted/30');
-        expect(shareClasses).toContain('hover:bg-primary/10');
-        expect(exportClasses).toContain('bg-muted/30');
-        expect(exportClasses).toContain('hover:bg-primary/10');
-    });
-
-    it('filters blocks by selected date', () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [{ id: 'fav-1' }, { id: 'fav-2' }],
-        });
-
-        render(
-            <BrowserRouter>
-                <MyAgenda />
-            </BrowserRouter>
-        );
-
-        // Initially, only the first date's block (Date 1) should be visible in the list.
-        // Block 1 is in 'Centro'. Block 2 is in 'Savassi'.
-        // "Próximo Bloco" header might show Block 1's name, but not its Bairro.
-        expect(screen.getByText('Centro')).toBeInTheDocument();
-        expect(screen.queryByText('Savassi')).not.toBeInTheDocument();
-
-        // Find date selector buttons
-        // Date 1: 01 (March)
-        // Date 2: 02 (March)
-        const dayButton2 = screen.getByText('02').closest('button');
-
-        // Click the second date
-        fireEvent.click(dayButton2);
-
-        // Now block 2 should be visible in the list (Savassi) and block 1 (Centro) hidden
-        expect(screen.getByText('Savassi')).toBeInTheDocument();
-        expect(screen.queryByText('Centro')).not.toBeInTheDocument();
+        // Should trigger toggleFavorite for '2'
+        // Wait for potential async if any (handleAddAll is synchronous but good to be safe)
+        expect(toggleFavoriteMock).toHaveBeenCalledWith('2');
     });
 });

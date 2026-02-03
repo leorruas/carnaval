@@ -1,22 +1,24 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // Configuração do Firebase
 // IMPORTANTE: Substitua com suas credenciais do Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyBElTVuiMpEzJ8nCNyGKQvTshVDfeb1NfE",
+  authDomain: "tateno-app.firebaseapp.com",
+  projectId: "tateno-app",
+  storageBucket: "tateno-app.firebasestorage.app",
+  messagingSenderId: "790111485975",
+  appId: "1:790111485975:web:dd9941f3ff0f06eef3dc52",
+  measurementId: "G-MDX7R03H3Q"
 };
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
 
 // Serviços do Firebase
 export const auth = getAuth(app);
@@ -45,12 +47,12 @@ export const requestNotificationPermission = async () => {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       console.log('Permissão de notificação concedida');
-      
+
       // Obter token FCM
       const token = await getToken(messaging, {
         vapidKey: 'YOUR_VAPID_KEY' // Obter do Firebase Console
       });
-      
+
       console.log('Token FCM:', token);
       return token;
     } else {
@@ -70,7 +72,7 @@ export const onMessageListener = () =>
       console.log('Messaging não disponível');
       return;
     }
-    
+
     onMessage(messaging, (payload) => {
       console.log('Mensagem recebida:', payload);
       resolve(payload);
