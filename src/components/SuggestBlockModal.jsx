@@ -34,7 +34,7 @@ const SuggestBlockModal = ({ isOpen, onClose }) => {
         try {
             // Race condition to prevent infinite loading
             const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Timeout: Falha de conexão.')), 10000)
+                setTimeout(() => reject(new Error('A conexão está lenta. Verifique sua internet e tente novamente.')), 30000)
             );
 
             const submissionPromise = addDoc(collection(db, 'suggested_blocks'), {

@@ -50,7 +50,7 @@
 - **Painel Administrativo**:
     - **Segurança**: Acesso **exclusivo** para o e-mail administrador (`leoruas@gmail.com`). Regras de segurança do Firestore bloqueiam leitura/escrita para outros usuários.
     - **Tempo Real**: A lista de sugestões utiliza `onSnapshot` para atualizações instantâneas sem necessidade de refresh manual.
-    - **Proteção**: Envios de sugestão possuem timeout de 10s e proteção contra race conditions de rede.
+    - **Proteção**: Envios de sugestão possuem timeout de 30s e sistema de feedback aprimorado para conexões lentas.
     - Permite visualizar sugestões pendentes, aprovar ou rejeitar.
     - **Aprovação**: Move o bloco da coleção `suggested_blocks` para `approved_blocks`.
     - **Rejeição**: Exclui permanentemente a sugestão.

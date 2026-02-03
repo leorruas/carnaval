@@ -36,14 +36,10 @@ const AdminPanel = ({ isOpen, onClose }) => {
     const handleApprove = async (suggestion) => {
         setProcessing(suggestion.id);
         try {
-            // 1. Add to approved_blocks with SAME ID (or generated? same ID is fine to track origin)
-            // Actually, let's use the suggestion ID as the block ID to prevent duplicates if approved twice?
-            // Or auto-generate. Let's use setDoc to specify ID if we want, or addDoc.
-            // Let's use `addDoc` to `approved_blocks` to get a fresh ID, OR use the suggestion ID.
-            // Using suggestion ID is cleaner.
-
+            // 1. Add to approved_blocks with SAME ID to prevent duplicates
             const { id, suggestedBy, suggestedByName, suggestedByEmail, createdAt, status, ...blockData } = suggestion;
 
+            // Use setDoc to ensure idempotency
             await setDoc(doc(db, 'approved_blocks', id), {
                 ...blockData,
                 source: 'user_suggestion',
@@ -54,11 +50,12 @@ const AdminPanel = ({ isOpen, onClose }) => {
             // 2. Delete from suggested_blocks
             await deleteDoc(doc(db, 'suggested_blocks', id));
 
-            // 3. Remove from UI
+            // 3. Remove from UI (optimistic update happened? No, we wait for confirmation but don't want to get stuck)
+            // The snapshot listener might update it, but let's ensure local state is clean
             setSuggestions(prev => prev.filter(s => s.id !== id));
         } catch (error) {
             console.error("Error approving block:", error);
-            alert("Erro ao aprovar.");
+            alert("Erro ao aprovar. Verifique sua conexão.");
         } finally {
             setProcessing(null);
         }

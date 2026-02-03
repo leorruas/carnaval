@@ -87,8 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 13:34] - perf: Added page prefetch for instant navigation between routes (0ms vs 1-2s).
 - [2026-02-03 13:34] - fix: Fixed critical bug where user variable was undefined in sync effect.
 - [2026-02-03 14:45] - fix: Resolved race condition in Live Link sharing by implementing 'Force Sync' before copy
-[2026-02-03 14:45] - feat: Enabled sharing of empty agendas (removed validation block) to facilitate friend following
-[2026-02-03 14:24] - feat: Implemented Live Link feature (permanent public sharable links)
+- [2026-02-03 14:45] - feat: Enabled sharing of empty agendas (removed validation block) to facilitate friend following
+- [2026-02-03 14:24] - feat: Implemented Live Link feature (permanent public sharable links)
 - [2026-02-03 14:24] - fix: Fixed infinite loading state on share button by replacing snapshot generation with live link
 - [2026-02-03 14:24] - test: Added comprehensive test suite for shareService and MyAgenda
 - [2026-02-03 13:52] - fix: Fixed timeout issues in MyAgenda tests loading state with 10-second timeout protection.
@@ -107,3 +107,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 15:35] - fix: Added timeout protection (10s) and race condition handling to "Suggest Block" submission.
 - [2026-02-03 15:35] - sec: Hardened Firestore Security Rules for `suggested_blocks` (admin-only read/write).
 - [2026-02-03 15:35] - feat: Enabled offline persistence for Firestore to improve reliability on flaky networks.
+- [2026-02-03 15:45] - fix: Increased Suggestion Timeout to 30s to accommodate slower connections.
+- [2026-02-03 15:45] - fix: Resolved infinite loading in Admin Panel approval flow by caching state updates.
