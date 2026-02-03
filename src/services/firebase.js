@@ -1,11 +1,14 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 // Configuração do Firebase
-// IMPORTANTE: Substitua com suas credenciais do Firebase Console
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -16,26 +19,40 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
+// SINGLETON: Inicializar Firebase apenas uma vez
+// Isso previne o erro "INTERNAL ASSERTION: Unexpected state"
+let app;
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+  console.log('[Firebase] App initialized (first time)');
+} else {
+  app = getApps()[0];
+  console.log('[Firebase] Reusing existing app instance');
+}
+
 export const analytics = getAnalytics(app);
 
 // Serviços do Firebase
 export const auth = getAuth(app);
+
+// SINGLETON: Firestore gerencia instância única automaticamente
+// Compatible with Vite HMR - SDK handles singleton internally
 export const db = getFirestore(app);
+console.log('[Firebase] Firestore initialized (singleton)');
 
-
-try {
-  enableMultiTabIndexedDbPersistence(db).catch((err) => {
-    if (err.code === 'failed-precondition') {
-      console.warn('Persistência falhou: Múltiplas abas abertas.');
-    } else if (err.code === 'unimplemented') {
-      console.warn('Persistência não suportada neste navegador.');
-    }
-  });
-} catch (e) {
-  console.warn("Erro ao ativar persistência:", e);
-}
+/**
+ * "Aquece" a conexão do Firestore fazendo uma query dummy.
+ */
+export const warmupFirestore = async () => {
+  try {
+    console.log('[Firebase] Warming up Firestore connection...');
+    const dummyRef = doc(db, '_connection_test', 'warmup');
+    await getDoc(dummyRef, { source: 'server' });
+    console.log('[Firebase] ✅ Firestore connection warmed up');
+  } catch (error) {
+    console.log('[Firebase] Warmup attempt completed (errors ignored)');
+  }
+};
 
 // Messaging (notificações push)
 let messaging = null;

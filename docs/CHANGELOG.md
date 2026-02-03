@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 08:31] - ui: Replaced PillToggle background with subtle dot marker.
 - [2026-02-03 08:31] - ui: Centered countown content in BlockCard.
 - [2026-02-03 08:31] - fix: Calendar view now strictly filters blocks by selected day.
-- [2026-02-03 12:55] - feat: Rebranded app to "TáTeno" with new SVG logo and identity.
+- [2026-02-03 12:55] - feat: Rebranded app to "táteno" with new SVG logo and identity.
 - [2026-02-03 12:55] - ui: Implemented new Brand Colors (Brand Blue, Green, Orange, Light, Pink).
 - [2026-02-03 12:55] - ui: Refined sticky header with gradient fade background for better legibility.
 - [2026-02-03 12:55] - ui: Added glassmorphism to date selector buttons.
@@ -109,3 +109,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 15:35] - feat: Enabled offline persistence for Firestore to improve reliability on flaky networks.
 - [2026-02-03 15:45] - fix: Increased Suggestion Timeout to 30s to accommodate slower connections.
 - [2026-02-03 15:45] - fix: Resolved infinite loading in Admin Panel approval flow by caching state updates.
+- [2026-02-03 16:00] - fix: Removed 2s debounce on favorites sync to ensure immediate Cloud persistence.
+- [2026-02-03 16:00] - fix: Implemented 10s timeout protection in `syncNow` to prevent UI hang during link generation.
+- [2026-02-03 16:00] - feat: Implemented "Friends Flow" landing experience - shared links now open the Friends tab first.
+- [2026-02-03 16:00] - ui: Added "Novo Amigo Encontrado" preview card for better friend onboarding.
+- [2026-02-03 16:00] - fix: Resolved JSX syntax error and variable duplication in `MyAgenda.jsx`.
+- [2026-02-03 19:00] - fix: Resolved "Target ID already exists" error by replacing manual Firestore instance management with native getFirestore() singleton.
+- [2026-02-03 19:00] - fix: Fixed "Missing or insufficient permissions" error by adding approved_blocks collection rules to Firestore.
+- [2026-02-03 19:00] - refactor: Simplified firebase.js by removing 24 lines of complex HMR handling code.
+- [2026-02-03 19:00] - perf: Improved retry logic to fail fast on structural errors (Target ID, failed-precondition).
+- [2026-02-03 19:00] - perf: Switched from memory-only cache to IndexedDB for better offline support and performance.
+
