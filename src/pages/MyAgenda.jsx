@@ -125,16 +125,31 @@ const MyAgenda = () => {
       setIsLoginModalOpen(true);
       return;
     }
-    if (isSharing) return; // Prevent double-click
+
+    // Prevent double-click
+    if (isSharing) return;
+
+    // Validate we have blocks to share
+    if (blocksList.length === 0) {
+      alert('Você precisa ter blocos na sua agenda para compartilhar!');
+      return;
+    }
 
     setIsSharing(true);
     try {
       const blockIds = blocksList.map(b => b.id);
-      console.log('Creating share link with:', { userId: user.uid, userName: user.displayName, blockIds });
+      console.log('[MyAgenda] Creating share link with:', {
+        userId: user.uid,
+        userName: user.displayName,
+        blockIds
+      });
+
       const id = await createShareLink(user.uid, user.displayName || 'Folião', blockIds);
-      console.log('Share link created with ID:', id);
+      console.log('[MyAgenda] Share link created with ID:', id);
+
       const shareUrl = `${window.location.origin}/agenda?shareId=${id}`;
-      console.log('Share URL:', shareUrl);
+      console.log('[MyAgenda] Share URL:', shareUrl);
+
       if (navigator.share) {
         await navigator.share({
           title: `Agenda de ${user.displayName || 'Amigo'} - Carnaval BH`,
@@ -145,8 +160,19 @@ const MyAgenda = () => {
         alert(`Link copiado!\n\n${shareUrl}`);
       }
     } catch (error) {
-      console.error('Error in handleShare:', error);
-      alert(`Erro ao criar link de compartilhamento: ${error.message}`);
+      console.error('[MyAgenda] Error in handleShare:', error);
+
+      // User-friendly error messages
+      let errorMessage = 'Erro ao criar link de compartilhamento.';
+      if (error.message.includes('timed out')) {
+        errorMessage = 'A operação demorou muito. Verifique sua conexão e tente novamente.';
+      } else if (error.message.includes('not initialized')) {
+        errorMessage = 'Serviço de compartilhamento não está disponível. Tente novamente mais tarde.';
+      } else if (error.code === 'permission-denied') {
+        errorMessage = 'Você não tem permissão para compartilhar. Faça login novamente.';
+      }
+
+      alert(errorMessage);
     } finally {
       setIsSharing(false);
     }

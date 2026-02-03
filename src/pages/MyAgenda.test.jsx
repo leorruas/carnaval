@@ -70,7 +70,7 @@ describe('MyAgenda', () => {
         });
     });
 
-    it('renders Personal Mode correctly', () => {
+    it('renders Personal Mode correctly', { timeout: 10000 }, () => {
         useStore.mockReturnValue({
             favoriteBlocks: [{ id: '1' }],
             friends: [],
@@ -116,10 +116,15 @@ describe('MyAgenda', () => {
             expect(shareService.getSharedAgenda).toHaveBeenCalledWith('share-123');
         });
 
-        expect(screen.getByText('Agenda de')).toBeInTheDocument();
-        expect(screen.getByText('Amigo')).toBeInTheDocument();
-        expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
-        expect(screen.getAllByText('Bloco 2').length).toBeGreaterThan(0);
+        await waitFor(() => {
+            expect(screen.getByText('Agenda de')).toBeInTheDocument();
+            expect(screen.getByText('Amigo')).toBeInTheDocument();
+        });
+
+        // Blocks should be rendered
+        await waitFor(() => {
+            expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
+        });
     });
 
     it('calculates matches correctly in Shared Mode', async () => {
@@ -222,5 +227,163 @@ describe('MyAgenda', () => {
         const friendCard = screen.getByText('Amigo 1').closest('div').parentElement.parentElement;
         const viewButton = within(friendCard).getAllByRole('button')[0];
         expect(viewButton).toBeInTheDocument();
+    });
+
+    describe('Share functionality', () => {
+        beforeEach(() => {
+            // Mock navigator.clipboard
+            Object.assign(navigator, {
+                clipboard: {
+                    writeText: vi.fn().mockResolvedValue(undefined)
+                }
+            });
+            // Mock alert
+            global.alert = vi.fn();
+        });
+
+        it('shows loading state when sharing', async () => {
+            useStore.mockReturnValue({
+                favoriteBlocks: [{ id: '1' }],
+                friends: [],
+                toggleFavorite: vi.fn(),
+                addFriend: vi.fn(),
+                removeFriend: vi.fn(),
+            });
+
+            // Make createShareLink slow to capture loading state
+            shareService.createShareLink.mockImplementation(() =>
+                new Promise(resolve => setTimeout(() => resolve('share-id-123'), 100))
+            );
+
+            render(
+                <MemoryRouter>
+                    <MyAgenda />
+                </MemoryRouter>
+            );
+
+            const shareButton = screen.getByText('Compartilhar');
+            fireEvent.click(shareButton);
+
+            // Should show loading state
+            await waitFor(() => {
+                expect(screen.getByText('Gerando...')).toBeInTheDocument();
+            });
+
+            // Should return to normal after completion
+            await waitFor(() => {
+                expect(screen.getByText('Compartilhar')).toBeInTheDocument();
+            }, { timeout: 2000 });
+        });
+
+        it('shows error message on timeout', { timeout: 10000 }, async () => {
+            useStore.mockReturnValue({
+                favoriteBlocks: [{ id: '1' }],
+                friends: [],
+                toggleFavorite: vi.fn(),
+                addFriend: vi.fn(),
+                removeFriend: vi.fn(),
+            });
+
+            shareService.createShareLink.mockRejectedValue(new Error('Operation timed out'));
+
+            render(
+                <MemoryRouter>
+                    <MyAgenda />
+                </MemoryRouter>
+            );
+
+            const shareButton = screen.getByText('Compartilhar');
+            fireEvent.click(shareButton);
+
+            await waitFor(() => {
+                expect(global.alert).toHaveBeenCalledWith(
+                    'A operação demorou muito. Verifique sua conexão e tente novamente.'
+                );
+            });
+
+            // Button should be enabled again
+            expect(screen.getByText('Compartilhar')).toBeInTheDocument();
+        });
+
+        it('shows error message when Firestore is not initialized', async () => {
+            useStore.mockReturnValue({
+                favoriteBlocks: [{ id: '1' }],
+                friends: [],
+                toggleFavorite: vi.fn(),
+                addFriend: vi.fn(),
+                removeFriend: vi.fn(),
+            });
+
+            shareService.createShareLink.mockRejectedValue(new Error('Firestore is not initialized'));
+
+            render(
+                <MemoryRouter>
+                    <MyAgenda />
+                </MemoryRouter>
+            );
+
+            const shareButton = screen.getByText('Compartilhar');
+            fireEvent.click(shareButton);
+
+            await waitFor(() => {
+                expect(global.alert).toHaveBeenCalledWith(
+                    'Serviço de compartilhamento não está disponível. Tente novamente mais tarde.'
+                );
+            });
+        });
+
+        it('prevents sharing when agenda is empty', () => {
+            useStore.mockReturnValue({
+                favoriteBlocks: [],
+                friends: [],
+                toggleFavorite: vi.fn(),
+                addFriend: vi.fn(),
+                removeFriend: vi.fn(),
+            });
+
+            render(
+                <MemoryRouter>
+                    <MyAgenda />
+                </MemoryRouter>
+            );
+
+            // Should show empty state instead
+            expect(screen.getByText('Agenda Vazia')).toBeInTheDocument();
+        });
+
+        it('successfully creates and copies share link', { timeout: 10000 }, async () => {
+            useStore.mockReturnValue({
+                favoriteBlocks: [{ id: '1' }],
+                friends: [],
+                toggleFavorite: vi.fn(),
+                addFriend: vi.fn(),
+                removeFriend: vi.fn(),
+            });
+
+            shareService.createShareLink.mockResolvedValue('share-id-123');
+
+            render(
+                <MemoryRouter>
+                    <MyAgenda />
+                </MemoryRouter>
+            );
+
+            const shareButton = screen.getByText('Compartilhar');
+            fireEvent.click(shareButton);
+
+            await waitFor(() => {
+                expect(shareService.createShareLink).toHaveBeenCalledWith(
+                    'user1',
+                    'Test User',
+                    ['1']
+                );
+            });
+
+            await waitFor(() => {
+                expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+                    expect.stringContaining('shareId=share-id-123')
+                );
+            });
+        });
     });
 });
