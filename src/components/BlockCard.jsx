@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, MapPin, Copy, Check } from 'lucide-react';
 import useStore from '../store/useStore';

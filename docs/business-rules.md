@@ -10,6 +10,7 @@
 ### 1.2. Favoritos & Agenda
 - Usuários podem favoritar blocos.
 - **Persistência Cloud**: Os favoritos são sincronizados com o **Firebase Firestore** quando o usuário está logado. 
+    - **Sincronização Imediata**: Toda alteração (favoritar/desfavoritar) é enviada instantaneamente ao Firestore para garantir consistência em tempo real.
     - **Hidratação**: Ao logar, se a nuvem tiver dados, eles substituem os locais. Se a nuvem estiver vazia, os favoritos locais são subidos automaticamente.
     - **Offline**: Usuários deslogados usam persistência local (fallback).
 - **Minha Agenda**: Uma visualização filtrada apenas com os blocos favoritados.
@@ -20,6 +21,10 @@
     - **Sem Bloqueio de Vazio**: É permitido compartilhar uma agenda vazia (ex: para começar a seguir amigos).
     - **Error Handling**: Feedback visual para sucesso (cópia) ou erro (permissões/falhas).
 - **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos. Amigos seguidos são salvos no perfil do usuário e podem ser acessados rapidamente na aba "Amigos" da agenda.
+- **Fluxo de Onboarding de Amigos**:
+    - Ao acessar um Live Link, o sistema detecta se o usuário já segue o dono da agenda.
+    - **Preview Mode**: Se não seguir, o usuário é direcionado automaticamente para a aba **Amigos**, exibindo um card de pré-visualização ("Novo Amigo Encontrado").
+    - **Seguir para Ver**: O acesso à agenda completa do amigo é liberado após o clique em "Seguir", promovendo o engajamento social.
 
 ### 1.3. Filtros e Busca
 - **Busca Global**: 

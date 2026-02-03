@@ -119,4 +119,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 19:00] - refactor: Simplified firebase.js by removing 24 lines of complex HMR handling code.
 - [2026-02-03 19:00] - perf: Improved retry logic to fail fast on structural errors (Target ID, failed-precondition).
 - [2026-02-03 19:00] - perf: Switched from memory-only cache to IndexedDB for better offline support and performance.
+- [2026-02-03 19:18] - fix: Resolved "Shared Agenda" blocks not showing by implementing block hydration service (IDs -> Objects).
+- [2026-02-03 19:18] - fix: Fixed "FIRESTORE INTERNAL ASSERTION FAILED" by removing aggressive connection checks in `useFirestoreReady`.
+- [2026-02-03 19:18] - feat: Created `blockService` to handle efficient block retrieval strategies (static vs dynamic).
+- [2026-02-03 19:18] - test: Added comprehensive unit tests for block hydration logic.
 

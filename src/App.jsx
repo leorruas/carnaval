@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './services/firebase';
-import { getUserFavorites, saveUserFavorites } from './services/syncService';
+import { auth, warmupFirestore } from './services/firebase';
+import { getUserFavorites } from './services/syncService';
+import { mergeFavorites } from './utils/migration';
 import useStore from './store/useStore';
+import { useFirestoreReady } from './hooks/useFirestoreReady';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -20,42 +22,77 @@ function AppContent() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const { user, setUser, setFavorites, favoriteBlocks } = useStore();
+  const { isReady: firestoreReady, isOnline } = useFirestoreReady();
+  const syncedUsersRef = useRef(new Set()); // Track which users have been synced
+
+  // Effect 0: Warmup Firestore connection ASAP
+  useEffect(() => {
+    warmupFirestore(); // Fire and forget - não bloquear o app
+  }, []);
 
   // Effect 1: Authentication state listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      setLoading(false);
+      // Só para de carregar quando auth E firestore estiverem prontos (ou não houver usuário)
+      if (firestoreReady || !user) {
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();
-  }, [setUser]);
+  }, [setUser, firestoreReady]);
 
   // Effect 2: Initial favorites sync (runs when user changes)
+  // IMPORTANTE: Aguarda Firestore estar pronto antes de tentar sincronizar
   useEffect(() => {
     const syncInitialFavorites = async () => {
       if (!user?.uid) return;
 
-      try {
-        const cloudFavorites = await getUserFavorites(user.uid);
+      // CRITICAL FIX: Evitar sync duplicado para o mesmo usuário
+      if (syncedUsersRef.current.has(user.uid)) {
+        console.log('[App] User already synced, skipping duplicate sync:', user.uid);
+        return;
+      }
 
-        if (cloudFavorites && cloudFavorites.length > 0) {
-          // Cloud has data - use it
-          setFavorites(cloudFavorites);
-        } else {
-          // No cloud data - check if we have local favorites to upload
-          const currentFavorites = useStore.getState().favoriteBlocks;
-          if (currentFavorites.length > 0) {
-            await saveUserFavorites(user.uid, currentFavorites);
-          }
-        }
+      // Aguardar Firestore estar pronto
+      if (!firestoreReady) {
+        console.log('[App] Waiting for Firestore to be ready before syncing favorites...');
+        return;
+      }
+
+      // Verificar conexão de internet
+      if (!isOnline) {
+        console.warn('[App] User is offline, skipping initial sync');
+        return;
+      }
+
+      try {
+        console.log('[App] Starting initial favorites sync for user:', user.uid);
+        const cloudFavorites = await getUserFavorites(user.uid);
+        const localFavorites = useStore.getState().favoriteBlocks;
+
+        // Perform Merge
+        const merged = await mergeFavorites(
+          user.uid,
+          localFavorites,
+          cloudFavorites,
+          user.displayName || 'Folião'
+        );
+
+        // Update Store
+        setFavorites(merged);
+
+        // Marcar como sincronizado
+        syncedUsersRef.current.add(user.uid);
+        console.log('[App] Initial sync completed successfully');
       } catch (error) {
         console.error('Erro ao sincronizar favoritos:', error);
       }
     };
 
     syncInitialFavorites();
-  }, [user?.uid, setFavorites]); // Only depends on user.uid
+  }, [user?.uid, firestoreReady, isOnline, setFavorites]);
 
   // Effect 3: Prefetch other pages for instant navigation
   useEffect(() => {

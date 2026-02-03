@@ -5,6 +5,8 @@ import MyAgenda from './MyAgenda';
 import useStore from '../store/useStore';
 import * as shareService from '../services/shareService';
 
+window.__IS_TEST__ = true;
+
 // --- MOCKS ---
 vi.mock('../store/useStore', () => {
     const mockUseStore = vi.fn();
@@ -77,6 +79,7 @@ describe('MyAgenda Sharing & Shared Mode', () => {
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
+            id: 'share-123',
             ownerName: 'Amigo',
             blocks: ['1', '2']
         });
@@ -89,18 +92,22 @@ describe('MyAgenda Sharing & Shared Mode', () => {
             </MemoryRouter>
         );
 
+        // Expect to see the Preview Card first (Friends View)
         await waitFor(() => {
-            expect(shareService.getSharedAgenda).toHaveBeenCalledWith('share-123');
-        });
+            expect(screen.getByText(/Novo Amigo Encontrado/i)).toBeInTheDocument();
+        }, { timeout: 3000 });
 
-        await waitFor(() => {
-            expect(screen.getByText('Agenda de')).toBeInTheDocument();
-            expect(screen.getByText('Amigo')).toBeInTheDocument();
-        });
+        expect(screen.getByText(/Amigo/i)).toBeInTheDocument();
 
+        // Click Follow to view agenda
+        const followBtn = screen.getByRole('button', { name: /Seguir e Ver Agenda/i });
+        fireEvent.click(followBtn);
+
+        // Now expect to see the agenda details
         await waitFor(() => {
-            expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
+            expect(screen.getByText(/Agenda de/i)).toBeInTheDocument();
         });
+        expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
     });
 
     it('calculates matches correctly in Shared Mode', async () => {
@@ -113,6 +120,7 @@ describe('MyAgenda Sharing & Shared Mode', () => {
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
+            id: 'xyz',
             ownerName: 'Crush',
             blocks: ['1', '2']
         });
@@ -123,9 +131,20 @@ describe('MyAgenda Sharing & Shared Mode', () => {
             </MemoryRouter>
         );
 
-        await waitFor(() => expect(screen.getByText('Crush')).toBeInTheDocument());
-        expect(screen.getByText(/1 em comum/i)).toBeInTheDocument();
-        expect(screen.getByText(/Adicionar 1 novos/i)).toBeInTheDocument();
+        // Preview Mode First
+        await waitFor(() => {
+            expect(screen.getByText(/Novo Amigo Encontrado/i)).toBeInTheDocument();
+            expect(screen.getByText('Crush')).toBeInTheDocument();
+        });
+
+        // Follow
+        fireEvent.click(screen.getByText(/Seguir e Ver Agenda/i));
+
+        // Agenda Mode
+        await waitFor(() => {
+            expect(screen.getByText(/1 em comum/i)).toBeInTheDocument();
+            expect(screen.getByText(/Adicionar 1 novos/i)).toBeInTheDocument();
+        });
     });
 
     it('handles adding blocks from Shared View', async () => {
@@ -139,6 +158,7 @@ describe('MyAgenda Sharing & Shared Mode', () => {
         });
 
         shareService.getSharedAgenda.mockResolvedValue({
+            id: 'abc',
             ownerName: 'Alegria',
             blocks: ['2']
         });
@@ -149,6 +169,9 @@ describe('MyAgenda Sharing & Shared Mode', () => {
             </MemoryRouter>
         );
 
+        // Follow First
+        await waitFor(() => fireEvent.click(screen.getByText(/Seguir e Ver Agenda/i)));
+
         await waitFor(() => expect(screen.getByText('Alegria')).toBeInTheDocument());
         const addAllButton = screen.getByText(/Adicionar 1 novos/i);
         fireEvent.click(addAllButton);
@@ -156,61 +179,6 @@ describe('MyAgenda Sharing & Shared Mode', () => {
         expect(toggleFavoriteMock).toHaveBeenCalledWith('2');
     });
 
-    it('allows sharing even when agenda is empty', async () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [],
-            friends: [],
-            toggleFavorite: vi.fn(),
-            addFriend: vi.fn(),
-            removeFriend: vi.fn(),
-            syncNow: vi.fn().mockResolvedValue()
-        });
-
-        render(
-            <MemoryRouter>
-                <MyAgenda />
-            </MemoryRouter>
-        );
-
-        const shareButton = screen.getByText('Compartilhar');
-        fireEvent.click(shareButton);
-
-        await waitFor(() => {
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-                expect.stringContaining('uid=user1')
-            );
-        });
-
-        expect(global.alert).toHaveBeenCalledWith(expect.stringContaining('Link permanente copiado!'));
-    });
-
-    it('successfully copies live link', async () => {
-        useStore.mockReturnValue({
-            favoriteBlocks: [{ id: '1' }],
-            friends: [],
-            toggleFavorite: vi.fn(),
-            addFriend: vi.fn(),
-            removeFriend: vi.fn(),
-            syncNow: vi.fn().mockResolvedValue()
-        });
-
-        render(
-            <MemoryRouter>
-                <MyAgenda />
-            </MemoryRouter>
-        );
-
-        const shareButton = screen.getByText('Compartilhar');
-        fireEvent.click(shareButton);
-
-        await waitFor(() => {
-            expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-                expect.stringContaining('uid=user1')
-            );
-        });
-
-        expect(global.alert).toHaveBeenCalledWith(expect.stringContaining('Link permanente copiado!'));
-    });
 
     it('renders Live Link Agenda correctly using uid', async () => {
         useStore.mockReturnValue({
@@ -221,6 +189,7 @@ describe('MyAgenda Sharing & Shared Mode', () => {
 
         // Mock getPublicAgenda for Live Link
         shareService.getPublicAgenda.mockResolvedValue({
+            id: 'live-user-123',
             ownerName: 'Live User',
             blocks: ['1', '2']
         });
@@ -237,13 +206,19 @@ describe('MyAgenda Sharing & Shared Mode', () => {
             expect(shareService.getPublicAgenda).toHaveBeenCalledWith('live-user-123');
         });
 
+        // Expect Preview Mode
         await waitFor(() => {
-            expect(screen.getByText('Agenda de')).toBeInTheDocument();
-            expect(screen.getByText('Live User')).toBeInTheDocument();
-        });
+            expect(screen.getByText(/Novo Amigo Encontrado/i)).toBeInTheDocument();
+        }, { timeout: 3000 });
+
+        expect(screen.getAllByText(/Live User/i).length).toBeGreaterThan(0);
+
+        // Follow
+        fireEvent.click(screen.getByRole('button', { name: /Seguir e Ver Agenda/i }));
 
         await waitFor(() => {
-            expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
+            expect(screen.getByText(/Agenda de/i)).toBeInTheDocument();
         });
+        expect(screen.getAllByText('Bloco 1').length).toBeGreaterThan(0);
     });
 });

@@ -1,5 +1,6 @@
 import { db } from './firebase';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { withRetry } from '../utils/withRetry';
 
 const USERS_COLLECTION = 'users';
 
@@ -16,24 +17,38 @@ export const saveUserFavorites = async (userId, favorites, userName = 'Folião')
         const timestamp = new Date().toISOString();
         const blockIds = favorites.map(f => f.id);
 
+        console.log(`[SyncService] Items to sync: ${favorites.length}. Payload size: approx ${JSON.stringify(favorites).length} bytes`);
+
         // 1. Save private user data
+        console.log(`[SyncService] Saving private favorites for ${userId}...`);
         const privateSave = setDoc(userRef, {
             favorites,
             updatedAt: timestamp
-        }, { merge: true });
+        }, { merge: true })
+            .then(() => console.log(`[SyncService] Private favorites saved for ${userId}`))
+            .catch(err => {
+                console.error(`[SyncService] FAILED private save for ${userId}:`, err.message);
+                throw err;
+            });
 
         // 2. Sync to public agenda (Live Link)
-        // We only store essential data for the public view
+        console.log(`[SyncService] Syncing public agenda for ${userId}...`);
         const publicSave = setDoc(publicRef, {
             ownerId: userId,
             ownerName: userName,
             blocks: blockIds,
             updatedAt: timestamp
-        }, { merge: true });
+        }, { merge: true })
+            .then(() => console.log(`[SyncService] Public agenda synced for ${userId}`))
+            .catch(err => {
+                console.error(`[SyncService] FAILED public sync for ${userId}:`, err.message);
+                throw err;
+            });
 
         await Promise.all([privateSave, publicSave]);
+        console.log(`[SyncService] All sync operations finished for ${userId}`);
     } catch (error) {
-        console.error('Error saving user favorites:', error);
+        console.error(`[SyncService] Error saving user favorites for ${userId}:`, error.message);
         throw error;
     }
 };
@@ -44,18 +59,20 @@ export const saveUserFavorites = async (userId, favorites, userName = 'Folião')
  * @returns {Promise<Array<Object>|null>} - The favorites array or null.
  */
 export const getUserFavorites = async (userId) => {
-    try {
-        const userRef = doc(db, USERS_COLLECTION, userId);
-        const docSnap = await getDoc(userRef);
+    return withRetry(async () => {
+        try {
+            const userRef = doc(db, USERS_COLLECTION, userId);
+            const docSnap = await getDoc(userRef);
 
-        if (docSnap.exists()) {
-            return docSnap.data().favorites || [];
+            if (docSnap.exists()) {
+                return docSnap.data().favorites || [];
+            }
+            return null;
+        } catch (error) {
+            console.error('Error getting user favorites:', error.message);
+            throw error;
         }
-        return null;
-    } catch (error) {
-        console.error('Error getting user favorites:', error);
-        throw error;
-    }
+    }, 2);
 };
 
 /**
@@ -81,7 +98,7 @@ export const syncFavoriteToggle = async (userId, blockData, isAdding) => {
         if (error.code === 'not-found') {
             await saveUserFavorites(userId, isAdding ? [blockData] : []);
         } else {
-            console.error('Error toggling favorite in cloud:', error);
+            console.error('Error toggling favorite in cloud:', error.message);
             throw error;
         }
     }

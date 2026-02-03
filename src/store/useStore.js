@@ -50,40 +50,29 @@ const useStore = create(
 
         set({ favoriteBlocks: newFavorites });
 
-        // Debounced cloud sync if authenticated
-        // Clear previous timeout to reset the 2s delay
-        if (syncTimeout) clearTimeout(syncTimeout);
-
+        // Sync immediately if authenticated
         if (state.user?.uid) {
-          syncTimeout = setTimeout(() => {
-            // Use get() to fetch latest state at sync time
-            saveUserFavorites(
-              state.user.uid,
-              get().favoriteBlocks,
-              state.user.displayName || 'Folião'
-            ).catch(err => {
-              console.error('Failed to sync favorites to cloud:', err);
-            });
-          }, 2000); // 2 second debounce
+          saveUserFavorites(
+            state.user.uid,
+            newFavorites, // Use newFavorites, not get().favoriteBlocks strictly needed if synchronous, but safe
+            state.user.displayName || 'Folião'
+          ).catch(err => {
+            // Silent fail for background sync to avoid interrupting user flow
+            // but log it. Real-time feedback could be added later.
+            console.error('Background sync failed:', err);
+          });
         }
       },
 
-      // Force immediate sync (e.g., before sharing)
+      // Force immediate sync (non-blocking)
       syncNow: async () => {
         const state = get();
-        if (syncTimeout) clearTimeout(syncTimeout);
-
         if (state.user?.uid) {
-          try {
-            await saveUserFavorites(
-              state.user.uid,
-              state.favoriteBlocks,
-              state.user.displayName || 'Folião'
-            );
-          } catch (err) {
-            console.error('Failed to force sync favorites:', err);
-            throw err;
-          }
+          saveUserFavorites(
+            state.user.uid,
+            state.favoriteBlocks,
+            state.user.displayName || 'Folião'
+          ).catch(err => console.error('Manual sync failed:', err));
         }
       },
 

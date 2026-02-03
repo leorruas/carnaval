@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const Loader = () => {
+const Loader = ({ message }) => {
     const brandColors = [
         '#00CE65', // brand-green
         '#FF00ED', // brand-pink
@@ -40,6 +40,16 @@ const Loader = () => {
                     }}
                 />
             </div>
+            {message && (
+                <motion.p
+                    className="mt-6 text-sm font-bold uppercase tracking-widest text-foreground/60 text-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    {message}
+                </motion.p>
+            )}
         </motion.div>
     );
 };

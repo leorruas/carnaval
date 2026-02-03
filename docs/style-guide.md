@@ -27,7 +27,7 @@ O projeto utiliza um sistema de variáveis HSL para facilitar a manutenção e s
 - **Headings**: Grandes e com tracking reduzido para impacto visual.
 
 ## 4. Logo e Identidade
-- **Logo**: SVG otimizado ("TáTeno") focado no logotype.
+- **Logo**: SVG otimizado ("táteno") focado no logotype.
 - **Aplicações**:
     - **Header**: Versão monocromática (`text-foreground`) escalável.
     - **Responsividade**: Adapta-se à largura do container (`max-w-full`) para evitar overflow em telas pequenas.
