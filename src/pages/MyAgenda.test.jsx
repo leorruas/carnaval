@@ -5,8 +5,13 @@ import MyAgenda from './MyAgenda';
 import useStore from '../store/useStore';
 import * as shareService from '../services/shareService';
 
-// Mock store
-vi.mock('../store/useStore');
+vi.mock('../store/useStore', () => {
+    const mockUseStore = vi.fn();
+    mockUseStore.getState = vi.fn(() => ({
+        syncNow: vi.fn().mockResolvedValue()
+    }));
+    return { default: mockUseStore };
+});
 
 // Mock Firebase Auth
 vi.mock('firebase/auth', () => ({
@@ -243,13 +248,14 @@ describe('MyAgenda', () => {
             global.alert = vi.fn();
         });
 
-        it('prevents sharing when agenda is empty', () => {
+        it('allows sharing even when agenda is empty', async () => {
             useStore.mockReturnValue({
                 favoriteBlocks: [],
                 friends: [],
                 toggleFavorite: vi.fn(),
                 addFriend: vi.fn(),
                 removeFriend: vi.fn(),
+                syncNow: vi.fn().mockResolvedValue()
             });
 
             render(
@@ -258,8 +264,16 @@ describe('MyAgenda', () => {
                 </MemoryRouter>
             );
 
-            // Should show empty state instead of share button being clickable/functional check
-            expect(screen.getByText('Agenda Vazia')).toBeInTheDocument();
+            const shareButton = screen.getByText('Compartilhar');
+            fireEvent.click(shareButton);
+
+            await waitFor(() => {
+                expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+                    expect.stringContaining('uid=user1')
+                );
+            });
+
+            expect(global.alert).toHaveBeenCalledWith(expect.stringContaining('Link permanente copiado!'));
         });
 
         it('successfully copies live link', async () => {
@@ -269,6 +283,7 @@ describe('MyAgenda', () => {
                 toggleFavorite: vi.fn(),
                 addFriend: vi.fn(),
                 removeFriend: vi.fn(),
+                syncNow: vi.fn().mockResolvedValue()
             });
 
             render(

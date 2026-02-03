@@ -149,16 +149,18 @@ const MyAgenda = () => {
       return;
     }
 
-    // Validate we have blocks to share
-    if (blocksList.length === 0) {
-      alert('Você precisa ter blocos na sua agenda para compartilhar!');
-      return;
-    }
-
     // Direct Live Link Sharing
     const liveLink = `${window.location.origin}/agenda?uid=${user.uid}`;
 
     try {
+      setIsSharing(true);
+
+      // FORCE SYNC: Ensure cloud has latest data before sharing link
+      // This prevents "empty agenda" race conditions
+      if (useStore.getState().syncNow) {
+        await useStore.getState().syncNow();
+      }
+
       if (navigator.share) {
         await navigator.share({
           title: `Agenda de ${user.displayName || 'Amigo'} - Carnaval BH`,
@@ -170,6 +172,9 @@ const MyAgenda = () => {
       }
     } catch (error) {
       console.error('Error sharing live link:', error);
+      alert('Erro ao sincronizar dados. Tente novamente.');
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -240,17 +245,7 @@ const MyAgenda = () => {
     setActiveView('mine'); // Switch to agenda view
   };
 
-  if (currentBlocks.length === 0 && !isLoadingShared) {
-    return (
-      <div className="min-h-screen bg-background font-sans text-foreground pb-20">
-        <div className="max-w-md mx-auto px-6 pt-20 text-center">
-          <h2 className="text-2xl font-black mb-4 font-bricolage">Agenda Vazia</h2>
-          <a href="/" className="text-primary font-bold hover:underline">Explorar Blocos</a>
-        </div>
-        <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-      </div>
-    );
-  }
+  // Removed early return for empty agenda to allow sharing
 
   return (
     <div className="min-h-screen bg-background font-sans text-foreground transition-colors duration-500 pb-20">
@@ -388,26 +383,37 @@ const MyAgenda = () => {
                   <Share2 className={`w-4 h-4 ${isSharing ? 'animate-spin' : ''}`} />
                   {isSharing ? 'Gerando...' : 'Compartilhar'}
                 </button>
-                <button onClick={handleExport} className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={handleExport}
+                  disabled={currentBlocks.length === 0}
+                  className="flex-1 py-4 rounded-2xl bg-muted/30 hover:bg-muted transition-colors flex items-center justify-center gap-2 font-black text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <Download className="w-4 h-4" /> Colocar na minha agenda
                 </button>
               </div>
             )}
 
-            {/* Blocks List */}
-            <div className="space-y-6">
-              <AnimatePresence mode="popLayout">
-                {(displayBlocks || []).map((block) => (
-                  <motion.div key={block.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
-                    <BlockCard
-                      block={block}
-                      matchBadge={isSharedMode && matches.includes(block.id)}
-                      onAdd={isSharedMode && newBlocks.includes(block.id) ? handleAddBlock : undefined}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+            {/* Blocks List OR Empty State */}
+            {currentBlocks.length === 0 ? (
+              <div className="py-20 text-center space-y-4">
+                <h2 className="text-2xl font-black mb-4 font-bricolage">Agenda Vazia</h2>
+                <a href="/" className="text-primary font-bold hover:underline">Explorar Blocos</a>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                  {(displayBlocks || []).map((block) => (
+                    <motion.div key={block.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+                      <BlockCard
+                        block={block}
+                        matchBadge={isSharedMode && matches.includes(block.id)}
+                        onAdd={isSharedMode && newBlocks.includes(block.id) ? handleAddBlock : undefined}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
           </>
         ) : (
           <div className="space-y-4">

@@ -16,7 +16,8 @@
 - **Live Link (Link Permanente)**: Usuários logados têm um link único e permanente (`/agenda?uid=USER_ID`) que reflete sua agenda em tempo real.
     - **Sincronização Dupla**: Favoritos são sincronizados automaticamente para a coleção privada `users` e pública `public_agendas`.
     - **Sem Snapshot**: Não é necessário gerar links snapshot; o link é sempre vivo.
-    - **Validação**: O botão de copiar link só funciona se o usuário tiver blocos na agenda.
+    - **Force Sync**: O sistema força uma sincronização imediata ao clicar em "Compartilhar" para prevenir dados desatualizados.
+    - **Sem Bloqueio de Vazio**: É permitido compartilhar uma agenda vazia (ex: para começar a seguir amigos).
     - **Error Handling**: Feedback visual para sucesso (cópia) ou erro (permissões/falhas).
 - **Seguidores (Following)**: Usuários logados podem "Seguir" a agenda de amigos. Amigos seguidos são salvos no perfil do usuário e podem ser acessados rapidamente na aba "Amigos" da agenda.
 

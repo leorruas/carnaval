@@ -68,6 +68,25 @@ const useStore = create(
         }
       },
 
+      // Force immediate sync (e.g., before sharing)
+      syncNow: async () => {
+        const state = get();
+        if (syncTimeout) clearTimeout(syncTimeout);
+
+        if (state.user?.uid) {
+          try {
+            await saveUserFavorites(
+              state.user.uid,
+              state.favoriteBlocks,
+              state.user.displayName || 'Folião'
+            );
+          } catch (err) {
+            console.error('Failed to force sync favorites:', err);
+            throw err;
+          }
+        }
+      },
+
       isFavorited: (blockId) => {
         return get().favoriteBlocks.some(b => b.id === blockId);
       },
