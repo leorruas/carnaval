@@ -44,6 +44,17 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && 
                        resource.data.ownerId == request.auth.uid;
     }
+
+    // ========================================
+    // SUGGESTED BLOCKS COLLECTION
+    // ========================================
+    match /suggested_blocks/{blockId} {
+      // Anyone logged in can suggest
+      allow create: if isAuthenticated();
+      
+      // Only specifc admin email can manage suggestions
+      allow read, delete: if request.auth.token.email == 'leoruas@gmail.com';
+    }
     
     // ========================================
     // BLOCKS COLLECTION (Dynamic Blocks Data)
