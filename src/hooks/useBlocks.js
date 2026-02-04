@@ -28,9 +28,12 @@ const initializeGlobalListener = () => {
                 dynamicBlocks.push({ id: doc.id, ...doc.data() });
             });
 
-            // Merge with dedupe
+            // Merge with dedupe and property preservation
             const blockMap = new Map(staticBlocks.map(b => [b.id, b]));
-            dynamicBlocks.forEach(b => blockMap.set(b.id, b));
+            dynamicBlocks.forEach(b => {
+                const existing = blockMap.get(b.id) || {};
+                blockMap.set(b.id, { ...existing, ...b });
+            });
 
             globalBlocks = Array.from(blockMap.values());
             globalLoading = false;

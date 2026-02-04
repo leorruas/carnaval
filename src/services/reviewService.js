@@ -7,6 +7,7 @@ import {
     getDocs,
     doc,
     updateDoc,
+    setDoc,
     addDoc,
     serverTimestamp,
     orderBy
@@ -55,17 +56,28 @@ export async function calculateBlockStats(blockId) {
 
 /**
  * Atualiza as estatísticas de um bloco na coleção approved_blocks
+ * Usa setDoc com merge: true para suportar blocos estáticos que ainda não estão no Firestore
  */
 export async function updateBlockStats(blockId) {
-    const stats = await calculateBlockStats(blockId);
+    console.log(`[reviewService] Updating stats for block: ${blockId}`);
+    try {
+        const stats = await calculateBlockStats(blockId);
+        console.log(`[reviewService] Calculated stats:`, stats);
 
-    await updateDoc(doc(db, 'approved_blocks', blockId), {
-        avgRating: stats.avgRating,
-        totalReviews: stats.totalReviews,
-        ratingDistribution: stats.ratingDistribution
-    });
+        const docRef = doc(db, 'approved_blocks', blockId);
+        await setDoc(docRef, {
+            avgRating: stats.avgRating,
+            totalReviews: stats.totalReviews,
+            ratingDistribution: stats.ratingDistribution,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
 
-    return stats;
+        console.log(`[reviewService] Stats updated in approved_blocks for ${blockId}`);
+        return stats;
+    } catch (error) {
+        console.error(`[reviewService] Error updating block stats for ${blockId}:`, error);
+        throw error;
+    }
 }
 
 /**
@@ -118,13 +130,16 @@ export async function hasUserReviewed(userId, blockId) {
  * Se houver comentário, o status é 'pending' (vai para moderação).
  */
 export async function createReview({ blockId, userId, userName, userEmail, rating, comment, timesAttended }) {
+    console.log(`[reviewService] createReview called:`, { blockId, rating, comment });
     const alreadyReviewed = await hasUserReviewed(userId, blockId);
     if (alreadyReviewed) {
+        console.warn(`[reviewService] User ${userId} already reviewed block ${blockId}`);
         throw new Error('Você já avaliou este bloco');
     }
 
     const trimmedComment = comment?.trim() || null;
     const isAutoApproved = !trimmedComment;
+    console.log(`[reviewService] isAutoApproved: ${isAutoApproved}`);
 
     const reviewData = {
         blockId,
@@ -138,14 +153,16 @@ export async function createReview({ blockId, userId, userName, userEmail, ratin
         createdAt: serverTimestamp()
     };
 
+    console.log(`[reviewService] Saving review data:`, reviewData);
     const docRef = await addDoc(collection(db, 'reviews'), reviewData);
+    console.log(`[reviewService] Review created with ID: ${docRef.id}`);
 
     // Se foi auto-aprovado, já atualiza as stats do bloco
     if (isAutoApproved) {
         try {
             await updateBlockStats(blockId);
         } catch (e) {
-            console.error('Failed to update block stats after auto-approval:', e);
+            console.error('[reviewService] Failed to update block stats after auto-approval:', e);
         }
     }
 
