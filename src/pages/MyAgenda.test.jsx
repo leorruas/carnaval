@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import MyAgenda from './MyAgenda';
 import useStore from '../store/useStore';
@@ -27,7 +27,7 @@ vi.mock('../data/blocos.json', () => ({
 }));
 
 vi.mock('../services/shareService', () => ({
-    getSharedAgenda: vi.fn(),
+    getSharedAgenda: vi.fn().mockResolvedValue({ id: 'f1', ownerName: 'Amigo 1', blocks: [] }),
     getPublicAgenda: vi.fn(),
     createShareLink: vi.fn(),
 }));
@@ -105,7 +105,7 @@ describe('MyAgenda Personal Mode', () => {
         expect(screen.getByText(/Nenhum amigo ainda/i)).toBeInTheDocument();
     });
 
-    it('renders list of friends and allows viewing their agenda', () => {
+    it('renders list of friends and allows viewing their agenda', async () => {
         const friends = [
             { shareId: 'f1', name: 'Amigo 1', addedAt: new Date().toISOString() }
         ];
@@ -131,5 +131,18 @@ describe('MyAgenda Personal Mode', () => {
         const friendCard = screen.getByText('Amigo 1').closest('div').parentElement.parentElement;
         const viewButton = within(friendCard).getAllByRole('button')[0];
         expect(viewButton).toBeInTheDocument();
+
+        // Simular clique para ver agenda
+        fireEvent.click(viewButton);
+
+        // Verificar se mudou para a view da agenda (deve renderizar AgendaMyView)
+        // O efeito é async, então precisamos esperar
+        await waitFor(() => {
+            expect(screen.getByText(/Agenda de/i)).toBeInTheDocument();
+            expect(screen.getByText('Amigo 1')).toBeInTheDocument();
+        });
+
+        // E NÃO deve mais mostrar a lista de amigos (FriendsList)
+        expect(screen.queryByLabelText('Remover amigo')).not.toBeInTheDocument();
     });
 });

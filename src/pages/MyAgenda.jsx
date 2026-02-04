@@ -26,19 +26,28 @@ const MyAgenda = () => {
   const { favoriteBlocks = [], toggleFavorite, friends = [], addFriend, removeFriend } = useStore() || {};
   const [searchParams, setSearchParams] = useSearchParams();
   const auth = getAuth();
-  const [activeView, setActiveView] = useState('mine');
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
   const shareId = searchParams.get('shareId');
   const publicUid = searchParams.get('uid');
+  // If we land on the page with a share ID, we want to start in friends view (preview mode)
+  // BUT if we are navigating internally (handleViewFriend), we want to see the agenda ('mine' view, but loaded with friend's data)
+  // The crucial distinction: handleViewFriend sets params AND sets view to 'mine'.
+  // But if we just load the URL, we might want 'friends' view (preview)?
+  // Actually, if I follow a link, I see the preview card. That is 'friends' view.
+  // So: Default to 'friends' if params exist?
+  // Problem: handleViewFriend adds params. If I add params, this state doesn't update (it's initial state).
+  // BUT the useEffect WAS forcing it back.
+  // So removing the useEffect is the main fix.
+  // Initial state logic:
+  const [activeView, setActiveView] = useState(() => {
+    return (publicUid || shareId) ? 'friends' : 'mine';
+  });
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const friendsList = Array.isArray(friends) ? friends : [];
 
   const { sharedData, setSharedData, isLoadingShared, sharedError } = useSharedAgenda(publicUid, shareId);
   const isSharedMode = !!sharedData;
 
-  useEffect(() => {
-    if (publicUid || shareId) setActiveView('friends');
-  }, [publicUid, shareId]);
+
 
   const isAlreadyFollowing = useMemo(() => {
     if (!sharedData) return false;

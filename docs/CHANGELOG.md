@@ -139,3 +139,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-04 09:40] - fix: Implemented accent-insensitive search logic in Home and Utils.
 - [2026-02-04 10:35] - ui: Refined BlockCard and Actions to be ultra-compact (rounded-2xl, p-5) based on user feedback.
 - [2026-02-04 10:35] - ui: Increased BlockCard time font size to text-4xl for better legibility while maintaining compactness.
+- [2026-02-04 10:50] - fix: Resolved issue where friends list required double click to view agenda by refactoring state initialization.
+- [2026-02-04 10:50] - docs: Updated workflow to include 'Minimize useEffect' rule.

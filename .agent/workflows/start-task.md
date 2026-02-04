@@ -26,6 +26,8 @@ Este workflow DEVE ser executado pelo Agente de IA no início de QUALQUER solici
    - **Critical**: Utilize a skill `test_application` para definir a estratégia de testes *antes* de codar (Quais testes unitários? Quais snapshots?).
    - Crie o `implementation_plan.md` incluindo uma seção dedicada a testes.
    - Liste explicitamente no `task.md` as etapas de verificação para cada item atômico.
+   - **Coding Guidelines (Obrigatório)**:
+     - **Minimize `useEffect`**: Evite `useEffect` para sincronizar estado. Use event handlers ou estado derivado/calculado durante o render. Só use se estritamente necessário (ex: eventos globais, subs).
 
 5. **Análise do Plano (Skill Check)**
    - Leia as instruções em `.agent/skills/plan_analysis/SKILL.md`.
