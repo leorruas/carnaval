@@ -1,5 +1,6 @@
 # Changelog
 
+[2026-02-04 11:06] - 🚀 deploy: Release - Friends Also Going Feature
 [2026-02-04 11:05] - feat: Amigos que também vão ao mesmo bloco na Agenda
 - Implementado hook `useFriendsAgendas` com cache de 15 minutos
 - Avatares dos amigos aparecem ao lado do countdown nos cards
