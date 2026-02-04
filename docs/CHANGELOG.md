@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- [2026-02-04 13:30] - feat: Sistema de Avaliações e Moderação completo
+  - Avaliações por estrelas e comentários moderados
+  - Auto-aprovação para avaliações sem comentário (publicação instantânea)
+  - Painel de moderação para admin (`leoruas@gmail.com`)
+  - Suporte completo a tema Claro/Escuro nos modais de review
+- [2026-02-04 13:35] - ui: Relocação do badge "🆕 NOVO" para próximo das estrelas nos cards
+- [2026-02-04 13:35] - fix: Correção de permissões do Firestore para admin e índices compostos
+
+
+### Added
 - Created initial `docs/` structure (`business-rules.md`, `style-guide.md`, `tech-stack.md`).
 - [2026-02-02 20:30] - ui: Design overhaul to a "Clean Gummy" aesthetic with pastel colors and rounded corners (32px).
 - [2026-02-02 20:30] - feat: Added `PillToggle` component for better navigation.

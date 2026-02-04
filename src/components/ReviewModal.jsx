@@ -31,8 +31,6 @@ export default function ReviewModal({ block, user, onClose }) {
 
     function handleSuccess() {
         loadReviews();
-        // Mostrar mensagem de sucesso
-        alert('Avaliação enviada! Aguarde a moderação.');
     }
 
     return (

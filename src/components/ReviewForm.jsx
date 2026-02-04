@@ -63,7 +63,7 @@ export default function ReviewForm({ block, user, onSuccess }) {
             {/* Success message */}
             {success && (
                 <div className="success-message">
-                    ✓ Avaliação enviada! Aguarde a moderação para publicação.
+                    {comment ? '✓ Avaliação enviada! Aguarde a moderação para publicação.' : '✨ Sua nota foi computada com sucesso!'}
                 </div>
             )}
 
