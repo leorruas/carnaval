@@ -1,4 +1,11 @@
+[2026-02-04 13:55] - 🚀 deploy: Release v1.1.2 - Sistema de Avaliações e Moderação Completo
+- Sistema de estrelas com auto-aprovação de notas sem comentário.
+- Moderação administrativa de comentários de texto.
+- Relocação do badge "🆕 NOVO" para maior visibilidade.
+- Correções de segurança e acesso do admin.
+
 # Changelog
+
 
 [2026-02-04 11:06] - 🚀 deploy: Release - Friends Also Going Feature
 [2026-02-04 11:05] - feat: Amigos que também vão ao mesmo bloco na Agenda

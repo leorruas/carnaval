@@ -63,6 +63,17 @@
     - **Rejeição**: Exclui permanentemente a sugestão.
 - **Dados Dinâmicos**: O app exibe a união dos blocos estáticos (JSON) com os blocos aprovados (Firestore).
 
+### 1.6. Sistema de Avaliações e Comentários
+- **Avaliação por Estrelas**: Usuários logados podem avaliar blocos (1 a 5 estrelas).
+- **Auto-Aprovação (Regra de Rapidez)**: 
+    - Avaliações enviadas **sem comentário de texto** são aprovadas automaticamente e publicadas no mesmo instante.
+    - As estatísticas agregadas (média e total de reviews) no componente `BlockCard` são atualizadas em tempo real via Firestore.
+- **Moderação de Comentários**:
+    - Avaliações que contenham **texto (comentário)** são marcadas como `pending` e enviadas para o Painel Administrativo.
+    - Apenas após a aprovação manual do admin o comentário fica visível para outros usuários e a nota é contabilizada na média.
+- **Unicidade**: Cada usuário pode avaliar um bloco apenas uma vez. O sistema previne duplicidade via regras de segurança do Firestore e lógica no serviço.
+- **Privacidade**: Comentários são exibidos de forma anônima para a comunidade.
+
 ## 2. Autenticação & Social (Firebase)
 - **Firebase Auth**: Suporte para Login/Cadastro via E-mail e **Google Sign-In**.
 - **Perfil**: Usuários podem ver seu progresso, logout e acessar recursos exclusivos como o Painel Admin (se autorizado).

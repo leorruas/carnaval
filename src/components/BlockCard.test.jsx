@@ -88,7 +88,7 @@ describe('BlockCard', () => {
             </BrowserRouter>
         );
 
-        const heartButton = container.querySelector('button');
+        const heartButton = screen.getByLabelText('Desfavoritar');
         const heartClasses = heartButton?.className || '';
         expect(heartClasses).toContain('bg-red-500/10');
 
@@ -105,7 +105,7 @@ describe('BlockCard', () => {
             </BrowserRouter>
         );
 
-        const heartButton = container.querySelector('button');
+        const heartButton = screen.getByLabelText('Favoritar');
         const heartClasses = heartButton?.className || '';
         expect(heartClasses).toContain('bg-muted/50');
 
@@ -122,7 +122,7 @@ describe('BlockCard', () => {
             </BrowserRouter>
         );
 
-        const heartButton = screen.getAllByRole('button')[0];
+        const heartButton = screen.getByLabelText('Favoritar');
         fireEvent.click(heartButton);
 
         expect(mockToggleFavorite).toHaveBeenCalledWith('test-block-1');

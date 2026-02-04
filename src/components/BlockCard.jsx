@@ -148,6 +148,7 @@ const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => toggleFavorite(block.id)}
+              aria-label={favorited ? "Desfavoritar" : "Favoritar"}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10' : 'bg-muted/50 hover:bg-muted'}`}
             >
               <Heart className={`w-5 h-5 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
