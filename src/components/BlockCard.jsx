@@ -14,7 +14,7 @@ import {
 import { getDateTheme } from '../utils/themeUtils';
 import BlockCardActions from './BlockCardActions';
 
-const BlockCard = ({ block, matchBadge, onAdd }) => {
+const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
   const { toggleFavorite, favoriteBlocks } = useStore();
   const [countdown, setCountdown] = useState(null);
   const [route, setRoute] = useState(null);
@@ -75,6 +75,16 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
   };
 
   const uberPrice = route ? estimateUberPrice(route.distanceKm) : null;
+
+  // Calculate friends going
+  const friendsGoing = friendsAgendas
+    ? Object.values(friendsAgendas).filter(agenda => {
+      // Blocks can be objects (block object) or strings (block ID, legacy)
+      // If objects, check schema. If IDs, simple check.
+      // Hydrated blocks inside agenda are objects.
+      return agenda.blocks?.some(b => (b.id === block.id) || (b === block.id));
+    })
+    : [];
 
   return (
     <div
@@ -188,6 +198,7 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
         onCalculateDistance={handleCalculateDistance}
         onOpenUber={handleOpenUber}
         onOpenMaps={handleOpenMaps}
+        friendsGoing={friendsGoing}
       />
     </div>
   );

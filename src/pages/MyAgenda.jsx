@@ -19,6 +19,7 @@ import { useAgendaMatches } from '../hooks/useAgendaMatches';
 import { useAgendaScroll } from '../hooks/useAgendaScroll';
 import { useAgendaSharing } from '../hooks/useAgendaSharing';
 import { useAgendaSocial } from '../hooks/useAgendaSocial';
+import { useFriendsAgendas } from '../hooks/useFriendsAgendas';
 import { generateAndDownloadICS } from '../utils/icsExport';
 
 const MyAgenda = () => {
@@ -47,7 +48,8 @@ const MyAgenda = () => {
   const { sharedData, setSharedData, isLoadingShared, sharedError } = useSharedAgenda(publicUid, shareId);
   const isSharedMode = !!sharedData;
 
-
+  // New Hook: Fetch friends agendas for display
+  const { friendsAgendas } = useFriendsAgendas(friendsList);
 
   const isAlreadyFollowing = useMemo(() => {
     if (!sharedData) return false;
@@ -121,6 +123,7 @@ const MyAgenda = () => {
             onShare={handleShare} onExport={() => generateAndDownloadICS(currentBlocks)}
             isSharing={isSharing} shareSuccess={shareSuccess} currentBlocks={currentBlocks}
             displayBlocks={displayBlocks} matches={matches} newBlocks={newBlocks} onAddBlock={handleAddBlock}
+            friendsAgendas={friendsAgendas}
           />
         ) : (
           <FriendsList

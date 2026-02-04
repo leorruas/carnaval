@@ -157,4 +157,32 @@ describe('BlockCard', () => {
 
         expect(writeTextMock).toHaveBeenCalledWith('Rua Teste, 123, Centro');
     });
+    it('shows friends who are also going', () => {
+        const mockFriendsAgendas = {
+            'friend-1': {
+                ownerId: 'friend-1',
+                ownerName: 'Amigo 1',
+                blocks: [{ id: 'test-block-1' }]
+            },
+            'friend-2': {
+                ownerId: 'friend-2',
+                ownerName: 'Bia',
+                blocks: [{ id: 'other-block' }]
+            }
+        };
+
+        const { container } = render(
+            <BrowserRouter>
+                <BlockCard block={mockBlock} friendsAgendas={mockFriendsAgendas} />
+            </BrowserRouter>
+        );
+
+        // Should find "A" for "Amigo 1"
+        expect(screen.getByText('A')).toBeInTheDocument();
+        expect(screen.getByTitle('Amigo 1')).toBeInTheDocument();
+
+        // Should NOT find "B" for "Bia" (different block)
+        expect(screen.queryByTitle('Bia')).not.toBeInTheDocument();
+    });
 });
+

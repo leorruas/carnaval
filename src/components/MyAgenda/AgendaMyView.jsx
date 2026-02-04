@@ -19,7 +19,8 @@ const AgendaMyView = ({
     displayBlocks,
     matches,
     newBlocks,
-    onAddBlock
+    onAddBlock,
+    friendsAgendas
 }) => {
     return (
         <>
@@ -57,6 +58,7 @@ const AgendaMyView = ({
                                     block={block}
                                     matchBadge={isSharedMode && matches.includes(block.id)}
                                     onAdd={isSharedMode && newBlocks.includes(block.id) ? onAddBlock : undefined}
+                                    friendsAgendas={friendsAgendas}
                                 />
                             </motion.div>
                         ))}

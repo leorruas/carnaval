@@ -8,9 +8,12 @@ const BlockCardActions = ({
     uberPrice,
     onCalculateDistance,
     onOpenUber,
-    onOpenMaps
+
+    onOpenMaps,
+    friendsGoing = []
 }) => {
-    const isExpanded = (countdown && !countdown.isPast) || route;
+    // Show if there is countdown, route, OR friends going
+    const isExpanded = (countdown && !countdown.isPast) || route || friendsGoing.length > 0;
 
     if (isExpanded) {
         return (
@@ -29,6 +32,26 @@ const BlockCardActions = ({
                                 <span className="font-bricolage text-[9px] uppercase font-black tracking-tight" style={{ color: theme.color }}>
                                     Falta: {countdown.formatted}
                                 </span>
+                            </div>
+                        )}
+
+                        {/* Friends Going Display - Next to countdown */}
+                        {friendsGoing.length > 0 && (
+                            <div className="flex items-center justify-center -space-x-2">
+                                {friendsGoing.slice(0, 3).map((friend, i) => (
+                                    <div
+                                        key={friend.ownerId || i}
+                                        className="w-5 h-5 rounded-full border border-card bg-primary text-white flex items-center justify-center text-[8px] font-black uppercase shadow-sm z-10"
+                                        title={friend.ownerName}
+                                    >
+                                        {friend.ownerName?.[0] || 'A'}
+                                    </div>
+                                ))}
+                                {friendsGoing.length > 3 && (
+                                    <div className="w-5 h-5 rounded-full border border-card bg-muted text-muted-foreground flex items-center justify-center text-[7px] font-black uppercase z-0">
+                                        +{friendsGoing.length - 3}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -77,7 +100,7 @@ const BlockCardActions = ({
                         <span className="text-[7px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100">Bus</span>
                     </button>
                 </div>
-            </div>
+            </div >
         );
     }
 
