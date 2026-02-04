@@ -137,3 +137,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-04 09:35] - fix: Fixed Suggestion Form and Admin Panel permission issues in Firestore Rules.
 - [2026-02-04 09:35] - sec: Restricted Admin Panel access to admin email only (leoruas@gmail.com).
 - [2026-02-04 09:40] - fix: Implemented accent-insensitive search logic in Home and Utils.
+- [2026-02-04 10:35] - ui: Refined BlockCard and Actions to be ultra-compact (rounded-2xl, p-5) based on user feedback.
+- [2026-02-04 10:35] - ui: Increased BlockCard time font size to text-4xl for better legibility while maintaining compactness.

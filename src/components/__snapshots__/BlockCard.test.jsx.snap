@@ -3,17 +3,17 @@
 exports[`BlockCard > renders correctly 1`] = `
 <div>
   <div
-    class="relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden hover:border-transparent"
+    class="relative bg-card border border-border/10 rounded-2xl p-5 transition-all duration-500 group overflow-hidden hover:border-transparent"
     style="--theme-color: #00CE65;"
   >
     <div
-      class="absolute inset-0 rounded-[2.5rem] border border-transparent pointer-events-none transition-all duration-500 border-[#00CE65]"
+      class="absolute inset-0 rounded-2xl border border-transparent pointer-events-none transition-all duration-500 border-[#00CE65]"
     />
     <div
-      class="flex justify-between items-start mb-8"
+      class="flex justify-between items-start mb-3"
     >
       <div
-        class="space-y-1.5 font-bricolage"
+        class="space-y-1 font-bricolage"
       >
         <span
           class="text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors"
@@ -21,17 +21,17 @@ exports[`BlockCard > renders correctly 1`] = `
           14:00
         </span>
         <p
-          class="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40"
+          class="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40"
         >
           Bloco de teste
         </p>
       </div>
       <button
-        class="w-12 h-12 rounded-full flex items-center justify-center transition-all bg-muted/50 hover:bg-muted"
+        class="w-10 h-10 rounded-full flex items-center justify-center transition-all bg-muted/50 hover:bg-muted"
         whiletap="[object Object]"
       >
         <svg
-          class="lucide lucide-heart w-6 h-6 transition-all text-muted-foreground"
+          class="lucide lucide-heart w-5 h-5 transition-all text-muted-foreground"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -49,21 +49,21 @@ exports[`BlockCard > renders correctly 1`] = `
       </button>
     </div>
     <div
-      class="mb-10"
+      class="mb-4"
     >
       <h3
-        class="text-2xl font-black leading-[1.1] tracking-tight mb-4 text-foreground pr-8 font-bricolage"
+        class="text-xl font-black uppercase leading-[1.1] tracking-tight mb-3 text-foreground pr-6 font-bricolage"
       >
         Bloco Teste
       </h3>
       <div
-        class="space-y-3"
+        class="space-y-2"
       >
         <div
-          class="flex items-center gap-2.5 text-muted-foreground font-bricolage"
+          class="flex items-center gap-2 text-muted-foreground font-bricolage"
         >
           <svg
-            class="lucide lucide-map-pin w-4 h-4 opacity-70"
+            class="lucide lucide-map-pin w-3.5 h-3.5 opacity-70"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -85,7 +85,7 @@ exports[`BlockCard > renders correctly 1`] = `
             />
           </svg>
           <span
-            class="text-[11px] font-black uppercase tracking-widest truncate"
+            class="text-[10px] font-black uppercase tracking-widest truncate"
             style="color: rgb(0, 206, 101); opacity: 0.7;"
           >
             Centro
@@ -134,7 +134,7 @@ exports[`BlockCard > renders correctly 1`] = `
       </div>
     </div>
     <div
-      class="pt-8 border-t border-border/20 space-y-6"
+      class="pt-3 border-t border-border/20 space-y-3"
     >
       <div
         class="flex items-center justify-center gap-4"
@@ -143,15 +143,15 @@ exports[`BlockCard > renders correctly 1`] = `
           class="flex items-center justify-center gap-3"
         >
           <div
-            class="flex items-center gap-2 px-4 py-2 rounded-2xl border transition-colors duration-500"
+            class="flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-colors duration-500"
             style="background-color: rgba(0, 206, 101, 0.082); border-color: rgba(0, 206, 101, 0.19);"
           >
             <div
-              class="w-2 h-2 rounded-full animate-pulse"
+              class="w-1.5 h-1.5 rounded-full animate-pulse"
               style="background-color: rgb(0, 206, 101);"
             />
             <span
-              class="font-bricolage text-[10px] uppercase font-black tracking-tight"
+              class="font-bricolage text-[9px] uppercase font-black tracking-tight"
               style="color: rgb(0, 206, 101);"
             >
               Falta: 
@@ -161,14 +161,14 @@ exports[`BlockCard > renders correctly 1`] = `
         </div>
       </div>
       <div
-        class="grid grid-cols-3 gap-3"
+        class="grid grid-cols-3 gap-2"
       >
         <button
-          class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10"
+          class="flex flex-col items-center justify-center py-2.5 rounded-2xl bg-muted/30 transition-all group/btn gap-1.5 hover:bg-[var(--theme-color)]/10"
           style="--theme-color: #00CE65;"
         >
           <svg
-            class="lucide lucide-navigation w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
+            class="lucide lucide-navigation w-4 h-4 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -184,17 +184,17 @@ exports[`BlockCard > renders correctly 1`] = `
             />
           </svg>
           <span
-            class="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
+            class="text-[7px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
           >
             Rota
           </span>
         </button>
         <button
-          class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10"
+          class="flex flex-col items-center justify-center py-2.5 rounded-2xl bg-muted/30 transition-all group/btn gap-1.5 hover:bg-[var(--theme-color)]/10"
           style="--theme-color: #00CE65;"
         >
           <svg
-            class="lucide lucide-car w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
+            class="lucide lucide-car w-4 h-4 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -223,17 +223,17 @@ exports[`BlockCard > renders correctly 1`] = `
             />
           </svg>
           <span
-            class="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
+            class="text-[7px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
           >
             Uber
           </span>
         </button>
         <button
-          class="flex flex-col items-center justify-center py-4 rounded-3xl bg-muted/30 transition-all group/btn gap-2 hover:bg-[var(--theme-color)]/10"
+          class="flex flex-col items-center justify-center py-2.5 rounded-2xl bg-muted/30 transition-all group/btn gap-1.5 hover:bg-[var(--theme-color)]/10"
           style="--theme-color: #00CE65;"
         >
           <svg
-            class="lucide lucide-bus w-5 h-5 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
+            class="lucide lucide-bus w-4 h-4 opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100 transition-all"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -271,7 +271,7 @@ exports[`BlockCard > renders correctly 1`] = `
             />
           </svg>
           <span
-            class="text-[8px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
+            class="text-[7px] font-black uppercase tracking-widest opacity-60 text-[var(--theme-color)] group-hover/btn:opacity-100"
           >
             Bus
           </span>

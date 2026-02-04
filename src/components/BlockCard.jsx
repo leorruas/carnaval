@@ -78,17 +78,17 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
 
   return (
     <div
-      className={`relative bg-card border border-border/10 rounded-[2.5rem] p-8 transition-all duration-500 group overflow-hidden ${onAdd ? '' : 'hover:border-transparent'}`}
+      className={`relative bg-card border border-border/10 rounded-2xl p-5 transition-all duration-500 group overflow-hidden ${onAdd ? '' : 'hover:border-transparent'}`}
       style={{
         '--theme-color': theme.color,
       }}
     >
       {/* Dynamic border via simulated element */}
-      <div className={`absolute inset-0 rounded-[2.5rem] border border-transparent pointer-events-none transition-all duration-500 ${theme.borderClass}`} />
+      <div className={`absolute inset-0 rounded-2xl border border-transparent pointer-events-none transition-all duration-500 ${theme.borderClass}`} />
 
       {/* Match Badge for Shared Agenda */}
       {matchBadge && (
-        <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-2xl z-10">
+        <div className="absolute top-0 right-0 bg-green-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10">
           👯 Match!
         </div>
       )}
@@ -96,26 +96,26 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
       {/* Add Button for Shared Agenda (New Blocks) */}
       {
         onAdd && (
-          <div className="absolute top-4 right-4 z-20">
+          <div className="absolute top-3 right-3 z-20">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => onAdd(block)}
-              className="bg-primary text-white text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full hover:bg-primary/90 flex items-center gap-2"
+              className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full hover:bg-primary/90 flex items-center gap-1.5"
             >
-              Adicionar <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center text-[10px]">+</div>
+              Adicionar <div className="w-3.5 h-3.5 bg-white/20 rounded-full flex items-center justify-center text-[9px]">+</div>
             </motion.button>
           </div>
         )
       }
 
       {/* Time & Favorite Header (Hidden if onAdd mode, because button takes space, or adjust layout) */}
-      <div className="flex justify-between items-start mb-8">
-        <div className="space-y-1.5 font-bricolage">
+      <div className="flex justify-between items-start mb-3">
+        <div className="space-y-1 font-bricolage">
           <span className={`text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors`}>
             {formatTime(block.horario)}
           </span>
           {block.observacoes && !block.observacoes.toLowerCase().includes('carnaval 2026') && (
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">
               {block.observacoes}
             </p>
           )}
@@ -125,23 +125,23 @@ const BlockCard = ({ block, matchBadge, onAdd }) => {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => toggleFavorite(block.id)}
-            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10' : 'bg-muted/50 hover:bg-muted'}`}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10' : 'bg-muted/50 hover:bg-muted'}`}
           >
-            <Heart className={`w-6 h-6 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+            <Heart className={`w-5 h-5 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
           </motion.button>
         )}
       </div>
 
       {/* Main Info */}
-      <div className="mb-10">
-        <h3 className="text-2xl font-black uppercase leading-[1.1] tracking-tight mb-4 text-foreground pr-8 font-bricolage">
+      <div className="mb-4">
+        <h3 className="text-xl font-black uppercase leading-[1.1] tracking-tight mb-3 text-foreground pr-6 font-bricolage">
           {block.nome}
         </h3>
 
-        <div className="space-y-3">
-          <div className="flex items-center gap-2.5 text-muted-foreground font-bricolage">
-            <MapPin className={`w-4 h-4 opacity-70`} style={{ color: theme.color }} />
-            <span className="text-[11px] font-black uppercase tracking-widest truncate" style={{ color: theme.color, opacity: 0.7 }}>{block.bairro}</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-muted-foreground font-bricolage">
+            <MapPin className={`w-3.5 h-3.5 opacity-70`} style={{ color: theme.color }} />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate" style={{ color: theme.color, opacity: 0.7 }}>{block.bairro}</span>
           </div>
 
           <button
