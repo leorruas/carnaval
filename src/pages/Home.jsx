@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { Calendar } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import BlockCard from '../components/BlockCard';
+import { normalizeText } from '../utils/stringUtils';
 import { useBlocks } from '../hooks/useBlocks';
 import { groupBlocksByDate, sortBlocksByDateTime } from '../utils/dateUtils';
 import useStore from '../store/useStore';
@@ -38,10 +39,11 @@ const Home = () => {
     // Global Search Logic - Bypasses all other filters
     if (searchQuery) {
       // When searching, we want to look at EVERYTHING
+      const normalizedQuery = normalizeText(searchQuery);
       return allBlocks.filter(b =>
-        b.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.bairro.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.endereco.toLowerCase().includes(searchQuery.toLowerCase())
+        normalizeText(b.nome).includes(normalizedQuery) ||
+        normalizeText(b.bairro).includes(normalizedQuery) ||
+        normalizeText(b.endereco).includes(normalizedQuery)
       );
     }
 

@@ -136,3 +136,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [2026-02-03 19:55] - ui: Replaced generic user pin with pulsing blue dot (animate-ping) for instant recognition.
 - [2026-02-04 09:35] - fix: Fixed Suggestion Form and Admin Panel permission issues in Firestore Rules.
 - [2026-02-04 09:35] - sec: Restricted Admin Panel access to admin email only (leoruas@gmail.com).
+- [2026-02-04 09:40] - fix: Implemented accent-insensitive search logic in Home and Utils.
