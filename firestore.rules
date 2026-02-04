@@ -66,6 +66,43 @@ service cloud.firestore {
     }
     
     // ========================================
+    // REVIEWS COLLECTION
+    // ========================================
+    match /reviews/{reviewId} {
+      // Helper: Check if review already exists for this user + block combination
+      function reviewExists(userId, blockId) {
+        return exists(/databases/$(database)/documents/reviews/$(userId + '_' + blockId));
+      }
+      
+      // Create: Authenticated users only, 1 review per block
+      // Auto-approve if no comment, otherwise pending
+      allow create: if isAuthenticated() 
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.blockId is string
+        && request.resource.data.rating >= 1 
+        && request.resource.data.rating <= 5
+        && (
+          (request.resource.data.comment == null && request.resource.data.status == 'approved') ||
+          (request.resource.data.comment != null && request.resource.data.status == 'pending')
+        )
+        && !reviewExists(request.auth.uid, request.resource.data.blockId);
+      
+      // Read: Anyone can read approved reviews, admin can read all, users can read their own
+      allow read: if resource.data.status == 'approved'
+        || (isAuthenticated() && resource.data.userId == request.auth.uid)
+        || (isAuthenticated() && request.auth.token.email == 'leoruas@gmail.com');
+      
+      // Update: Only admin can moderate (approve/reject)
+      allow update: if isAuthenticated() 
+        && request.auth.token.email == 'leoruas@gmail.com';
+      
+      // Delete: Only admin can delete
+      allow delete: if isAuthenticated() 
+        && request.auth.token.email == 'leoruas@gmail.com';
+    }
+    
+    
+    // ========================================
     // APPROVED BLOCKS COLLECTION
     // ========================================
     // Admin-approved dynamic blocks - public read

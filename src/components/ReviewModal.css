@@ -1,0 +1,332 @@
+/* src/components/ReviewModal.css */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    backdrop-filter: blur(8px);
+}
+
+.dark .modal-overlay {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content.review-modal {
+    background: white;
+    border-radius: 1.5rem;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .modal-content.review-modal {
+    background: rgba(10, 10, 15, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    color: black;
+}
+
+.dark .modal-header h2 {
+    color: white;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    padding: 0.25rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.dark .close-btn {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: black;
+}
+
+.dark .close-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Rating Distribution */
+.rating-distribution {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .rating-distribution {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rating-distribution h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+}
+
+.rating-bar {
+    display: grid;
+    grid-template-columns: 2rem 1fr 2rem;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.star-label {
+    font-size: 0.75rem;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.bar {
+    height: 0.375rem;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.dark .bar {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.bar .fill {
+    height: 100%;
+    background: #ffd700;
+    transition: width 0.3s ease;
+    border-radius: 0.25rem;
+}
+
+.count {
+    font-size: 0.75rem;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+}
+
+.dark .count {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Already Reviewed / Login Required */
+.already-reviewed,
+.login-required {
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.dark .already-reviewed,
+.dark .login-required {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.already-reviewed p,
+.login-required p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.dark .already-reviewed p,
+.dark .login-required p {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Reviews List */
+.reviews-list {
+    margin-top: 1.5rem;
+}
+
+.reviews-list h3 {
+    margin: 0 0 1rem 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+}
+
+.loading,
+.empty-state {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.4);
+    padding: 2rem 1rem;
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+.dark .loading,
+.dark .empty-state {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.reviews-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.review-item {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+.dark .review-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.review-item:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.12);
+}
+
+.dark .review-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.review-header .stars {
+    color: #ffd700;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.attendance-badge {
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 2rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.dark .attendance-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.review-date {
+    margin-left: auto;
+    font-size: 0.625rem;
+    color: rgba(0, 0, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.dark .review-date {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.review-comment {
+    margin: 0;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 0.875rem;
+}
+
+.dark .review-comment {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Scrollbar styling */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.dark .modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.dark .modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}

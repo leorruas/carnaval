@@ -155,7 +155,7 @@ const ProfilePage = () => {
 
                 <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
                 <SuggestBlockModal isOpen={isSuggestModalOpen} onClose={() => setIsSuggestModalOpen(false)} />
-                <AdminPanel isOpen={isAdminPanelOpen} onClose={() => setIsAdminPanelOpen(false)} />
+                <AdminPanel isOpen={isAdminPanelOpen} onClose={() => setIsAdminPanelOpen(false)} user={user} />
             </div>
         </div>
     );

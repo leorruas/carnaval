@@ -13,13 +13,17 @@ import {
 } from '../utils/locationUtils';
 import { getDateTheme } from '../utils/themeUtils';
 import BlockCardActions from './BlockCardActions';
+import NewBadge from './NewBadge';
+import BlockRating from './BlockRating';
+import ReviewModal from './ReviewModal';
 
 const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
-  const { toggleFavorite, favoriteBlocks } = useStore();
+  const { toggleFavorite, favoriteBlocks, user } = useStore();
   const [countdown, setCountdown] = useState(null);
   const [route, setRoute] = useState(null);
   const [loadingRoute, setLoadingRoute] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   // Get dynamic theme based on DATE
   const theme = getDateTheme(block.data);
@@ -96,6 +100,8 @@ const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
       {/* Dynamic border via simulated element */}
       <div className={`absolute inset-0 rounded-2xl border border-transparent pointer-events-none transition-all duration-500 ${theme.borderClass}`} />
 
+
+
       {/* Match Badge for Shared Agenda */}
       {matchBadge && (
         <div className="absolute top-0 right-0 bg-green-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10">
@@ -118,7 +124,7 @@ const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
         )
       }
 
-      {/* Time & Favorite Header (Hidden if onAdd mode, because button takes space, or adjust layout) */}
+      {/* Time & Favorite Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="space-y-1 font-bricolage">
           <span className={`text-4xl font-black tracking-tighter text-foreground group-hover:text-[var(--theme-color)] transition-colors`}>
@@ -132,13 +138,21 @@ const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
         </div>
 
         {!onAdd && (
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => toggleFavorite(block.id)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10' : 'bg-muted/50 hover:bg-muted'}`}
-          >
-            <Heart className={`w-5 h-5 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-          </motion.button>
+          <div className="flex items-center gap-2">
+            {!matchBadge && <NewBadge block={block} />}
+            <BlockRating
+              avgRating={block.avgRating}
+              totalReviews={block.totalReviews}
+              onClick={() => setShowReviewModal(true)}
+            />
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => toggleFavorite(block.id)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${favorited ? 'bg-red-500/10' : 'bg-muted/50 hover:bg-muted'}`}
+            >
+              <Heart className={`w-5 h-5 transition-all ${favorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+            </motion.button>
+          </div>
         )}
       </div>
 
@@ -188,7 +202,6 @@ const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
       </div>
 
       {/* Footer / Utility Restoration */}
-      {/* Footer / Utility Restoration */}
       <BlockCardActions
         theme={theme}
         countdown={countdown}
@@ -200,6 +213,15 @@ const BlockCard = ({ block, matchBadge, onAdd, friendsAgendas }) => {
         onOpenMaps={handleOpenMaps}
         friendsGoing={friendsGoing}
       />
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <ReviewModal
+          block={block}
+          user={user}
+          onClose={() => setShowReviewModal(false)}
+        />
+      )}
     </div>
   );
 };
