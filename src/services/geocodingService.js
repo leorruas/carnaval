@@ -36,6 +36,7 @@ export const geocodeAddress = async (address, neighborhood) => {
         }
 
         const data = await response.json();
+        console.log(`[Geocoding] API Response for ${query}:`, data);
 
         if (data && data.length > 0) {
             const result = data[0];
