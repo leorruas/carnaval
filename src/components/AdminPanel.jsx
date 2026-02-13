@@ -133,15 +133,7 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                                         let count = 0;
                                         let needsFix = 0;
                                         for (const blockDoc of snap.docs) {
-                                            // The provided edit snippet seems to be intended for the geocodingService.js file.
-                                            // To log the raw response and exact error within AdminPanel, we would need to modify
-                                            // geocodeAddress to return more details or perform the fetch here.
-                                            // As per the instruction to make the change faithfully and syntactically correct,
-                                            // and assuming the user intended to add these logs to the geocoding process,
-                                            // I'm adding a placeholder comment here as the provided snippet is not directly applicable
-                                            // in this exact location without further context or modification to geocodeAddress.
-                                            // The existing error logging already captures the "exact error".
-                                            // To see the "raw response from Nominatim", geocodeAddress would need to be changed.
+                                            const data = blockDoc.data();
 
                                             // Skip metadata and blocks that already have coordinates
                                             if (!data.nome || (data.latitude && data.longitude)) continue;
