@@ -46,8 +46,7 @@ const MapPage = () => {
                </div>`
     });
 
-    // Use direct data to ensure UI renders immediately
-    const blocks = Array.isArray(blocosData) ? blocosData : (blocosData?.default || []);
+    const { blocks } = useBlocks();
 
     // Default to BH center initially to avoid blocking UI if geo hangs
     const defaultCenter = [-19.9167, -43.9345];

@@ -38,7 +38,24 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
     const handleApprove = async (suggestion) => {
         setProcessing(suggestion.id);
         try {
-            // 1. Add to approved_blocks with NEW badge fields
+            // Attempt geocoding
+            let coordinates = {};
+            try {
+                const result = await geocodeAddress(suggestion.endereco, suggestion.bairro);
+                if (result) {
+                    coordinates = {
+                        latitude: String(result.latitude),
+                        longitude: String(result.longitude)
+                    };
+                    console.log("[AdminPanel] Geocoding success:", coordinates);
+                } else {
+                    console.warn("[AdminPanel] Geocoding failed for address:", suggestion.endereco);
+                }
+            } catch (geoError) {
+                console.error("[AdminPanel] Geocoding error:", geoError);
+            }
+
+            // 1. Add to approved_blocks with NEW badge fields and coordinates
             const { id, suggestedBy, suggestedByName, suggestedByEmail, createdAt, status, ...blockData } = suggestion;
 
             const approvedAt = new Date();
@@ -48,6 +65,7 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
             // Use setDoc to ensure idempotency
             await setDoc(doc(db, 'approved_blocks', id), {
                 ...blockData,
+                ...coordinates, // Inject geocoded coordinates if found
                 source: 'user_suggestion',
                 isUserSuggested: true,
                 approvedAt: Timestamp.fromDate(approvedAt),
@@ -102,6 +120,44 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                             Painel <span className="text-primary NOT-italic">Admin</span>
                         </h2>
                         <div className="flex gap-2">
+                            <button
+                                onClick={async () => {
+                                    if (!window.confirm("Deseja geocodificar todos os blocos aprovados sem coordenadas?")) return;
+                                    setProcessing('bulk-geo');
+                                    try {
+                                        const { getDocs, query, collection, where, doc, setDoc } = await import('firebase/firestore');
+                                        const q = query(collection(db, 'approved_blocks'), where('latitude', '==', null));
+                                        const snap = await getDocs(q);
+                                        console.log(`[AdminPanel] Found ${snap.size} blocks to geocode`);
+
+                                        let count = 0;
+                                        for (const blockDoc of snap.docs) {
+                                            const data = blockDoc.data();
+                                            const result = await geocodeAddress(data.endereco, data.bairro);
+                                            if (result) {
+                                                await setDoc(doc(db, 'approved_blocks', blockDoc.id), {
+                                                    latitude: String(result.latitude),
+                                                    longitude: String(result.longitude)
+                                                }, { merge: true });
+                                                count++;
+                                            }
+                                            // Sleep 1s to respect Nominatim usage policy if many blocks
+                                            if (snap.size > 5) await new Promise(r => setTimeout(r, 1000));
+                                        }
+                                        alert(`${count} blocos geocodificados com sucesso!`);
+                                    } catch (err) {
+                                        console.error(err);
+                                        alert("Erro no processo de geocodificação em massa.");
+                                    } finally {
+                                        setProcessing(null);
+                                    }
+                                }}
+                                disabled={processing === 'bulk-geo'}
+                                className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold transition-colors disabled:opacity-50"
+                            >
+                                {processing === 'bulk-geo' ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                                GEO FIX
+                            </button>
                             <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-full transition-colors">
                                 <X className="w-5 h-5 opacity-60" />
                             </button>
@@ -113,8 +169,8 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                         <button
                             onClick={() => setActiveTab('suggestions')}
                             className={`flex-1 px-6 py-3 font-bold text-sm uppercase tracking-widest transition-colors ${activeTab === 'suggestions'
-                                    ? 'text-primary border-b-2 border-primary'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                ? 'text-primary border-b-2 border-primary'
+                                : 'text-muted-foreground hover:text-foreground'
                                 }`}
                         >
                             Sugestões {suggestions.length > 0 && `(${suggestions.length})`}
@@ -122,8 +178,8 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                         <button
                             onClick={() => setActiveTab('reviews')}
                             className={`flex-1 px-6 py-3 font-bold text-sm uppercase tracking-widest transition-colors ${activeTab === 'reviews'
-                                    ? 'text-primary border-b-2 border-primary'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                ? 'text-primary border-b-2 border-primary'
+                                : 'text-muted-foreground hover:text-foreground'
                                 }`}
                         >
                             Moderação
