@@ -151,3 +151,10 @@ export const sortBlocksByDateTime = (blocos = []) => {
     return dateA - dateB;
   });
 };
+/**
+ * Retorna a data atual no formato ISO (YYYY-MM-DD)
+ * @returns {string} Data atual formatada
+ */
+export const getTodayISO = () => {
+  return format(new Date(), 'yyyy-MM-dd');
+};

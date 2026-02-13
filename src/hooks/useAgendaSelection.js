@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { sortBlocksByDateTime, groupBlocksByDate } from '../utils/dateUtils';
+import { sortBlocksByDateTime, groupBlocksByDate, getTodayISO } from '../utils/dateUtils';
 import { getDateTheme } from '../utils/themeUtils';
 
 export const useAgendaSelection = (allBlocks, sharedData, isSharedMode, favoriteBlocks) => {
@@ -25,8 +25,17 @@ export const useAgendaSelection = (allBlocks, sharedData, isSharedMode, favorite
 
     useEffect(() => {
         if (!selectedDate || !navigationDates.includes(selectedDate)) {
-            if (navigationDates.length > 0) setSelectedDate(navigationDates[0]);
-            else setSelectedDate(null);
+            if (navigationDates.length > 0) {
+                const today = getTodayISO();
+                // If today is in navigation, select it. Otherwise select first date.
+                if (navigationDates.includes(today)) {
+                    setSelectedDate(today);
+                } else {
+                    setSelectedDate(navigationDates[0]);
+                }
+            } else {
+                setSelectedDate(null);
+            }
         }
     }, [navigationDates, selectedDate]);
 
