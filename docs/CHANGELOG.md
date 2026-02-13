@@ -1,3 +1,12 @@
+[2026-02-13 15:00] - 🚀 deploy: Release v1.2.0 - Funcionalidade Compartilhar Story
+- [2026-02-13 14:40] - feat: Funcionalidade de Compartilhar Agenda como Story (Imagem 9:16)
+  - Modal de seleção inteligente de blocos (limite de 4 por imagem)
+  - Geração de imagem via `html-to-image` com design premium e branding oficial
+  - Suporte a temas Caro/Escuro automático na imagem gerada
+  - URLs e tipografia otimizadas para visibilidade em stories
+- [2026-02-13 14:45] - fix: Correção de inicialização do Firebase via variáveis de ambiente (.env)
+- [2026-02-13 14:55] - ui: Refinamento visual da pré-visualização e cabeçalho do modal de compartilhamento
+
 [2026-02-04 13:55] - 🚀 deploy: Release v1.1.2 - Sistema de Avaliações e Moderação Completo
 - Sistema de estrelas com auto-aprovação de notas sem comentário.
 - Moderação administrativa de comentários de texto.

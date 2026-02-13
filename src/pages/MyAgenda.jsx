@@ -4,6 +4,7 @@ import { User, ArrowLeft } from 'lucide-react';
 import { getAuth } from 'firebase/auth';
 
 import LoginModal from '../components/LoginModal';
+import StoryShareModal from '../components/MyAgenda/StoryShareModal';
 import StickyHeader from '../components/StickyHeader';
 import AgendaTitle from '../components/MyAgenda/AgendaTitle';
 import FriendsList from '../components/MyAgenda/FriendsList';
@@ -43,6 +44,7 @@ const MyAgenda = () => {
     return (publicUid || shareId) ? 'friends' : 'mine';
   });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const friendsList = Array.isArray(friends) ? friends : [];
 
   const { sharedData, setSharedData, isLoadingShared, sharedError } = useSharedAgenda(publicUid, shareId);
@@ -121,6 +123,7 @@ const MyAgenda = () => {
             navigationDates={navigationDates} selectedDate={selectedDate} onDateSelect={setSelectedDate}
             isSharedMode={isSharedMode} nextBlock={nextBlock} nextBlockTheme={nextBlockTheme}
             onShare={handleShare} onExport={() => generateAndDownloadICS(currentBlocks)}
+            onShareStory={() => setIsStoryModalOpen(true)}
             isSharing={isSharing} shareSuccess={shareSuccess} currentBlocks={currentBlocks}
             displayBlocks={displayBlocks} matches={matches} newBlocks={newBlocks} onAddBlock={handleAddBlock}
             friendsAgendas={friendsAgendas}
@@ -132,6 +135,14 @@ const MyAgenda = () => {
           />
         )}
         <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+        {isStoryModalOpen && (
+          <StoryShareModal
+            isOpen={isStoryModalOpen}
+            onClose={() => setIsStoryModalOpen(false)}
+            blocks={displayBlocks}
+            date={selectedDate}
+          />
+        )}
       </div>
     </div>
   );

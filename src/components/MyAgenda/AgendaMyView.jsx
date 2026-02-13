@@ -12,6 +12,7 @@ const AgendaMyView = ({
     nextBlock,
     nextBlockTheme,
     onShare,
+    onShareStory,
     onExport,
     isSharing,
     shareSuccess,
@@ -37,6 +38,7 @@ const AgendaMyView = ({
             {!isSharedMode && (
                 <AgendaActions
                     onShare={onShare}
+                    onShareStory={onShareStory}
                     onExport={onExport}
                     isSharing={isSharing}
                     shareSuccess={shareSuccess}

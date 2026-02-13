@@ -48,6 +48,12 @@
     - Integração com Google Maps para rotas de ônibus.
     - Integração com Deep Link do Uber para estimativa de preço.
 - **Address & Copy**: Exibição do endereço completo do bloco com funcionalidade de cópia rápida para a área de transferência.
+- **Compartilhamento como Story**:
+    - Permite gerar uma imagem (9:16) formatada para Instagram/Facebook Stories.
+    - **Regra de Limite**: Máximo de 4 blocos por imagem para garantir legibilidade.
+    - **Seleção Inteligente**: Se o usuário tiver > 4 favoritos no dia, ele deve selecionar exatamente quais 4 deseja compartilhar.
+    - **Geração On-device**: A imagem é gerada via `html-to-image` e compartilhada diretamente do dispositivo (Native Share) ou baixada (Desktop).
+    - **Design System Adaptável**: A imagem adapta cores e elementos automaticamente conforme o modo claro/escuro do dispositivo.
 
 ### 1.5. Sugestão e Aprovação de Blocos
 - **Sugestão de Usuário**:
