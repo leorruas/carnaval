@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Trash2, Loader2, RefreshCw } from 'lucide-react';
-import { collection, deleteDoc, doc, setDoc, onSnapshot, Timestamp } from 'firebase/firestore';
+import { collection, deleteDoc, doc, setDoc, onSnapshot, Timestamp, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import AdminReviews from './AdminReviews';
 
@@ -124,8 +124,8 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                                 onClick={async () => {
                                     if (!window.confirm("Deseja geocodificar todos os blocos aprovados sem coordenadas?")) return;
                                     setProcessing('bulk-geo');
+                                    let currentBlockName = "";
                                     try {
-                                        const { getDocs, collection, doc, setDoc } = await import('firebase/firestore');
                                         const snap = await getDocs(collection(db, 'approved_blocks'));
                                         console.log(`[AdminPanel] Analyzing ${snap.size} blocks...`);
 
@@ -136,13 +136,14 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                                             // Skip metadata and blocks that already have coordinates
                                             if (!data.nome || (data.latitude && data.longitude)) continue;
 
+                                            currentBlockName = data.nome;
                                             needsFix++;
                                             const result = await geocodeAddress(data.endereco, data.bairro);
                                             if (result) {
-                                                await setDoc(doc(db, 'approved_blocks', blockDoc.id), {
+                                                await updateDoc(doc(db, 'approved_blocks', blockDoc.id), {
                                                     latitude: String(result.latitude),
                                                     longitude: String(result.longitude)
-                                                }, { merge: true });
+                                                });
                                                 count++;
                                             }
                                             // Sleep 1.2s to respect Nominatim usage policy (max 1 req/sec)
@@ -150,8 +151,8 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                                         }
                                         alert(`Processo concluído!\nBlocos analisados: ${snap.size}\nPrecisavam de coordenadas: ${needsFix}\nCorrigidos: ${count}`);
                                     } catch (err) {
-                                        console.error(err);
-                                        alert("Erro no processo de geocodificação em massa.");
+                                        console.error("Bulk Geocoding Error:", err);
+                                        alert(`Erro no processo de geocodificação em massa.\n\nDetalhe: ${err.message || 'Erro desconhecido'}\nBloco atual: ${currentBlockName || 'Nenhum'}`);
                                     } finally {
                                         setProcessing(null);
                                     }
