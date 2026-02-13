@@ -125,14 +125,18 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                                     if (!window.confirm("Deseja geocodificar todos os blocos aprovados sem coordenadas?")) return;
                                     setProcessing('bulk-geo');
                                     try {
-                                        const { getDocs, query, collection, where, doc, setDoc } = await import('firebase/firestore');
-                                        const q = query(collection(db, 'approved_blocks'), where('latitude', '==', null));
-                                        const snap = await getDocs(q);
-                                        console.log(`[AdminPanel] Found ${snap.size} blocks to geocode`);
+                                        const { getDocs, collection, doc, setDoc } = await import('firebase/firestore');
+                                        const snap = await getDocs(collection(db, 'approved_blocks'));
+                                        console.log(`[AdminPanel] Analyzing ${snap.size} blocks...`);
 
                                         let count = 0;
+                                        let needsFix = 0;
                                         for (const blockDoc of snap.docs) {
                                             const data = blockDoc.data();
+                                            // Skip metadata and blocks that already have coordinates
+                                            if (!data.nome || (data.latitude && data.longitude)) continue;
+
+                                            needsFix++;
                                             const result = await geocodeAddress(data.endereco, data.bairro);
                                             if (result) {
                                                 await setDoc(doc(db, 'approved_blocks', blockDoc.id), {
@@ -141,10 +145,10 @@ const AdminPanel = ({ isOpen, onClose, user }) => {
                                                 }, { merge: true });
                                                 count++;
                                             }
-                                            // Sleep 1s to respect Nominatim usage policy if many blocks
-                                            if (snap.size > 5) await new Promise(r => setTimeout(r, 1000));
+                                            // Sleep 1.2s to respect Nominatim usage policy (max 1 req/sec)
+                                            await new Promise(r => setTimeout(r, 1200));
                                         }
-                                        alert(`${count} blocos geocodificados com sucesso!`);
+                                        alert(`Processo concluído!\nBlocos analisados: ${snap.size}\nPrecisavam de coordenadas: ${needsFix}\nCorrigidos: ${count}`);
                                     } catch (err) {
                                         console.error(err);
                                         alert("Erro no processo de geocodificação em massa.");
