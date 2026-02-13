@@ -4,6 +4,7 @@ import { X, Check, Trash2, Loader2, RefreshCw } from 'lucide-react';
 import { collection, deleteDoc, doc, setDoc, onSnapshot, Timestamp, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import AdminReviews from './AdminReviews';
+import { geocodeAddress } from '../services/geocodingService';
 
 const AdminPanel = ({ isOpen, onClose, user }) => {
     const [suggestions, setSuggestions] = useState([]);
