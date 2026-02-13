@@ -24,12 +24,7 @@ export const geocodeAddress = async (address, neighborhood) => {
 
     try {
         console.log(`[Geocoding] Geocoding: ${query}`);
-        const response = await fetch(`${NOMINATIM_BASE_URL}?${params.toString()}`, {
-            headers: {
-                'Accept-Language': 'pt-BR',
-                'User-Agent': 'TatenoApp/1.0 (leoruas@gmail.com)' // Good practice for Nominatim
-            }
-        });
+        const response = await fetch(`${NOMINATIM_BASE_URL}?${params.toString()}`);
 
         if (!response.ok) {
             throw new Error(`Geocoding error: ${response.statusText}`);
