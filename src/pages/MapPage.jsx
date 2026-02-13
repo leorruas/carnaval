@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { Target } from 'lucide-react';
 import L from 'leaflet';
 import DateScrollSelector from '../components/Home/DateScrollSelector';
-import blocosData from '../data/blocos.json'; // Direct import for reliability
 import { groupBlocksByDate } from '../utils/dateUtils';
+import { useBlocks } from '../hooks/useBlocks';
 
 // Fix Leaflet marker icon issue
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -46,7 +46,7 @@ const MapPage = () => {
                </div>`
     });
 
-    const { blocks } = useBlocks();
+    const { blocks = [] } = useBlocks();
 
     // Default to BH center initially to avoid blocking UI if geo hangs
     const defaultCenter = [-19.9167, -43.9345];
